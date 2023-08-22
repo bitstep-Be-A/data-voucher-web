@@ -1,25 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import PublicRoute from './routes/PublicRoute';
+import PrivateRoute from './routes/PrivateRoute';
+import { routes } from './routes/path';
+
+import LoginPage from './pages/Login';
+import NotFound from './pages/NotFound';
+import RegisterPage from './pages/Register';
+import SearchPage from './pages/Search';
+import MyPage from './pages/My';
+import DocsPage from './pages/Docs';
+import BookmarkPage from './pages/Bookmark';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<PrivateRoute/>}>
+          <Route path={routes.search.path} element={<SearchPage/>}/>
+          <Route path={routes.my.path} element={<MyPage/>}/>
+          <Route path={routes.docs.path} element={<DocsPage/>}/>
+          <Route path={routes.bookmark.path} element={<BookmarkPage/>}/>
+        </Route>
+        <Route path='/' element={<PublicRoute/>}>
+          <Route path={routes.register.path} element={<RegisterPage/>}/>
+          <Route path={routes.login.path} element={<LoginPage/>}/>
+        </Route>
+        <Route path={"/*"} element={<NotFound/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

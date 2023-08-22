@@ -1,46 +1,42 @@
-# Getting Started with Create React App
+# Project guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Issue
 
-## Available Scripts
+Issue에는 Feature와 Debug를 정리합니다. (향후 추가 예정)\
+Title에는 [Feature] 혹은 [Debug]를 앞에 표시 후 타이틀을 작성합니다.
 
-In the project directory, you can run:
+컨텐츠의 양식은 다음과 같습니다.
 
-### `npm start`
+```plain
+작업일
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [ ] 작업 내용 [commit link(사항 있다면)]
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Branch
 
-### `npm test`
+main branch는 feature/#(issue id)와 같이 네이밍합니다. ex) feature/#10
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Commit
 
-### `npm run build`
+commit은 [git convention](https://www.conventionalcommits.org/en/v1.0.0/)을 따르되, Issue id를 반드시 붙여주셔야 합니다.\
+type은 대문자로 시작합니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+ex)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```plain
+# issue id => #1, #2, #3 ...
+Feat(#1): 로그인 기능 추가
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## PR
 
-### `npm run eject`
+1. pull request는 commit 하나에만 할당됩니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+2. pull request를 보내기 전, 본인의 commit 사항에 대해 우선적으로 코드리뷰를 하고 comment를 남깁니다.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. pull request를 요청한 뒤, 담당 코드 리뷰어와 함께 코드 리뷰를 완료합니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+4. pull request가 완료되면 요청 보낸 branch는 삭제합니다.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+> 문서 변경사항에 대해서는 docs branch에 문서 변경사항만 (이외 코드 변경 사항은 반영하지 말것!!) 추가하여 PR을 보내주세요.

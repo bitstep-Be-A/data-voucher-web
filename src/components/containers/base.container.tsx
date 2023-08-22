@@ -1,7 +1,9 @@
+import { useMemo } from "react";
 import { useLocation } from "react-router";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
+import { useAuth } from "../../hooks/auth.hook";
 
 import Nav from "../Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
@@ -117,13 +119,15 @@ const TopNavItem: React.FC<TobNavItemProps> = ({
 
 const TopNavbar = () => {
   const { pathname } = useLocation();
-  const isLogin = true;
+  const auth = useAuth();
+
+  const isLogined = useMemo(() => !!auth.tokenRef.current, [auth]);
 
   return (
     <div className="w-full border-b border-gray-400 py-4">
       <Nav
         className="flex flex-row justify-end mr-5"
-        linkMenus={!isLogin ? [
+        linkMenus={!isLogined ? [
           {
             path: routes.login.path,
             item: (

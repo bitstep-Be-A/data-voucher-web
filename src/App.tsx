@@ -12,7 +12,7 @@ import { AuthContext } from './hooks/auth.hook';
 
 import LoginPage from './pages/Login';
 import NotFound from './pages/NotFound';
-import RegisterPage from './pages/Register';
+import SignupPage from './pages/Signup';
 import SearchPage from './pages/Search';
 import MyPage from './pages/My';
 import DocsPage from './pages/Docs';
@@ -44,29 +44,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={
-          <AuthProvider>
-            <PrivateRoute/>
-          </AuthProvider>
-        }>
-          <Route path={routes.search.path} element={<SearchPage/>}/>
-          <Route path={routes.my.path} element={<MyPage/>}/>
-          <Route path={routes.docs.path} element={<DocsPage/>}/>
-          <Route path={routes.bookmark.path} element={<BookmarkPage/>}/>
-        </Route>
-        <Route path='/' element={
-          <AuthProvider>
-            <PublicRoute/>
-          </AuthProvider>
-        }>
-          <Route path={routes.register.path} element={<RegisterPage/>}/>
-          <Route path={routes.login.path} element={<LoginPage/>}/>
-        </Route>
-        <Route path={"/*"} element={<NotFound/>}/>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<PrivateRoute/>}>
+            <Route path={routes.search.path} element={<SearchPage/>}/>
+            <Route path={routes.my.path} element={<MyPage/>}/>
+            <Route path={routes.docs.path} element={<DocsPage/>}/>
+            <Route path={routes.bookmark.path} element={<BookmarkPage/>}/>
+          </Route>
+          <Route path='/' element={<PublicRoute/>}>
+            <Route path={routes.signup.path} element={<SignupPage/>}/>
+            <Route path={routes.login.path} element={<LoginPage/>}/>
+          </Route>
+          <Route path={"/*"} element={<NotFound/>}/>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

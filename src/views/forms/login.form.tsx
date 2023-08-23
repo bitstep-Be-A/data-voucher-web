@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 
 import { routes } from "../../routes/path";
 
-import { EventButton } from "../Button";
-import { UnderlinedTextInput, BlockedTextInput } from "../Input";
+import { EventButton } from "../../components/Button";
+import { UnderlinedTextInput, BlockedTextInput } from "../../components/Input";
 
+// FindCredentialPw
 interface FindCredentialPwInputFieldProps {
   placeholder: string;
   buttonText?: string;
@@ -63,6 +64,7 @@ export const FindCredentialPwForm: React.FC = () => {
   );
 }
 
+// FindCredentialId
 interface FindCredentialIdInputFieldProps {
   placeholder: string;
   buttonText: string;
@@ -108,6 +110,7 @@ export const FindCredentialIdForm: React.FC = () => {
   );
 }
 
+// Login
 interface LoginInputFieldProps {
   labelName: string;
 }

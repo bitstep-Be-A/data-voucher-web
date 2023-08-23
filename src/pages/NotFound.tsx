@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { routes } from "../routes/path";
 
-import { BaseContainer, CenteredContainer } from "../components/containers/base.container";
+import { BaseContainer, CenteredContainer } from "../views/containers/base.container";
 
 export default function NotFound() {
   return (

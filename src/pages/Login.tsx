@@ -4,8 +4,8 @@ import {
   LoginForm,
   FindCredentialIdForm,
   FindCredentialPwForm
-} from "../components/forms/login.form";
-import { CenteredContainer } from "../components/containers/base.container";
+} from "../views/forms/login.form";
+import { CenteredContainer } from "../views/containers/base.container";
 import NotFound from "./NotFound";
 
 export default function LoginPage() {

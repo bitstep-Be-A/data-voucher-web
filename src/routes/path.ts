@@ -6,7 +6,7 @@ export interface RouteExp {
 interface PublicRoutesType {
   home: RouteExp;
   login: RouteExp;
-  register: RouteExp;
+  signup: RouteExp;
   findCredentialId: RouteExp;
   findCredentialPw: RouteExp;
 }
@@ -20,9 +20,9 @@ export const publicRoutes: PublicRoutesType = {
     path: '/login',
     re: new RegExp('^/login')
   },
-  register: {
-    path: '/register',
-    re: new RegExp('^/register')
+  signup: {
+    path: '/signup',
+    re: new RegExp('^/signup')
   },
   findCredentialId: {
     path: '/login?find=id',

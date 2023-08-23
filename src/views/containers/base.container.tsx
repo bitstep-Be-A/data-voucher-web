@@ -5,7 +5,7 @@ import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
 import { useAuth } from "../../hooks/auth.hook";
 
-import Nav from "../Nav";
+import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
@@ -141,12 +141,12 @@ const TopNavbar = () => {
             )
           },
           {
-            path: routes.register.path,
+            path: routes.signup.path,
             item: (
               <TopNavItem
                 text={"회원가입"}
                 isActive={
-                  routes.register.re.test(pathname)
+                  routes.signup.re.test(pathname)
                 }
                 isLast={true}
               />

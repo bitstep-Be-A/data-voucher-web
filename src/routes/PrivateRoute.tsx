@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth.hook";
 import { routes } from "./path";
 
-import { BaseContainer } from "../components/containers/base.container";
+import { BaseContainer } from "../views/containers/base.container";
 
 export default function PrivateRoute() {
   const navigate = useNavigate();

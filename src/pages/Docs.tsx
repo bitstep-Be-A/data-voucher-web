@@ -1,4 +1,4 @@
-import { CenteredContainer } from "../components/containers/base.container";
+import { CenteredContainer } from "../views/containers/base.container";
 
 export default function DocsPage() {
   return (

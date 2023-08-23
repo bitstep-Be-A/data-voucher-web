@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import Nav from "../Nav";
+import Nav from "../../components/Nav";
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
 
@@ -45,7 +45,7 @@ const StepNavbar = () => {
       className="flex flex-row"
       linkMenus={[
         {
-          path: `${routes.register.path}?step=1`,
+          path: `${routes.signup.path}?step=1`,
           item: (
             <StatusItem
               isActive={step === 1}
@@ -55,7 +55,7 @@ const StepNavbar = () => {
           )
         },
         {
-          path: `${routes.register.path}?step=2`,
+          path: `${routes.signup.path}?step=2`,
           item: (
             <StatusItem
               isActive={step === 2}
@@ -65,7 +65,7 @@ const StepNavbar = () => {
           )
         },
         {
-          path: `${routes.register.path}?step=3`,
+          path: `${routes.signup.path}?step=3`,
           item: (
             <StatusItem
               isActive={step === 3}
@@ -79,7 +79,7 @@ const StepNavbar = () => {
   );
 }
 
-const RegisterContainer = ({ children }: {
+const SignupContainer = ({ children }: {
   children: React.ReactNode;
 }) => {
   return (
@@ -91,4 +91,4 @@ const RegisterContainer = ({ children }: {
   );
 }
 
-export default RegisterContainer;
+export default SignupContainer;

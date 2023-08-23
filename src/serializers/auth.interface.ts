@@ -4,7 +4,7 @@ import type {
   CompanyTypeEnum
 } from "../policies/auth.policy";
 
-export interface JoinPolicy {
+export interface JoinAgreement {
   isAgreeService: boolean;
   isAgreePrivacy: boolean;
   isAgreeMarketing: boolean;
@@ -39,12 +39,12 @@ export interface CompanyDetailInfo {
 
 export interface CompanyInfo extends CompanyRegisterInfo, CompanyDetailInfo {}
 
-export interface SignupinfoRequest extends JoinPolicy, MyInfo, CompanyInfo {}
+export interface SignupinfoRequest extends JoinAgreement, MyInfo, CompanyInfo {}
 
 export interface SignupService {
   // 약관동의
-  checkRequiredPolicy: (policy: JoinPolicy) => boolean;
-  submitPolicy: (policy: JoinPolicy) => void;
+  checkRequiredAgreement: (agreement: JoinAgreement) => boolean;
+  submitAgreement: (agreement: JoinAgreement) => void;
   // 정보입력
   checkValidEmail: (email: string) => boolean;
   checkDuplicatedEmail: (email: string) => Promise<boolean>;

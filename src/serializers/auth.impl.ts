@@ -3,7 +3,7 @@ import {
 } from "../utils/serializer";
 import type {
   CompanyInfo,
-  JoinPolicy,
+  JoinAgreement,
   MyInfo,
   SignupService,
   SignupinfoRequest,
@@ -76,18 +76,18 @@ export class SignupSerializer extends BaseSerializer<SignupinfoRequest> implemen
     return {}
   }
 
-  checkRequiredPolicy(policy: JoinPolicy) {
+  checkRequiredAgreement(agreement: JoinAgreement) {
     return (
-      policy.isAgreeService &&
-      policy.isAgreePrivacy
+      agreement.isAgreeService &&
+      agreement.isAgreePrivacy
     );
   };
 
-  submitPolicy(policy: JoinPolicy) {
-    if (this.checkRequiredPolicy(policy)) {
+  submitAgreement(agreement: JoinAgreement) {
+    if (this.checkRequiredAgreement(agreement)) {
       this.data = {
         ...this.data,
-        ...policy
+        ...agreement
       }
       return;
     };

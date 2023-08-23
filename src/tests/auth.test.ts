@@ -2,14 +2,14 @@ import {
   SignupSerializer,
 } from "../serializers/auth.impl";
 import {
-  JoinPolicy,
+  JoinAgreement,
 } from "../serializers/auth.interface";
 
 describe('회원가입', () => {
   const serializer = new SignupSerializer();
 
   it('필수 동의 정책에 동의해야합니다.', () => {
-    const policy: JoinPolicy = {
+    const agreement: JoinAgreement = {
       isAgreeService: false,
       isAgreePrivacy: false,
       isAgreeMarketing: false
@@ -17,23 +17,23 @@ describe('회원가입', () => {
 
     let received;
 
-    received = serializer.checkRequiredPolicy(policy);
+    received = serializer.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
-    policy.isAgreeMarketing = true;
-    received = serializer.checkRequiredPolicy(policy);
+    agreement.isAgreeMarketing = true;
+    received = serializer.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
-    policy.isAgreePrivacy = true;
-    received = serializer.checkRequiredPolicy(policy);
+    agreement.isAgreePrivacy = true;
+    received = serializer.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
-    policy.isAgreeService = true;
-    received = serializer.checkRequiredPolicy(policy);
+    agreement.isAgreeService = true;
+    received = serializer.checkRequiredAgreement(agreement);
     expect(received).toBe(true);
 
-    policy.isAgreeMarketing = false;
-    received = serializer.checkRequiredPolicy(policy);
+    agreement.isAgreeMarketing = false;
+    received = serializer.checkRequiredAgreement(agreement);
     expect(received).toBe(true);
   });
 

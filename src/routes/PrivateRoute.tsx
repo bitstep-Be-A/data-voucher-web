@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { useAuth } from "../hooks/auth.hook";
+import { useAuth } from "../hooks/account.hook";
 import { routes } from "./path";
 
 import { BaseContainer } from "../views/containers/base.container";

@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 
 import Nav from "../../components/Nav";
-import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
-import { SignupContext, useSignup } from "../../hooks/auth.hook";
-import { useSignupSerializer } from "../../domains/auth.impl";
+import { SignupContext, useSignup } from "../../hooks/account.hook";
+import { useSignupSerializer } from "../../domains/account.impl";
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface StatusItemProps {
   isActive: boolean;
@@ -43,7 +44,6 @@ const StepNavbar = () => {
       className="flex flex-row"
       linkMenus={[
         {
-          path: `${routes.signup.path}?step=1`,
           item: (
             <StatusItem
               isActive={step === 1}
@@ -51,13 +51,9 @@ const StepNavbar = () => {
               text="Step1. 약관동의"
             />
           ),
+          className: "cursor-default"
         },
         {
-          onClick: () => {
-            if (accepted[0]) {
-              navigate(`${routes.signup.path}?step=2`);
-            }
-          },
           item: (
             <StatusItem
               isActive={step === 2}
@@ -65,16 +61,9 @@ const StepNavbar = () => {
               text="Step2. 정보입력"
             />
           ),
-          className: classNames(
-            accepted[0] ? "" : "cursor-default"
-          )
+          className: "cursor-default"
         },
         {
-          onClick: () => {
-            if (accepted[1]) {
-              navigate(`${routes.signup.path}?step=3`);
-            }
-          },
           item: (
             <StatusItem
               isActive={step === 3}
@@ -82,9 +71,7 @@ const StepNavbar = () => {
               text="Step3. 가입완료"
             />
           ),
-          className: classNames(
-            accepted[1] ? "" : "cursor-default"
-          )
+          className: "cursor-default"
         }
       ]}
     />
@@ -107,8 +94,17 @@ const SignupContainer = ({ children }: {
     <SignupContext.Provider value={{
       accepted, setAccepted, serializer, step
     }}>
-      <div className="w-full h-full flex flex-col items-center">
-        <h1 className="text-lg py-5">회원가입</h1>
+      <div className="w-full h-full flex flex-col items-center px-16">
+        <div className="relative w-full flex flex-row justify-center py-5">
+          {
+            (step === 2 || step === 3) && (
+              <Link to={`?step=${step-1}`} className="absolute left-0">
+                <ArrowBackIcon/>
+              </Link>
+            )
+          }
+          <h1 className="text-lg">회원가입</h1>
+        </div>
         <StepNavbar/>
         { children }
       </div>

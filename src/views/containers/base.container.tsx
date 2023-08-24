@@ -3,7 +3,7 @@ import { useLocation } from "react-router";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
-import { useAuth } from "../../hooks/auth.hook";
+import { useAuth } from "../../hooks/account.hook";
 
 import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";

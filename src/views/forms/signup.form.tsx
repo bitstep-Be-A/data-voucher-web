@@ -1,12 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
-import { useSignup } from "../../hooks/auth.hook";
-import type { CompanyInfo, JoinAgreement, MyInfo } from "../../domains/auth.interface";
-import agreementPolicies from "../../policies/agreement.policy";
+import { useSignup } from "../../hooks/account.hook";
+import type { CompanyInfo, JoinAgreement, MyInfo } from "../../domains/account.interface";
+import agreementPolicy from "../../policies/agreement.policy";
 import { routes } from "../../routes/path";
 
-import AgreementCheckInput from "../../components/signup/AgreementCheckInput";
+import AgreementCheckField from "../../components/signup/AgreementCheckField";
 import { EventButton } from "../../components/Button";
 
 interface StepSectionProps<T> {
@@ -15,26 +16,45 @@ interface StepSectionProps<T> {
   isValid: () => boolean;
   getErrorMessage: () => string;
   next: () => void;
+  getData: () => T;
 }
+
+const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 32px;
+`;
+
+const Fieldset = styled.fieldset`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  gap: 1rem; /* Adjust the gap value according to your needs */
+  margin-bottom: 1rem; /* Adjust the margin value according to your needs */
+`
 
 const AgreementStepSection: React.FC<StepSectionProps<JoinAgreement>> = ({
   complete,
   submit,
   isValid,
   getErrorMessage,
-  next
+  next,
+  getData
 }) => {
   const [data, setData] = useState<JoinAgreement>({
-    isAgreeService: false,
-    isAgreePrivacy: false,
-    isAgreeMarketing: false
+    isAgreeService: getData().isAgreeService,
+    isAgreePrivacy: getData().isAgreePrivacy,
+    isAgreeMarketing: getData().isAgreeMarketing
   });
 
   return (
-    <section className="flex flex-col items-center mt-8">
-      <fieldset className="w-full h-full flex flex-col overflow-y-scroll space-y-4 mb-4">
-        <AgreementCheckInput
-          agreementPolicy={agreementPolicies.service}
+    <Section>
+      <Fieldset>
+        <AgreementCheckField
+          policyContext={agreementPolicy.service}
           checked={data.isAgreeService}
           setChecked={() => {
             setData({
@@ -43,8 +63,8 @@ const AgreementStepSection: React.FC<StepSectionProps<JoinAgreement>> = ({
             });
           }}
         />
-        <AgreementCheckInput
-          agreementPolicy={agreementPolicies.privacy}
+        <AgreementCheckField
+          policyContext={agreementPolicy.privacy}
           checked={data.isAgreePrivacy}
           setChecked={() => {
             setData({
@@ -53,8 +73,8 @@ const AgreementStepSection: React.FC<StepSectionProps<JoinAgreement>> = ({
             });
           }}
         />
-        <AgreementCheckInput
-          agreementPolicy={agreementPolicies.marketing}
+        <AgreementCheckField
+          policyContext={agreementPolicy.marketing}
           checked={data.isAgreeMarketing}
           setChecked={() => {
             setData({
@@ -63,7 +83,7 @@ const AgreementStepSection: React.FC<StepSectionProps<JoinAgreement>> = ({
             });
           }}
         />
-      </fieldset>
+      </Fieldset>
       <EventButton
         width={96}
         paddingY={4}
@@ -79,7 +99,7 @@ const AgreementStepSection: React.FC<StepSectionProps<JoinAgreement>> = ({
           alert(getErrorMessage());
         }}
       >다음</EventButton>
-    </section>
+    </Section>
   );
 }
 
@@ -87,7 +107,9 @@ const MyInfoStepSection: React.FC<StepSectionProps<MyInfo>> = ({
   complete,
   submit,
   isValid,
-  getErrorMessage
+  getErrorMessage,
+  next,
+  getData
 }) => {
   return (
     <></>
@@ -98,7 +120,9 @@ const CompanyInfoStepSection: React.FC<StepSectionProps<CompanyInfo>> = ({
   complete,
   submit,
   isValid,
-  getErrorMessage
+  getErrorMessage,
+  next,
+  getData
 }) => {
   return (
     <></>
@@ -126,6 +150,7 @@ const SignupForm: React.FC = () => {
           isValid={() => serializer.isValid()}
           getErrorMessage={() => serializer.getExceptions()[0].message}
           next={() => navigate(`${routes.signup.path}?step=2`)}
+          getData={() => serializer.toData()}
         />
       );
     case 2:
@@ -139,6 +164,7 @@ const SignupForm: React.FC = () => {
           isValid={() => !serializer.isValid()}
           getErrorMessage={() => serializer.getExceptions()[0].message}
           next={() => navigate(`${routes.signup.path}?step=3`)}
+          getData={() => serializer.toData()}
         />
         <CompanyInfoStepSection
           complete={() => setAccepted([true, true, false])}
@@ -148,6 +174,7 @@ const SignupForm: React.FC = () => {
           isValid={() => !serializer.isValid()}
           getErrorMessage={() => serializer.getExceptions()[0].message}
           next={() => navigate(`${routes.signup.path}?step=3`)}
+          getData={() => serializer.toData()}
         />
         </>
       );

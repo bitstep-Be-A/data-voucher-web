@@ -12,7 +12,7 @@ import type {
   SignupinfoRequest,
   SignupExceptionMap,
   SignupValidator
-} from "./auth.interface";
+} from "./account.interface";
 import {
   CompanySizeEnum,
   CompanyTypeEnum
@@ -100,8 +100,12 @@ export function useSignupSerializer(): SignupSerializer {
   const exceptionsRef = useRef<ExceptionDetail[]>([]);
   const dataRef = useRef<SignupinfoRequest>(_.cloneDeep(defaultSignupinfoRequest));
 
-  function convert() {
+  function toObject() {
     return {}
+  }
+
+  function toData() {
+    return dataRef.current;
   }
 
   function isValid() {
@@ -150,7 +154,8 @@ export function useSignupSerializer(): SignupSerializer {
   function submitCompanyInfo(company: CompanyInfo) {}
 
   return {
-    convert,
+    toObject,
+    toData,
     isValid,
     submitAgreement,
     submitMyInfo,

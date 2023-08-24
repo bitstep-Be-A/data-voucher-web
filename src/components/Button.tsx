@@ -5,8 +5,9 @@ export interface EventButtonProps {
   width?: number | string;
   paddingY?: number | string;
   className?: string;
-  theme?: "default" | undefined;
+  theme?: "default" | undefined | "none";
   type?: "button" | "submit" | "reset" | undefined;
+  onClick?: () => void;
 }
 
 export const EventButton: React.FC<EventButtonProps> = ({
@@ -15,7 +16,8 @@ export const EventButton: React.FC<EventButtonProps> = ({
   paddingY,
   className,
   theme,
-  type
+  type,
+  onClick
 }) => {
   return (
     <button
@@ -30,6 +32,7 @@ export const EventButton: React.FC<EventButtonProps> = ({
         className
       )}
       type={ type }
+      onClick={onClick}
     >
       { children }
     </button>

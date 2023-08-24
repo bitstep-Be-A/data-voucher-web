@@ -5,7 +5,7 @@ import Nav from "../../components/Nav";
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
 import { SignupContext, useSignup } from "../../hooks/auth.hook";
-import { SignupSerializer } from "../../serializers/auth.impl";
+import { useSignupSerializer } from "../../domains/auth.impl";
 
 interface StatusItemProps {
   isActive: boolean;
@@ -96,7 +96,7 @@ const SignupContainer = ({ children }: {
 }) => {
   const [searchParams, _] = useSearchParams();
   const [accepted, setAccepted] = useState<boolean[]>([false, false, false]);
-  const serializer = new SignupSerializer();
+  const serializer = useSignupSerializer();
   const step = useMemo(() => {
     const stepParam = searchParams.get('step');
     if (stepParam) { return Number(stepParam) }

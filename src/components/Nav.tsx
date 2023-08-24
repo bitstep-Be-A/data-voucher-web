@@ -32,6 +32,7 @@ const Nav = ({
           <button
             onClick={value.onClick}
             className={value.className}
+            key={index}
           >
             {value.item}
           </button>

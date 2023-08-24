@@ -1,12 +1,12 @@
 import {
-  SignupSerializer,
-} from "../serializers/auth.impl";
+  signupValidator,
+} from "../domains/auth.impl";
 import {
   JoinAgreement,
-} from "../serializers/auth.interface";
+} from "../domains/auth.interface";
 
 describe('회원가입', () => {
-  const serializer = new SignupSerializer();
+  const validator = signupValidator;
 
   it('필수 동의 정책에 동의해야합니다.', () => {
     const agreement: JoinAgreement = {
@@ -17,23 +17,23 @@ describe('회원가입', () => {
 
     let received;
 
-    received = serializer.checkRequiredAgreement(agreement);
+    received = validator.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
     agreement.isAgreeMarketing = true;
-    received = serializer.checkRequiredAgreement(agreement);
+    received = validator.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
     agreement.isAgreePrivacy = true;
-    received = serializer.checkRequiredAgreement(agreement);
+    received = validator.checkRequiredAgreement(agreement);
     expect(received).toBe(false);
 
     agreement.isAgreeService = true;
-    received = serializer.checkRequiredAgreement(agreement);
+    received = validator.checkRequiredAgreement(agreement);
     expect(received).toBe(true);
 
     agreement.isAgreeMarketing = false;
-    received = serializer.checkRequiredAgreement(agreement);
+    received = validator.checkRequiredAgreement(agreement);
     expect(received).toBe(true);
   });
 
@@ -61,9 +61,9 @@ describe('회원가입', () => {
     const validEmail = 'user@domain.com'
 
     invalidEmails.forEach((email) => {
-      expect(serializer.checkValidEmail(email)).toBe(false);
+      expect(validator.checkValidEmail(email)).toBe(false);
     });
-    expect(serializer.checkValidEmail(validEmail)).toBe(true);
+    expect(validator.checkValidEmail(validEmail)).toBe(true);
   });
 
   it('비밀번호 입력을 올바르게 했는지 체크합니다.', () => {
@@ -83,17 +83,17 @@ describe('회원가입', () => {
     const validPassword = 'abcd12345@';
 
     invalidPasswords.forEach((password) => {
-      expect(serializer.checkValidPassword(password)).toBe(false);
+      expect(validator.checkValidPassword(password)).toBe(false);
     });
-    expect(serializer.checkValidPassword(validPassword)).toBe(true);
+    expect(validator.checkValidPassword(validPassword)).toBe(true);
   });
 
   it('비밀번호가 일치하지 않는지 검증합니다', () => {
     const inputPassword = 'Abcd12345@';
     let confirmPassword = 'Bacd12345@';
-    expect(serializer.checkPasswordConfirmed(inputPassword, confirmPassword)).toBe(false);
+    expect(validator.checkPasswordConfirmed(inputPassword, confirmPassword)).toBe(false);
     confirmPassword = inputPassword;
-    expect(serializer.checkPasswordConfirmed(inputPassword, confirmPassword)).toBe(true);
+    expect(validator.checkPasswordConfirmed(inputPassword, confirmPassword)).toBe(true);
   });
 
   it('전화번호가 올바른지 검증합니다', () => {
@@ -105,8 +105,8 @@ describe('회원가입', () => {
     ];
     const validPhoneNumber = '010-5789-4844';
     invalidPhoneNumbers.forEach((phoneNumber) => {
-      expect(serializer.checkValidPhoneNumber(phoneNumber)).toBe(false);
+      expect(validator.checkValidPhoneNumber(phoneNumber)).toBe(false);
     });
-    expect(serializer.checkValidPhoneNumber(validPhoneNumber)).toBe(true);
+    expect(validator.checkValidPhoneNumber(validPhoneNumber)).toBe(true);
   });
 });

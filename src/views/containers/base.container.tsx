@@ -175,7 +175,7 @@ export const BaseContainer = ({ children }: {
   children: React.ReactNode;
 }): JSX.Element => {
   return (
-    <div className="w-full h-full flex flex-row">
+    <div className="w-screen h-screen flex flex-row overflow-hidden">
       <SideNavbar />
       <div className="w-full h-full flex flex-col">
         <TopNavbar />

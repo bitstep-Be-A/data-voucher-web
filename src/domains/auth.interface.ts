@@ -2,7 +2,7 @@ import type { ExceptionDetail } from "../utils/exceptions";
 import type {
   CompanySizeEnum,
   CompanyTypeEnum
-} from "../policies/auth.policy";
+} from "../policies/company.policy";
 
 export interface JoinAgreement {
   isAgreeService: boolean;
@@ -41,23 +41,23 @@ export interface CompanyInfo extends CompanyRegisterInfo, CompanyDetailInfo {}
 
 export interface SignupinfoRequest extends JoinAgreement, MyInfo, CompanyInfo {}
 
-export interface SignupService {
-  // 약관동의
+export interface SignupValidator {
   checkRequiredAgreement: (agreement: JoinAgreement) => boolean;
-  submitAgreement: (agreement: JoinAgreement) => void;
-  // 정보입력
   checkValidEmail: (email: string) => boolean;
   checkDuplicatedEmail: (email: string) => Promise<boolean>;
   checkValidPassword: (password: string) => boolean;
   checkPasswordConfirmed: (password: string, confirmPassword: string) => boolean;
   checkValidPhoneNumber: (phoneNumber: string) => boolean;
+}
+
+export interface SignupService {
+  submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
-  // 가입완료
   submitCompanyInfo: (company: CompanyInfo) => void;
 }
 
 export interface SignupExceptionMap {
-  POLICY_AGREE_REQUIRED: ExceptionDetail;
+  REQUIRED_AGREEMENT_UNCHECKED: ExceptionDetail;
   INVALID_EMAIL_FORMAT: ExceptionDetail;
   EMAIL_DUPLICATED: ExceptionDetail;
   INVALID_PASSWORD_FORMAT: ExceptionDetail;

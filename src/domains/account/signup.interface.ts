@@ -1,8 +1,8 @@
-import type { ExceptionDetail } from "../utils/exceptions";
+import type { ExceptionDetail } from "../../utils/exceptions";
 import type {
   CompanySizeEnum,
   CompanyTypeEnum
-} from "../policies/company.policy";
+} from "../../policies/company.policy";
 
 export interface JoinAgreement {
   isAgreeService: boolean;
@@ -31,7 +31,7 @@ export interface CompanyRegisterInfo {
 }
 
 export interface CompanyDetailInfo {
-  companyLocation: string;
+  targetAreas: string[];
   companyType: CompanyTypeEnum;
   employeeCount: number;
   interestKeywords?: string;
@@ -50,10 +50,13 @@ export interface SignupValidator {
   checkValidPhoneNumber: (phoneNumber: string) => boolean;
 }
 
+export type VerificationType = "이메일 중복확인" | "기업정보확인";
+
 export interface SignupService {
   submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
   submitCompanyInfo: (company: CompanyInfo) => void;
+  verify: (eventType: VerificationType) => Promise<void>;
 }
 
 export interface SignupExceptionMap {
@@ -63,4 +66,5 @@ export interface SignupExceptionMap {
   INVALID_PASSWORD_FORMAT: ExceptionDetail;
   UNMATCHED_PASSWORD: ExceptionDetail;
   INVALID_PHONE_NUMBER_FORMAT: ExceptionDetail;
+  COMPANY_NOT_VERIFIED: ExceptionDetail;
 }

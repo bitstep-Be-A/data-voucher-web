@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { SignupSerializer } from "../domains/account.impl";
+import type { SignupSerializer } from "../domains/account/signup.impl";
 
 export interface IAuthContext {
   tokenRef: React.MutableRefObject<string>;

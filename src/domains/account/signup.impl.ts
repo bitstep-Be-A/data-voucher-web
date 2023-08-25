@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import { useRef } from "react";
 
-import type { ExceptionDetail } from "../utils/exceptions";
+import type { ExceptionDetail } from "../../utils/exceptions";
 import {
   Serializer
-} from "../utils/serializer";
+} from "../../utils/serializer";
 import type {
   CompanyInfo,
   JoinAgreement,
@@ -11,18 +12,18 @@ import type {
   SignupService,
   SignupinfoRequest,
   SignupExceptionMap,
-  SignupValidator
-} from "./account.interface";
+  SignupValidator,
+  VerificationType
+} from "./signup.interface";
 import {
   CompanySizeEnum,
   CompanyTypeEnum
-} from "../policies/company.policy";
+} from "../../policies/company.policy";
 import {
   EMAIL_REGEX,
   PASSWORD_REGEX,
   PHONE_NUMBER_REGEX
-} from "../policies/signup.policy";
-import _ from 'lodash';
+} from "../../policies/signup.policy";
 
 export const signupExceptionMap: SignupExceptionMap = {
   REQUIRED_AGREEMENT_UNCHECKED: {
@@ -48,6 +49,10 @@ export const signupExceptionMap: SignupExceptionMap = {
   INVALID_PHONE_NUMBER_FORMAT: {
     name: 'INVALID_PHONE_NUMBER_FORMAT',
     message: '올바르지 않은 전화번호 형식입니다'
+  },
+  COMPANY_NOT_VERIFIED: {
+    name: 'COMPANY_INFO_NOT_VERIFIED',
+    message: '등록되지 않은 회사입니다. 사업자 등록번호를 확인해주세요.'
   }
 }
 
@@ -61,7 +66,7 @@ export const defaultSignupinfoRequest: SignupinfoRequest = {
   phoneNumber: '',
   name: '',
   businessRegistrationNumber: '',
-  companyLocation: '',
+  targetAreas: [],
   establishDate: '',
   CEO: '',
   companySize: CompanySizeEnum.ETC,
@@ -118,6 +123,8 @@ export function useSignupSerializer(): SignupSerializer {
     return value;
   }
 
+  async function verify(eventType: VerificationType) {}
+
   function submitAgreement(agreement: JoinAgreement) {
     if (signupValidator.checkRequiredAgreement(agreement)) {
       dataRef.current = {
@@ -130,24 +137,9 @@ export function useSignupSerializer(): SignupSerializer {
   }
 
   async function submitMyInfo(my: MyInfo) {
-    if (!signupValidator.checkValidEmail(my.email)) {
-      exceptionsRef.current.push(signupExceptionMap.INVALID_EMAIL_FORMAT);
-    }
-    if (!signupValidator.checkValidPassword(my.password)) {
-      exceptionsRef.current.push(signupExceptionMap.INVALID_PASSWORD_FORMAT);
-    }
-    if (!signupValidator.checkPasswordConfirmed(my.password, my.confirmPassword)) {
-      exceptionsRef.current.push(signupExceptionMap.UNMATCHED_PASSWORD);
-    }
-    if (!signupValidator.checkValidPhoneNumber(my.phoneNumber)) {
-      exceptionsRef.current.push(signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT);
-    }
-
-    if (!isValid()) {
-      dataRef.current = {
-        ...dataRef.current,
-        ...my
-      }
+    dataRef.current = {
+      ...dataRef.current,
+      ...my
     }
   }
 
@@ -157,6 +149,7 @@ export function useSignupSerializer(): SignupSerializer {
     toObject,
     toData,
     isValid,
+    verify,
     submitAgreement,
     submitMyInfo,
     submitCompanyInfo,

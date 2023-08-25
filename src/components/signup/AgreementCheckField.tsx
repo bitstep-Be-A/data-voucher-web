@@ -1,3 +1,7 @@
+/**
+ * Step1. 회원가입 약관동의
+ */
+
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 

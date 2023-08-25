@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 import Nav from "../../components/Nav";
 import { classNames } from "../../utils";
 import { SignupContext, useSignup } from "../../hooks/account.hook";
-import { useSignupSerializer } from "../../domains/account.impl";
+import { useSignupSerializer } from "../../domains/account/signup.impl";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -35,9 +35,7 @@ const StatusItem: React.FC<StatusItemProps> = ({
 }
 
 const StepNavbar = () => {
-  const navigate = useNavigate();
-
-  const { accepted, step } = useSignup();
+  const { step } = useSignup();
 
   return (
     <Nav

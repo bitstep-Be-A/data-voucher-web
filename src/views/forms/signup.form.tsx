@@ -24,6 +24,7 @@ const Section = styled.section`
   flex-direction: column;
   align-items: center;
   margin-top: 32px;
+  padding-bottom: 1rem;
 `;
 
 const Fieldset = styled.fieldset`

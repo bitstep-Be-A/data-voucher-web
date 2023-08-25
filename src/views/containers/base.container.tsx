@@ -179,7 +179,9 @@ export const BaseContainer = ({ children }: {
       <SideNavbar />
       <div className="w-full h-full flex flex-col">
         <TopNavbar />
-        {children}
+        <div className="w-full h-full overflow-y-scroll">
+          {children}
+        </div>
       </div>
     </div>
   );

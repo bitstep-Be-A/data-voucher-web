@@ -13,7 +13,6 @@ import type {
   SignupinfoRequest,
   SignupExceptionMap,
   SignupValidator,
-  VerificationType
 } from "./signup.interface";
 import {
   CompanySizeEnum,
@@ -53,6 +52,22 @@ export const signupExceptionMap: SignupExceptionMap = {
   COMPANY_NOT_VERIFIED: {
     name: 'COMPANY_INFO_NOT_VERIFIED',
     message: '등록되지 않은 회사입니다. 사업자 등록번호를 확인해주세요.'
+  },
+  INVALID_NAME: {
+    name: 'INVALID_NAME',
+    message: '이름을 올바르게 입력해주세요.'
+  },
+  COMPANY_SIZE_NOT_SELECTED: {
+    name: 'COMPANY_SIZE_NOT_SELECTED',
+    message: '기업 규모를 선택해주세요.'
+  },
+  COMPANY_TYPE_NOT_SELECTED: {
+    name: 'COMPANY_TYPE_NOT_SELECTED',
+    message: '기업 형태를 선택해주세요.'
+  },
+  COMPANY_TARGET_AREA_NOT_SELECTED: {
+    name: 'COMPANY_TARGET_AREA_NOT_SELECTED',
+    message: '기업소재지 또는 관심지역을 적어도 하나 설정해주세요.'
   }
 }
 
@@ -123,9 +138,12 @@ export function useSignupSerializer(): SignupSerializer {
     return value;
   }
 
-  async function verify(eventType: VerificationType) {}
+  async function verifyEmail() {}
+
+  async function verifyCompany() {}
 
   function submitAgreement(agreement: JoinAgreement) {
+    exceptionsRef.current = [];
     if (signupValidator.checkRequiredAgreement(agreement)) {
       dataRef.current = {
         ...dataRef.current,
@@ -137,19 +155,48 @@ export function useSignupSerializer(): SignupSerializer {
   }
 
   async function submitMyInfo(my: MyInfo) {
-    dataRef.current = {
-      ...dataRef.current,
-      ...my
+    if (
+      !signupValidator.checkValidEmail(my.email)
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_EMAIL_FORMAT);
+    }
+    if (
+      !signupValidator.checkValidPassword(my.password)
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_PASSWORD_FORMAT);
+    }
+    if (
+      !signupValidator.checkPasswordConfirmed(my.password, my.confirmPassword)
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.UNMATCHED_PASSWORD);
+    }
+    if (
+      !signupValidator.checkValidPhoneNumber(my.phoneNumber)
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT);
+    }
+
+    if (isValid()) {
+      dataRef.current = {
+        ...dataRef.current,
+        ...my
+      }
     }
   }
 
-  function submitCompanyInfo(company: CompanyInfo) {}
+  function submitCompanyInfo(company: CompanyInfo) {
+    dataRef.current = {
+      ...dataRef.current,
+      ...company
+    }
+  }
 
   return {
     toObject,
     toData,
     isValid,
-    verify,
+    verifyEmail,
+    verifyCompany,
     submitAgreement,
     submitMyInfo,
     submitCompanyInfo,

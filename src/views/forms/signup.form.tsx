@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { useSignup } from "../../hooks/account.hook";
-import type { CompanyInfo, JoinAgreement, MyInfo, VerificationType } from "../../domains/account/signup.interface";
-import { signupExceptionMap, signupValidator } from "../../domains/account/signup.impl";
+import type { SignupinfoRequest, CompanyInfo, JoinAgreement, MyInfo } from "../../domains/account/signup.interface";
+import { signupExceptionMap, signupValidator, useSignupSerializer } from "../../domains/account/signup.impl";
 import agreementPolicy from "../../policies/agreement.policy";
 import { routes } from "../../routes/path";
 import {
@@ -14,17 +14,11 @@ import {
 import { interestTags, locations } from "../../policies/global.policy";
 
 import AgreementCheckField from "../../components/signup/AgreementCheckField";
-import InfoInputFieldset, { InfoInputField, ChoiceInputItem } from "../../components/signup/InfoInputFieldset";
-import { EventButton } from "../../components/Button";
+import InfoInputFieldset, { InfoInputField } from "../../components/signup/InfoInputFieldset";
 
 interface StepSectionProps<T> {
-  complete: () => void;
   submit: (data: T) => void;
-  isValid: () => boolean;
-  getErrorMessage: () => string;
-  next: () => void;
-  getData: () => T;
-  verify?: (eventType: VerificationType) => Promise<void>;
+  formData: SignupinfoRequest;
 }
 
 const Section = styled.section`
@@ -36,76 +30,58 @@ const Section = styled.section`
   padding-bottom: 1rem; /* Adjust the margin value according to your needs */
 `;
 
-const AgreementStep: React.FC<StepSectionProps<JoinAgreement>> = ({
-  complete,
-  submit,
-  isValid,
-  getErrorMessage,
-  next,
-  getData
-}) => {
-  const [data, setData] = useState<JoinAgreement>({
-    isAgreeService: getData().isAgreeService,
-    isAgreePrivacy: getData().isAgreePrivacy,
-    isAgreeMarketing: getData().isAgreeMarketing
-  });
+const NextButton = styled.button`
+  width: 96px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-top: 16px;
+`
 
+const AgreementStep: React.FC<StepSectionProps<JoinAgreement>> = ({
+  submit,
+  formData
+}) => {
   return (
-    <fieldset className="w-full flex flex-col items-center space-y-1">
+    <fieldset className="w-full flex flex-col items-center space-y-4">
       <AgreementCheckField
         policyContext={agreementPolicy.service}
-        checked={data.isAgreeService}
+        checked={formData.isAgreeService}
         setChecked={() => {
-          setData({
-            ...data,
-            isAgreeService: !data.isAgreeService
+          submit({
+            ...formData,
+            isAgreeService: !formData.isAgreeService
           });
         }}
       />
       <AgreementCheckField
         policyContext={agreementPolicy.privacy}
-        checked={data.isAgreePrivacy}
+        checked={formData.isAgreePrivacy}
         setChecked={() => {
-          setData({
-            ...data,
-            isAgreePrivacy: !data.isAgreePrivacy
+          submit({
+            ...formData,
+            isAgreePrivacy: !formData.isAgreePrivacy
           });
         }}
       />
       <AgreementCheckField
         policyContext={agreementPolicy.marketing}
-        checked={data.isAgreeMarketing}
+        checked={formData.isAgreeMarketing}
         setChecked={() => {
-          setData({
-            ...data,
-            isAgreeMarketing: !data.isAgreeMarketing
+          submit({
+            ...formData,
+            isAgreeMarketing: !formData.isAgreeMarketing
           });
         }}
       />
-      <EventButton
-        width={96}
-        paddingY={4}
-        theme="none"
-        className="border border-gray-500"
-        onClick={() => {
-          submit(data);
-          if (isValid()) {
-            complete();
-            next();
-            return;
-          }
-          alert(getErrorMessage());
-        }}
-      >다음</EventButton>
     </fieldset>
   );
 }
 
 const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
   submit,
-  getData,
-  verify
+  formData
 }) => {
+  const { verifyEmail } = useSignupSerializer();
   return (
     <InfoInputFieldset
       title="개인정보"
@@ -117,16 +93,16 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "아이디(이메일 주소)를 입력하세요.",
-            verification: {
-              name: "중복확인",
-              event: () => {
-                verify!("이메일 중복확인");
-              }
-            },
-            errorMessage: signupExceptionMap.INVALID_EMAIL_FORMAT.message,
-            validator: (value: string) => signupValidator.checkValidEmail(value),
             description: null,
           }}
+          verification={{
+            name: "중복확인",
+            event: () => {
+              verifyEmail();
+            }
+          }}
+          alertMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
+          validator={(value: string) => signupValidator.checkValidEmail(value)}
           onSuccess={null}
         />,
         <InfoInputField
@@ -136,11 +112,11 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "비밀번호를 입력하세요.",
-            errorMessage: signupExceptionMap.INVALID_PASSWORD_FORMAT.message,
-            validator: (value: string) => signupValidator.checkValidPassword(value),
             description: "비밀번호는 10~20자 이하의 영문, 숫자, 특수문자의 조합으로 입력하세요."
           }}
-          onSuccess={(value: string) => submit({...getData(), password: value})}
+          alertMessage={signupExceptionMap.INVALID_PASSWORD_FORMAT.message}
+          validator={(value: string) => signupValidator.checkValidPassword(value)}
+          onSuccess={(value: string) => submit({...formData, password: value})}
         />,
         <InfoInputField
           key="pw2"
@@ -149,11 +125,11 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "비밀번호를 한번 더 입력하세요",
-            errorMessage: signupExceptionMap.UNMATCHED_PASSWORD.message,
-            validator: (value: string) => signupValidator.checkPasswordConfirmed(getData().password, value),
             description: null
           }}
-          onSuccess={(value: string) => submit({...getData(), confirmPassword: value})}
+          alertMessage={signupExceptionMap.UNMATCHED_PASSWORD.message}
+          validator={(value: string) => signupValidator.checkPasswordConfirmed(formData.password, value)}
+          onSuccess={(value: string) => submit({...formData, confirmPassword: value})}
         />,
         <InfoInputField
           key="name"
@@ -162,10 +138,10 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "",
-            errorMessage: null,
             description: null
           }}
-          onSuccess={(value: string) => submit({...getData(), name: value})}
+          alertMessage={signupExceptionMap.INVALID_NAME.message}
+          onSuccess={(value: string) => submit({...formData, name: value})}
         />,
         <InfoInputField
           key="phone"
@@ -174,11 +150,11 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "ex) 010-1234-5678",
-            errorMessage: signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT.message,
-            validator: (value: string) => signupValidator.checkValidPhoneNumber(value),
             description: null
           }}
-          onSuccess={(value: string) => submit({...getData(), phoneNumber: value})}
+          alertMessage={signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT.message}
+          validator={(value: string) => signupValidator.checkValidPhoneNumber(value)}
+          onSuccess={(value: string) => submit({...formData, phoneNumber: value})}
         />
       ]}
     />
@@ -186,14 +162,11 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
 }
 
 const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
-  complete,
   submit,
-  isValid,
-  getErrorMessage,
-  next,
-  getData,
-  verify
+  formData
 }) => {
+  const { verifyCompany } = useSignupSerializer();
+
   return (
     <InfoInputFieldset
       title="기업정보 (최신 기준 사업자등록 정보)"
@@ -204,17 +177,17 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           label="사업자등록번호"
           props={{
             type: "text",
-            verification: {
-              name: "중복확인",
-              event: () => {
-                verify!("이메일 중복확인");
-              }
-            },
             placeholder: "사업자등록번호를 입력하세요.",
-            errorMessage: null,
             description: null
           }}
+          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
+          verification= {{
+            name: "기업정보확인",
+            event: () => {
+              verifyCompany();
+            }
+          }}
         />,
         <InfoInputField
           key="ceo"
@@ -223,9 +196,9 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           props={{
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
-            errorMessage: null,
             description: null
           }}
+          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
         />,
         <InfoInputField
@@ -235,9 +208,9 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           props={{
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
-            errorMessage: null,
             description: null
           }}
+          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
         />,
         <InfoInputField
@@ -264,10 +237,11 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
                 name: CompanySizeEnum.LC
               }
             ],
-            choiceRestriction: (choices: ChoiceInputItem[]) => choices.length === 1,
             defaultPosition: 0
           }}
-          onSuccess={(value: string) => submit({...getData(), companySize: JSON.parse(value)[0]})}
+          alertMessage={signupExceptionMap.COMPANY_SIZE_NOT_SELECTED.message}
+          validator={(value: string) => JSON.parse(value).length === 1}
+          onSuccess={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
         />,
         <InfoInputField
           key="compType"
@@ -297,10 +271,11 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
                 name: CompanyTypeEnum.NA
               }
             ],
-            choiceRestriction: (choices: ChoiceInputItem[]) => choices.length === 1,
             defaultPosition: 4
           }}
-          onSuccess={(value: string) => submit({...getData(), companyType: JSON.parse(value)[0]})}
+          alertMessage={signupExceptionMap.COMPANY_TYPE_NOT_SELECTED.message}
+          validator={(value: string) => JSON.parse(value).length === 1}
+          onSuccess={(value: string) => submit({...formData, companyType: JSON.parse(value)[0]})}
         />,
         <InfoInputField
           key="loc"
@@ -319,23 +294,24 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
                 name: v.name
               }
             }),
-            choiceRestriction: (choices: ChoiceInputItem[]) => choices.length >= 1,
             defaultPosition: null
           }}
-          onSuccess={(value: string) => submit({...getData(), targetAreas: JSON.parse(value)})}
+          alertMessage={signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED.message}
+          validator={(value: string) => JSON.parse(value).length >= 1}
+          onSuccess={(value: string) => submit({...formData, targetAreas: JSON.parse(value)})}
         />,
         <InfoInputField
           key="employee"
           required={true}
           label="종업원 수"
           props={{
-            type: "text",
-            placeholder: "종업원 수를 입력해 주세요.",
-            errorMessage: null,
+            type: "number",
+            defaultValue: "0",
             description: null,
             tail: "명"
           }}
-          onSuccess={(value: string) => submit({...getData(), employeeCount: Number(JSON.parse(value)[0])})}
+          alertMessage={null}
+          onSuccess={(value: string) => submit({...formData, employeeCount: Number(JSON.parse(value)[0])})}
         />,
         <InfoInputField
           key="interest"
@@ -354,28 +330,13 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
                 name: v.keyword
               }
             }),
-            choiceRestriction: (choices: ChoiceInputItem[]) => (choices.length <= 3) && (choices.length >= 1),
             defaultPosition: null
           }}
-          onSuccess={(value: string) => submit({...getData(), interestKeywords: JSON.parse(value)})}
+          validator={(value: string) => JSON.parse(value).length <= 3}
+          alertMessage={null}
+          onSuccess={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
         />
       ]}
-      nextButton={(
-        <EventButton
-          width={96}
-          paddingY={4}
-          theme="none"
-          className="border border-gray-500"
-          onClick={() => {
-            if (isValid()) {
-              complete();
-              next();
-              return;
-            }
-            alert(getErrorMessage());
-          }}
-        >다음</EventButton>
-      )}
     />
   );
 }
@@ -390,47 +351,122 @@ const SignupForm: React.FC = () => {
   const navigate = useNavigate();
   const { setAccepted, serializer, step } = useSignup();
 
+  const [formData, setFormData] = useState<SignupinfoRequest>(serializer.toData());
+
+  const joinAgreementValue = useMemo<JoinAgreement>(() => {
+    const {
+      isAgreeService,
+      isAgreePrivacy,
+      isAgreeMarketing
+    } = formData;
+    return {
+      isAgreeService,
+      isAgreePrivacy,
+      isAgreeMarketing
+    }
+  }, [formData]);
+  const myInfoValue = useMemo<MyInfo>(() => {
+    const {
+      email,
+      password,
+      confirmPassword,
+      phoneNumber,
+      name
+    } = formData;
+    return {
+      email,
+      password,
+      confirmPassword,
+      phoneNumber,
+      name
+    }
+  }, [formData]);
+  const companyInfoValue = useMemo<CompanyInfo>(() => {
+    const {
+      businessRegistrationNumber,
+      CEO,
+      establishDate,
+      companySize,
+      targetAreas,
+      companyType,
+      employeeCount,
+      interestKeywords
+    } = formData;
+    return {
+      businessRegistrationNumber,
+      CEO,
+      establishDate,
+      companySize,
+      targetAreas,
+      companyType,
+      employeeCount,
+      interestKeywords
+    }
+  }, [formData]);
+
   switch(step) {
     case 1:
       return (
         <Section>
           <AgreementStep
-            complete={() => setAccepted([true, false, false])}
             submit={(data: JoinAgreement) => {
-              serializer.submitAgreement(data);
+              setFormData({
+                ...formData,
+                ...data
+              });
             }}
-            isValid={() => serializer.isValid()}
-            getErrorMessage={() => serializer.getExceptions()[0].message}
-            next={() => navigate(`${routes.signup.path}?step=2`)}
-            getData={() => serializer.toData()}
+            formData={formData}
           />
+          <NextButton
+            className="border border-gray-500"
+            onClick={() => {
+              serializer.submitAgreement(joinAgreementValue);
+
+              if (serializer.isValid()) {
+                setAccepted([true, false, false]);
+                navigate(`${routes.signup.path}?step=2`);
+                return;
+              }
+              alert(serializer.getExceptions()[0].message);
+            }}
+          >다음</NextButton>
         </Section>
       );
     case 2:
       return (
         <Section>
           <MyInfoStep
-            complete={() => setAccepted([true, false, false])}
             submit={(data: MyInfo) => {
-              serializer.submitMyInfo(data);
+              setFormData({
+                ...formData,
+                ...data
+              });
             }}
-            isValid={() => !serializer.isValid()}
-            getErrorMessage={() => serializer.getExceptions()[0].message}
-            next={() => navigate(`${routes.signup.path}?step=3`)}
-            getData={() => serializer.toData()}
-            verify={(eventType: VerificationType) => serializer.verify(eventType)}
+            formData={formData}
           />
           <CompanyInfoStep
-            complete={() => setAccepted([true, true, false])}
             submit={(data: CompanyInfo) => {
-              serializer.submitCompanyInfo(data);
+              setFormData({
+                ...formData,
+                ...data
+              });
             }}
-            isValid={() => !serializer.isValid()}
-            getErrorMessage={() => serializer.getExceptions()[0].message}
-            next={() => navigate(`${routes.signup.path}?step=3`)}
-            getData={() => serializer.toData()}
-            verify={(eventType: VerificationType) => serializer.verify(eventType)}
+            formData={formData}
           />
+          <NextButton
+            className="border border-gray-500"
+            onClick={() => {
+              serializer.submitMyInfo(myInfoValue);
+              serializer.submitCompanyInfo(companyInfoValue);
+
+              if (serializer.isValid()) {
+                setAccepted([true, true, false]);
+                navigate(`${routes.signup.path}?step=2`);
+                return;
+              }
+              alert(serializer.getExceptions()[0].message);
+            }}
+          >다음</NextButton>
         </Section>
       );
     case 3:

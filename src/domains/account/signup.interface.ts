@@ -50,13 +50,12 @@ export interface SignupValidator {
   checkValidPhoneNumber: (phoneNumber: string) => boolean;
 }
 
-export type VerificationType = "이메일 중복확인" | "기업정보확인";
-
 export interface SignupService {
   submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
   submitCompanyInfo: (company: CompanyInfo) => void;
-  verify: (eventType: VerificationType) => Promise<void>;
+  verifyEmail: () => Promise<void>;
+  verifyCompany: () => Promise<void>;
 }
 
 export interface SignupExceptionMap {
@@ -67,4 +66,8 @@ export interface SignupExceptionMap {
   UNMATCHED_PASSWORD: ExceptionDetail;
   INVALID_PHONE_NUMBER_FORMAT: ExceptionDetail;
   COMPANY_NOT_VERIFIED: ExceptionDetail;
+  INVALID_NAME: ExceptionDetail;
+  COMPANY_SIZE_NOT_SELECTED: ExceptionDetail;
+  COMPANY_TYPE_NOT_SELECTED: ExceptionDetail;
+  COMPANY_TARGET_AREA_NOT_SELECTED: ExceptionDetail;
 }

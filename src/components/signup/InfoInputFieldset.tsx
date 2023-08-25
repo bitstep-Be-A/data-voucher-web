@@ -6,23 +6,23 @@ export interface InfoInputFieldsetProps {
   title: string;
   reason?: string;
   inputs: React.ReactNode[];
-  nextButton?: React.ReactNode;
 }
 
 interface TextInputProps {
   type: "text";
   placeholder: string;
-  verification?: {
-    name: string;
-    event: () => void;
-  };
-  errorMessage: string | null;
-  validator?: (value: string) => boolean;
   description: string | null;
   tail?: React.ReactNode | string;
 }
 
-export interface ChoiceInputItem {
+interface NumberInputProps {
+  type: "number";
+  defaultValue: string;
+  description: string | null;
+  tail?: React.ReactNode | string;
+}
+
+interface ChoiceInputItem {
   id: number;
   name: string;
 }
@@ -30,14 +30,19 @@ export interface ChoiceInputItem {
 interface ChoiceInputProps {
   type: "choice";
   items: ChoiceInputItem[];
-  choiceRestriction: (choices: ChoiceInputItem[]) => boolean;
   defaultPosition: number | null;
 }
 
 interface InputProps {
   required: boolean;
   label: string | React.ReactNode;
-  props: TextInputProps | ChoiceInputProps;
+  props: TextInputProps | ChoiceInputProps | NumberInputProps;
+  alertMessage: string | null;
+  validator?: (value: string) => boolean;
+  verification?: {
+    name: string;
+    event: () => void;
+  };
   onSuccess: ((value: string) => void) | null;
 }
 

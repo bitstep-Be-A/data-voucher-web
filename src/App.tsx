@@ -8,7 +8,7 @@ import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import { routes } from './routes/path';
 import { AUTH_TOKEN_COOKIE_KEY } from './constants/auth.constant';
-import { AuthContext } from './hooks/account.hook';
+import { AuthContext } from './contexts/auth.context';
 
 import LoginPage from './pages/Login';
 import NotFound from './pages/NotFound';

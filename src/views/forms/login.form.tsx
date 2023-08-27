@@ -120,7 +120,7 @@ const LoginInputField: React.FC<LoginInputFieldProps> = ({
 }) => {
   return (
     <div className="w-full flex justify-between items-center space-x-4">
-      <label className="text-sm font-light">{labelName}</label>
+      <label className="text-sm">{labelName}</label>
       <BlockedTextInput width={208} />
     </div>
   )
@@ -128,7 +128,7 @@ const LoginInputField: React.FC<LoginInputFieldProps> = ({
 
 const HelpCredentialInfo: React.FC = () => {
   return (
-    <div className="flex flex-row items-center justify-end text-xs text-gray-500 space-x-3">
+    <div className="flex flex-row items-center justify-end text-xs text-themegray space-x-3">
       <span>계정 정보를 잊으셨나요?</span>
       <div className="space-x-2">
         <Link to={routes.findCredentialId.path}
@@ -160,7 +160,9 @@ export const LoginForm: React.FC = () => {
       </div>
       <EventButton
         width={208}
-        className="rounded"
+        style={{
+          borderRadius: "4px",
+        }}
       >
         로그인
       </EventButton>

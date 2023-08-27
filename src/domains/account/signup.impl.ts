@@ -20,6 +20,7 @@ import {
 } from "../../policies/company.policy";
 import {
   EMAIL_REGEX,
+  NAME_REGEX,
   PASSWORD_REGEX,
   PHONE_NUMBER_REGEX
 } from "../../policies/signup.policy";
@@ -111,6 +112,9 @@ export const signupValidator: SignupValidator = {
   },
   checkValidPhoneNumber: function (phoneNumber: string) {
     return PHONE_NUMBER_REGEX.test(phoneNumber);
+  },
+  checkValidName: function (name: string) {
+    return NAME_REGEX.test(name);
   }
 }
 
@@ -169,6 +173,11 @@ export function useSignupSerializer(): SignupSerializer {
       !signupValidator.checkPasswordConfirmed(my.password, my.confirmPassword)
     ) {
       exceptionsRef.current.push(signupExceptionMap.UNMATCHED_PASSWORD);
+    }
+    if (
+      !signupValidator.checkValidName(my.name)
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_NAME);
     }
     if (
       !signupValidator.checkValidPhoneNumber(my.phoneNumber)

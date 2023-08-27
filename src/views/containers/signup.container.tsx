@@ -3,7 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 
 import Nav from "../../components/Nav";
 import { classNames } from "../../utils";
-import { SignupContext, useSignup } from "../../hooks/account.hook";
+import { SignupContext, useSignup } from "../../contexts/account.context";
 import { useSignupSerializer } from "../../domains/account/signup.impl";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -27,7 +27,7 @@ const StatusItem: React.FC<StatusItemProps> = ({
       )}>{text}</span>
       {
         !isLast && (
-          <span className="mr-5 text-gray-500 text-sm">{ ">" }</span>
+          <span className="mr-5 text-themegray text-sm">{ ">" }</span>
         )
       }
     </div>

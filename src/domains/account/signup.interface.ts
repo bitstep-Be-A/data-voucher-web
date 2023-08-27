@@ -48,6 +48,7 @@ export interface SignupValidator {
   checkValidPassword: (password: string) => boolean;
   checkPasswordConfirmed: (password: string, confirmPassword: string) => boolean;
   checkValidPhoneNumber: (phoneNumber: string) => boolean;
+  checkValidName: (name: string) => boolean;
 }
 
 export interface SignupService {

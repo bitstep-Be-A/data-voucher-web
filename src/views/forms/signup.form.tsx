@@ -2,16 +2,25 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useSignup } from "../../hooks/account.hook";
+import { useSignup } from "../../contexts/account.context";
 import type { SignupinfoRequest, CompanyInfo, JoinAgreement, MyInfo } from "../../domains/account/signup.interface";
 import { signupExceptionMap, signupValidator, useSignupSerializer } from "../../domains/account/signup.impl";
 import agreementPolicy from "../../policies/agreement.policy";
 import { routes } from "../../routes/path";
 import {
   CompanySizeEnum,
-  CompanyTypeEnum
+  CompanyTypeEnum,
+  MAX_EMPLOY,
+  MAX_INTEREST_KEYWORD_COUNT
 } from "../../policies/company.policy";
 import { interestTags, locations } from "../../policies/global.policy";
+import {
+  EMAIL_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  PHONE_NUMBER_MAX_LENGTH
+} from "../../policies/signup.policy";
+import { useContainer } from "../../contexts/base.context";
 
 import AgreementCheckField from "../../components/signup/AgreementCheckField";
 import InfoInputFieldset, { InfoInputField } from "../../components/signup/InfoInputFieldset";
@@ -26,7 +35,6 @@ const Section = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 32px;
   padding-bottom: 1rem; /* Adjust the margin value according to your needs */
 `;
 
@@ -42,7 +50,7 @@ const AgreementStep: React.FC<StepSectionProps<JoinAgreement>> = ({
   formData
 }) => {
   return (
-    <fieldset className="w-full flex flex-col items-center space-y-4">
+    <fieldset className="w-full flex flex-col items-center space-y-4 mt-8">
       <AgreementCheckField
         policyContext={agreementPolicy.service}
         checked={formData.isAgreeService}
@@ -94,6 +102,7 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "아이디(이메일 주소)를 입력하세요.",
             description: null,
+            maxLength: EMAIL_MAX_LENGTH
           }}
           verification={{
             name: "중복확인",
@@ -101,7 +110,7 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
               verifyEmail();
             }
           }}
-          alertMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
+          failMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidEmail(value)}
           onSuccess={null}
         />,
@@ -112,9 +121,10 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "비밀번호를 입력하세요.",
-            description: "비밀번호는 10~20자 이하의 영문, 숫자, 특수문자의 조합으로 입력하세요."
+            description: "비밀번호는 10~20자 이하의 영문, 숫자, 특수문자의 조합으로 입력하세요.",
+            maxLength: PASSWORD_MAX_LENGTH
           }}
-          alertMessage={signupExceptionMap.INVALID_PASSWORD_FORMAT.message}
+          failMessage={signupExceptionMap.INVALID_PASSWORD_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidPassword(value)}
           onSuccess={(value: string) => submit({...formData, password: value})}
         />,
@@ -125,9 +135,10 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "비밀번호를 한번 더 입력하세요",
-            description: null
+            description: null,
+            maxLength: PASSWORD_MAX_LENGTH
           }}
-          alertMessage={signupExceptionMap.UNMATCHED_PASSWORD.message}
+          failMessage={signupExceptionMap.UNMATCHED_PASSWORD.message}
           validator={(value: string) => signupValidator.checkPasswordConfirmed(formData.password, value)}
           onSuccess={(value: string) => submit({...formData, confirmPassword: value})}
         />,
@@ -138,9 +149,11 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "",
-            description: null
+            description: null,
+            maxLength: NAME_MAX_LENGTH
           }}
-          alertMessage={signupExceptionMap.INVALID_NAME.message}
+          failMessage={signupExceptionMap.INVALID_NAME.message}
+          validator={(value: string) => signupValidator.checkValidName(value)}
           onSuccess={(value: string) => submit({...formData, name: value})}
         />,
         <InfoInputField
@@ -150,9 +163,10 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           props={{
             type: "text",
             placeholder: "ex) 010-1234-5678",
-            description: null
+            description: null,
+            maxLength: PHONE_NUMBER_MAX_LENGTH
           }}
-          alertMessage={signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT.message}
+          failMessage={signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidPhoneNumber(value)}
           onSuccess={(value: string) => submit({...formData, phoneNumber: value})}
         />
@@ -180,7 +194,7 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             placeholder: "사업자등록번호를 입력하세요.",
             description: null
           }}
-          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
+          failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
           verification= {{
             name: "기업정보확인",
@@ -196,9 +210,10 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           props={{
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
-            description: null
+            description: null,
+            disabled: true
           }}
-          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
+          failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
         />,
         <InfoInputField
@@ -208,9 +223,10 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           props={{
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
-            description: null
+            description: null,
+            disabled: true
           }}
-          alertMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
+          failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
           onSuccess={null}
         />,
         <InfoInputField
@@ -239,7 +255,7 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             ],
             defaultPosition: 0
           }}
-          alertMessage={signupExceptionMap.COMPANY_SIZE_NOT_SELECTED.message}
+          failMessage={signupExceptionMap.COMPANY_SIZE_NOT_SELECTED.message}
           validator={(value: string) => JSON.parse(value).length === 1}
           onSuccess={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
         />,
@@ -273,7 +289,7 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             ],
             defaultPosition: 4
           }}
-          alertMessage={signupExceptionMap.COMPANY_TYPE_NOT_SELECTED.message}
+          failMessage={signupExceptionMap.COMPANY_TYPE_NOT_SELECTED.message}
           validator={(value: string) => JSON.parse(value).length === 1}
           onSuccess={(value: string) => submit({...formData, companyType: JSON.parse(value)[0]})}
         />,
@@ -296,7 +312,7 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             }),
             defaultPosition: null
           }}
-          alertMessage={signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED.message}
+          failMessage={signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED.message}
           validator={(value: string) => JSON.parse(value).length >= 1}
           onSuccess={(value: string) => submit({...formData, targetAreas: JSON.parse(value)})}
         />,
@@ -308,9 +324,10 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             type: "number",
             defaultValue: "0",
             description: null,
+            max: MAX_EMPLOY,
             tail: "명"
           }}
-          alertMessage={null}
+          failMessage={null}
           onSuccess={(value: string) => submit({...formData, employeeCount: Number(JSON.parse(value)[0])})}
         />,
         <InfoInputField
@@ -332,8 +349,8 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             }),
             defaultPosition: null
           }}
-          validator={(value: string) => JSON.parse(value).length <= 3}
-          alertMessage={null}
+          validator={(value: string) => JSON.parse(value).length <= MAX_INTEREST_KEYWORD_COUNT}
+          failMessage={null}
           onSuccess={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
         />
       ]}
@@ -404,6 +421,8 @@ const SignupForm: React.FC = () => {
     }
   }, [formData]);
 
+  const { mainScreenRef } = useContainer();
+
   switch(step) {
     case 1:
       return (
@@ -418,13 +437,14 @@ const SignupForm: React.FC = () => {
             formData={formData}
           />
           <NextButton
-            className="border border-gray-500"
+            className="border border-themegray"
             onClick={() => {
               serializer.submitAgreement(joinAgreementValue);
 
               if (serializer.isValid()) {
                 setAccepted([true, false, false]);
                 navigate(`${routes.signup.path}?step=2`);
+                if (mainScreenRef.current) mainScreenRef.current.scrollTop = 0;
                 return;
               }
               alert(serializer.getExceptions()[0].message);
@@ -454,7 +474,7 @@ const SignupForm: React.FC = () => {
             formData={formData}
           />
           <NextButton
-            className="border border-gray-500"
+            className="border border-themegray"
             onClick={() => {
               serializer.submitMyInfo(myInfoValue);
               serializer.submitCompanyInfo(companyInfoValue);
@@ -462,6 +482,7 @@ const SignupForm: React.FC = () => {
               if (serializer.isValid()) {
                 setAccepted([true, true, false]);
                 navigate(`${routes.signup.path}?step=2`);
+                if (mainScreenRef.current) mainScreenRef.current.scrollTop = 0;
                 return;
               }
               alert(serializer.getExceptions()[0].message);

@@ -1,5 +1,7 @@
 import { classNames } from "../utils";
 
+import { themeGray } from "../styles/constant";
+
 export interface EventButtonProps {
   children?: React.ReactNode;
   width?: number | string;
@@ -8,6 +10,7 @@ export interface EventButtonProps {
   theme?: "default" | undefined | "none";
   type?: "button" | "submit" | "reset" | undefined;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
 export const EventButton: React.FC<EventButtonProps> = ({
@@ -17,18 +20,31 @@ export const EventButton: React.FC<EventButtonProps> = ({
   className,
   theme,
   type,
+  style,
   onClick
 }) => {
+  let baseStyle: React.CSSProperties = {
+    width: width,
+    paddingTop: paddingY ?? "0.375rem",
+    paddingBottom: paddingY ?? "0.375rem"
+  };
+
+  if (theme === "default" || typeof theme === "undefined") {
+    baseStyle = {
+      ...baseStyle,
+      backgroundColor: themeGray,
+      color: "white"
+    }
+  }
   return (
     <button
       style={{
-        width: width,
-        paddingTop: paddingY ?? "0.375rem",
-        paddingBottom: paddingY ?? "0.375rem"
+        ...baseStyle,
+        ...style
       }}
       className={classNames(
         (theme === "default" || typeof theme === "undefined") ?
-          "bg-gray-500 rounded-sm text-sm text-white" : "",
+          "rounded-sm text-sm" : "",
         className
       )}
       type={ type }

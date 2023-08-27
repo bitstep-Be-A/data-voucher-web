@@ -8,3 +8,5 @@ export const NAME_MAX_LENGTH = 254;
 
 export const PHONE_NUMBER_MAX_LENGTH = 12;
 export const PHONE_NUMBER_REGEX = /^01([0|1|6|7|8|9])-\d{3,4}-\d{4}$/;
+
+export const NAME_REGEX = /^[가-힣]$/;

@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useLocation } from "react-router";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
-import { useAuth } from "../../hooks/account.hook";
+import { useAuth } from "../../contexts/auth.context";
+import { ContainerContext } from "../../contexts/base.context";
 
 import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
@@ -174,16 +175,20 @@ const TopNavbar = () => {
 export const BaseContainer = ({ children }: {
   children: React.ReactNode;
 }): JSX.Element => {
+  const mainScreenRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="w-screen h-screen flex flex-row overflow-hidden">
-      <SideNavbar />
-      <div className="w-full h-full flex flex-col">
-        <TopNavbar />
-        <div className="w-full h-full overflow-y-scroll">
-          {children}
+    <ContainerContext.Provider value={{mainScreenRef}}>
+      <div className="w-screen h-screen flex flex-row overflow-hidden">
+        <SideNavbar />
+        <div className="w-full h-full flex flex-col">
+          <TopNavbar />
+          <div className="w-full h-full overflow-y-scroll" ref={mainScreenRef}>
+            {children}
+          </div>
         </div>
       </div>
-    </div>
+    </ContainerContext.Provider>
   );
 }
 

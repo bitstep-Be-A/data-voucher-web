@@ -1,6 +1,6 @@
 export const REGISTRATION_NUMBER_MAX_LENGTH = 25;
 
-export const EMPLOY_MAX_LENGTH = 7;
+export const MAX_EMPLOY = 1000000;
 
 export const MAX_INTEREST_KEYWORD_COUNT = 3;
 

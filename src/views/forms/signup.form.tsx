@@ -273,6 +273,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
   return (
     <InfoInputFieldset
       title="기업 추가정보 (중복선택 가능)"
+      reason="추가정보 입력 시, 입력하신 정보를 바탕으로 맞춤형 고용정책 추천 서비스 및 인력 관리 서비스를 보다 간편하게 이용하실 수 있습니다."
       inputs={[
         <InfoInputField
           key="compType"

@@ -226,7 +226,8 @@ const InfoInputFieldset: React.FC<InfoInputFieldsetProps> = ({ title, reason, in
         <h2 className="text-deepgray font-bold text-xl">{title}</h2>
         {
           reason && (
-            <div>
+            <div className="mt-4 leading-none flex flex-row text-xs text-deepgray space-x-1">
+              <span>{"※ "}</span>
               <span>{reason}</span>
             </div>
           )

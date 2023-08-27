@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { classNames } from "../utils";
 
 export interface InputAttributeProps {
@@ -49,4 +50,19 @@ export const BlockedTextInput: React.FC<BlockedTextInputProps> = ({
       }}
     />
   );
+}
+
+export const NumberInput = ({
+  maxLength,
+  onChange
+}: {
+  maxLength?: number;
+  onChange?: (e: React.ChangeEvent) => void;
+}) => {
+  return (
+    <input type="number"  maxLength={maxLength} onChange={(e) => {
+      e.target.value = e.target.value.slice(0, maxLength);
+      onChange && onChange(e);
+    }}/>
+  )
 }

@@ -1,6 +1,7 @@
 /**
  * Step2. 회원가입 정보입력
  */
+import { useCallback, useState, useMemo } from "react";
 import styled from "styled-components";
 
 import { EventButton } from "../Button";
@@ -16,18 +17,19 @@ interface TextInputProps {
   type: "text";
   placeholder: string;
   description: string | null;
-  maxLength?: number | undefined;
+  maxLength?: number;
   tail?: React.ReactNode | string;
-  disabled?: boolean | undefined;
+  disabled?: boolean;
+  isPassword?: boolean;
 }
 
 interface NumberInputProps {
   type: "number";
   defaultValue: string;
   description: string | null;
-  max?: number | undefined;
+  maxLength?: number;
   tail?: React.ReactNode | string;
-  disabled?: boolean | undefined;
+  disabled?: boolean;
 }
 
 interface ChoiceInputItem {
@@ -78,10 +80,20 @@ const Label = ({label}: {label: React.ReactNode}) => {
   )
 }
 
-const Description = ({description}: {description: string | null}) => {
+const Description = ({main, fail}: {main: string | null; fail: string | null}) => {
+  const message = useMemo(() => {
+    if (fail) {
+      return <span className="text-red-500">{fail}</span>;
+    }
+    else if (main) {
+      return <>{"※ " + main}</>
+    }
+    return <></>;
+  }, [main, fail]);
+
   return (
-    <div className="absolute top-[28px] h-4 text-xs text-black w-[400px]">
-      {description && ("※ " + description)}
+    <div className="absolute top-[28px] h-4 text-xs text-deepgray w-[400px]">
+      {message}
     </div>
   )
 }
@@ -122,23 +134,37 @@ export const InfoInputField: React.FC<InputProps> = ({
   verification,
   onSuccess
 }) => {
+  const [failDescription, setFailDescription] = useState<string | null>(null);
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFailDescription(null);
+    const value = e.target.value;
+    if (validator) {
+      if (validator(value)) {
+        onSuccess && onSuccess(value);
+      } else {
+        setFailDescription(failMessage);
+      }
+    }
+  }, [setFailDescription, validator, onSuccess, setFailDescription, failMessage]);
+
   if (props.type === "text") {
-    const { placeholder, description, tail, maxLength, disabled } = props;
+    const { placeholder, description, tail, maxLength, disabled, isPassword } = props;
     return (
       <InputBlock>
         {required && <RequireSymbol/>}
         <Label label={label}/>
         <div className="relative">
-          <ChangedInput type="text" placeholder={placeholder} maxLength={maxLength} disabled={disabled}
-            className="placeholder:text-themegray"
-            onChange={(e) => {
-              const value = e.target.value;
-              if (validator && onSuccess) {
-                if (validator(value)) onSuccess(value);
-              }
+          <ChangedInput type={isPassword ? "password" : "text"}
+            {...{
+              placeholder,
+              maxLength,
+              disabled
             }}
+            className="placeholder:text-themegray placeholder:text-sm"
+            onChange={handleChange}
           />
-          <Description description={description}/>
+          <Description main={description} fail={failDescription}/>
         </div>
         {
           verification && (
@@ -153,21 +179,25 @@ export const InfoInputField: React.FC<InputProps> = ({
     );
   }
   if (props.type === "number") {
-    const { defaultValue, description, max, tail, disabled } = props;
+    const { defaultValue, description, maxLength, tail, disabled } = props;
     return (
       <InputBlock>
         {required && <RequireSymbol/>}
         <Label label={label}/>
         <div className="relative">
-          <ChangedInput type="number" defaultValue={defaultValue} min={0} max={max} disabled={disabled}
+          <ChangedInput type="number"
+            {...{
+              defaultValue,
+              maxLength,
+              disabled
+            }}
             onChange={(e) => {
-              const value = e.target.value;
-              if (validator && onSuccess) {
-                if (validator(value)) onSuccess(value);
-              }
+              if (e.target.value === "") e.target.placeholder = "0";
+              e.target.value = e.target.value.slice(0, maxLength);
+              handleChange(e);
             }}
           />
-          <Description description={description}/>
+          <Description main={description} fail={failDescription}/>
         </div>
         {
           verification && (

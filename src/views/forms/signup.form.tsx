@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { useSignup } from "../../contexts/account.context";
-import type { SignupinfoRequest, CompanyInfo, JoinAgreement, MyInfo } from "../../domains/account/signup.interface";
+import type { SignupinfoRequest, JoinAgreement, MyInfo, CompanyDetailInfo, CompanyRegisterInfo } from "../../domains/account/signup.interface";
 import { signupExceptionMap, signupValidator, useSignupSerializer } from "../../domains/account/signup.impl";
 import agreementPolicy from "../../policies/agreement.policy";
 import { routes } from "../../routes/path";
 import {
   CompanySizeEnum,
   CompanyTypeEnum,
-  MAX_EMPLOY,
+  EMPLOY_MAX_LENGTH,
   MAX_INTEREST_KEYWORD_COUNT
 } from "../../policies/company.policy";
 import { interestTags, locations } from "../../policies/global.policy";
@@ -112,7 +112,7 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
           }}
           failMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidEmail(value)}
-          onSuccess={null}
+          onSuccess={(value: string) => submit({...formData, email: value})}
         />,
         <InfoInputField
           key="pw"
@@ -122,7 +122,8 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "비밀번호를 입력하세요.",
             description: "비밀번호는 10~20자 이하의 영문, 숫자, 특수문자의 조합으로 입력하세요.",
-            maxLength: PASSWORD_MAX_LENGTH
+            maxLength: PASSWORD_MAX_LENGTH,
+            isPassword: true
           }}
           failMessage={signupExceptionMap.INVALID_PASSWORD_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidPassword(value)}
@@ -136,7 +137,8 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "비밀번호를 한번 더 입력하세요",
             description: null,
-            maxLength: PASSWORD_MAX_LENGTH
+            maxLength: PASSWORD_MAX_LENGTH,
+            isPassword: true
           }}
           failMessage={signupExceptionMap.UNMATCHED_PASSWORD.message}
           validator={(value: string) => signupValidator.checkPasswordConfirmed(formData.password, value)}
@@ -175,7 +177,7 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
   );
 }
 
-const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
+const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> = ({
   submit,
   formData
 }) => {
@@ -259,6 +261,19 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           validator={(value: string) => JSON.parse(value).length === 1}
           onSuccess={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
         />,
+      ]}
+    />
+  );
+}
+
+const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
+  submit,
+  formData
+}) => {
+  return (
+    <InfoInputFieldset
+      title="기업 추가정보 (중복선택 가능)"
+      inputs={[
         <InfoInputField
           key="compType"
           required={true}
@@ -324,11 +339,12 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
             type: "number",
             defaultValue: "0",
             description: null,
-            max: MAX_EMPLOY,
+            maxLength: EMPLOY_MAX_LENGTH,
             tail: "명"
           }}
           failMessage={null}
-          onSuccess={(value: string) => submit({...formData, employeeCount: Number(JSON.parse(value)[0])})}
+          validator={(value: string) => true}
+          onSuccess={(value: string) => submit({...formData, employeeCount: Number(value) || 0})}
         />,
         <InfoInputField
           key="interest"
@@ -352,10 +368,10 @@ const CompanyInfoStep: React.FC<StepSectionProps<CompanyInfo>> = ({
           validator={(value: string) => JSON.parse(value).length <= MAX_INTEREST_KEYWORD_COUNT}
           failMessage={null}
           onSuccess={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
-        />
+        />,
       ]}
     />
-  );
+  )
 }
 
 const SignupSuccessStep: React.FC = () => {
@@ -398,22 +414,30 @@ const SignupForm: React.FC = () => {
       name
     }
   }, [formData]);
-  const companyInfoValue = useMemo<CompanyInfo>(() => {
+
+  const companyRegisterInfoValue = useMemo<CompanyRegisterInfo>(() => {
     const {
       businessRegistrationNumber,
       CEO,
       establishDate,
       companySize,
+    } = formData;
+    return {
+      businessRegistrationNumber,
+      CEO,
+      establishDate,
+      companySize
+    }
+  }, [formData]);
+
+  const companyDetailInfoValue = useMemo<CompanyDetailInfo>(() => {
+    const {
       targetAreas,
       companyType,
       employeeCount,
       interestKeywords
     } = formData;
     return {
-      businessRegistrationNumber,
-      CEO,
-      establishDate,
-      companySize,
       targetAreas,
       companyType,
       employeeCount,
@@ -464,8 +488,17 @@ const SignupForm: React.FC = () => {
             }}
             formData={formData}
           />
-          <CompanyInfoStep
-            submit={(data: CompanyInfo) => {
+          <CompanyRegisterInfoStep
+            submit={(data: CompanyRegisterInfo) => {
+              setFormData({
+                ...formData,
+                ...data
+              });
+            }}
+            formData={formData}
+          />
+          <CompanyDetailInfoStep
+            submit={(data: CompanyDetailInfo) => {
               setFormData({
                 ...formData,
                 ...data
@@ -477,7 +510,8 @@ const SignupForm: React.FC = () => {
             className="border border-themegray"
             onClick={() => {
               serializer.submitMyInfo(myInfoValue);
-              serializer.submitCompanyInfo(companyInfoValue);
+              serializer.submitCompanyRegisterInfo(companyRegisterInfoValue);
+              serializer.submitCompanyDetailInfo(companyDetailInfoValue);
 
               if (serializer.isValid()) {
                 setAccepted([true, true, false]);

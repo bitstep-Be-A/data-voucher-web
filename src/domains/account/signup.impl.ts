@@ -6,13 +6,14 @@ import {
   Serializer
 } from "../../utils/serializer";
 import type {
-  CompanyInfo,
   JoinAgreement,
   MyInfo,
   SignupService,
   SignupinfoRequest,
   SignupExceptionMap,
   SignupValidator,
+  CompanyRegisterInfo,
+  CompanyDetailInfo,
 } from "./signup.interface";
 import {
   CompanySizeEnum,
@@ -193,7 +194,14 @@ export function useSignupSerializer(): SignupSerializer {
     }
   }
 
-  function submitCompanyInfo(company: CompanyInfo) {
+  function submitCompanyRegisterInfo(company: CompanyRegisterInfo) {
+    dataRef.current = {
+      ...dataRef.current,
+      ...company
+    }
+  }
+
+  function submitCompanyDetailInfo(company: CompanyDetailInfo) {
     dataRef.current = {
       ...dataRef.current,
       ...company
@@ -208,7 +216,8 @@ export function useSignupSerializer(): SignupSerializer {
     verifyCompany,
     submitAgreement,
     submitMyInfo,
-    submitCompanyInfo,
+    submitCompanyDetailInfo,
+    submitCompanyRegisterInfo,
     getExceptions
   }
 }

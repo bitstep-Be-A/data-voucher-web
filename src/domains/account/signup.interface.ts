@@ -54,7 +54,8 @@ export interface SignupValidator {
 export interface SignupService {
   submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
-  submitCompanyInfo: (company: CompanyInfo) => void;
+  submitCompanyRegisterInfo: (company: CompanyRegisterInfo) => void;
+  submitCompanyDetailInfo: (company: CompanyDetailInfo) => void;
   verifyEmail: () => Promise<void>;
   verifyCompany: () => Promise<void>;
 }

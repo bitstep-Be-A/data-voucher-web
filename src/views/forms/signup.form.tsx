@@ -341,7 +341,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
             defaultValue: "0",
             description: null,
             maxLength: EMPLOY_MAX_LENGTH,
-            tail: "명"
+            tail: <span className="ml-2">{"명"}</span>
           }}
           failMessage={null}
           validator={(value: string) => true}

@@ -4,8 +4,10 @@
 import { useCallback, useState, useMemo } from "react";
 import styled from "styled-components";
 
-import { EventButton } from "../Button";
 import { deepGray } from "../../styles/constant";
+
+import { EventButton } from "../Button";
+
 
 export interface InfoInputFieldsetProps {
   title: string;
@@ -196,6 +198,7 @@ export const InfoInputField: React.FC<InputProps> = ({
               e.target.value = e.target.value.slice(0, maxLength);
               handleChange(e);
             }}
+            className="placeholder:text-black"
           />
           <Description main={description} fail={failDescription}/>
         </div>

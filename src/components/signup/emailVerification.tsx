@@ -42,7 +42,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
         <InputBlock>
           <span className="text-deepGray mr-4">인증번호</span>
           <div className="relative">
-            <StyledInput onChange={(e) => setValue(e.target.value)} value={value}/>
+            <StyledInput onChange={(e) => setValue(e.target.value)} value={value} autoFocus />
             <Description main={null} fail={fail}/>
           </div>
           <div className="w-16">

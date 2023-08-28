@@ -103,11 +103,12 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "아이디(이메일 주소)를 입력하세요.",
             description: null,
-            maxLength: EMAIL_MAX_LENGTH
+            maxLength: EMAIL_MAX_LENGTH,
+            submitValue: String(formData.email)
           }}
           failMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidEmail(value)}
-          onSuccess={(value: string) => submit({...formData, email: value})}
+          onInput={(value: string) => submit({...formData, email: value})}
         />,
         <InfoInputField
           key="pw"
@@ -118,11 +119,12 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             placeholder: "비밀번호를 입력하세요.",
             description: "비밀번호는 10~20자 이하의 영문, 숫자, 특수문자의 조합으로 입력하세요.",
             maxLength: PASSWORD_MAX_LENGTH,
-            isPassword: true
+            isPassword: true,
+            submitValue: String(formData.password)
           }}
           failMessage={signupExceptionMap.INVALID_PASSWORD_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidPassword(value)}
-          onSuccess={(value: string) => submit({...formData, password: value})}
+          onInput={(value: string) => submit({...formData, password: value})}
         />,
         <InfoInputField
           key="pw2"
@@ -133,11 +135,12 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             placeholder: "비밀번호를 한번 더 입력하세요",
             description: null,
             maxLength: PASSWORD_MAX_LENGTH,
-            isPassword: true
+            isPassword: true,
+            submitValue: String(formData.confirmPassword)
           }}
           failMessage={signupExceptionMap.UNMATCHED_PASSWORD.message}
           validator={(value: string) => signupValidator.checkPasswordConfirmed(formData.password, value)}
-          onSuccess={(value: string) => submit({...formData, confirmPassword: value})}
+          onInput={(value: string) => submit({...formData, confirmPassword: value})}
         />,
         <InfoInputField
           key="name"
@@ -147,11 +150,12 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "",
             description: null,
-            maxLength: NAME_MAX_LENGTH
+            maxLength: NAME_MAX_LENGTH,
+            submitValue: String(formData.name)
           }}
           failMessage={signupExceptionMap.INVALID_NAME.message}
           validator={(value: string) => signupValidator.checkValidName(value)}
-          onSuccess={(value: string) => submit({...formData, name: value})}
+          onInput={(value: string) => submit({...formData, name: value})}
         />,
         <InfoInputField
           key="phone"
@@ -161,11 +165,12 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             type: "text",
             placeholder: "ex) 010-1234-5678",
             description: null,
-            maxLength: PHONE_NUMBER_MAX_LENGTH
+            maxLength: PHONE_NUMBER_MAX_LENGTH,
+            submitValue: String(formData.phoneNumber)
           }}
           failMessage={signupExceptionMap.INVALID_PHONE_NUMBER_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidPhoneNumber(value)}
-          onSuccess={(value: string) => submit({...formData, phoneNumber: value})}
+          onInput={(value: string) => submit({...formData, phoneNumber: value})}
         />
       ]}
     />
@@ -189,10 +194,12 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
           props={{
             type: "text",
             placeholder: "사업자등록번호를 입력하세요.",
-            description: null
+            description: null,
+            submitValue: String(formData.businessRegistrationNumber)
           }}
           failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          onSuccess={null}
+          validator={(value: string) => true}
+          onInput={(value: string) => submit({...formData, businessRegistrationNumber: value})}
           verification= {{
             name: "기업정보확인",
             event: () => {
@@ -208,10 +215,11 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
             description: null,
-            disabled: true
+            disabled: true,
+            submitValue: String(formData.CEO)
           }}
           failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          onSuccess={null}
+          onInput={null}
         />,
         <InfoInputField
           key="start"
@@ -221,10 +229,11 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
             description: null,
-            disabled: true
+            disabled: true,
+            submitValue: String(formData.establishDate)
           }}
           failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          onSuccess={null}
+          onInput={null}
         />,
         <InfoInputField
           key="size"
@@ -250,11 +259,11 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
                 name: CompanySizeEnum.LC
               }
             ],
-            defaultPosition: 0
+            submitValue: [String(formData.companySize)]
           }}
           failMessage={signupExceptionMap.COMPANY_SIZE_NOT_SELECTED.message}
           validator={signupValidator.checkValidCompanySize}
-          onSuccess={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
+          onInput={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
         />,
       ]}
     />
@@ -294,11 +303,11 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
                 name: CompanyTypeEnum.DIB
               },
             ],
-            defaultPosition: null
+            submitValue: formData.companyTypes
           }}
           failMessage={signupExceptionMap.COMPANY_TYPE_NOT_SELECTED.message}
           validator={signupValidator.checkValidCompanyType}
-          onSuccess={(value: string) => submit({...formData, companyType: JSON.parse(value)[0]})}
+          onInput={(value: string) => submit({...formData, companyTypes: JSON.parse(value)})}
         />,
         <InfoInputField
           key="loc"
@@ -317,11 +326,11 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
                 name: v.name
               }
             }),
-            defaultPosition: null
+            submitValue: formData.targetAreas
           }}
           failMessage={signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED.message}
           validator={signupValidator.checkValidTargetAreas}
-          onSuccess={(value: string) => submit({...formData, targetAreas: JSON.parse(value)})}
+          onInput={(value: string) => submit({...formData, targetAreas: JSON.parse(value)})}
         />,
         <InfoInputField
           key="employee"
@@ -329,14 +338,14 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
           label="종업원 수"
           props={{
             type: "number",
-            defaultValue: "0",
+            submitValue: String(formData.employeeCount),
             description: null,
             maxLength: EMPLOY_MAX_LENGTH,
             tail: <span className="ml-2">{"명"}</span>
           }}
           failMessage={null}
           validator={(value: string) => true}
-          onSuccess={(value: string) => submit({...formData, employeeCount: Number(value) || 0})}
+          onInput={(value: string) => submit({...formData, employeeCount: Number(value) || 0})}
         />,
         <InfoInputField
           key="interest"
@@ -355,11 +364,11 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
                 name: v.keyword
               }
             }),
-            defaultPosition: null
+            submitValue: formData.interestKeywords
           }}
           validator={signupValidator.checkValidInterestKeywords}
           failMessage={null}
-          onSuccess={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
+          onInput={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
         />,
       ]}
     />
@@ -373,7 +382,7 @@ const EmailVerificationStep: React.FC = () => {
         try {
           const res = await signupApi.signupVerify(value);
           return !!res;
-        } catch {
+        } catch (err: any) {
           return false;
         }
       }}
@@ -439,13 +448,13 @@ const SignupForm: React.FC = () => {
   const companyDetailInfoValue = useMemo<CompanyDetailInfo>(() => {
     const {
       targetAreas,
-      companyType,
+      companyTypes: companyType,
       employeeCount,
       interestKeywords
     } = formData;
     return {
       targetAreas,
-      companyType,
+      companyTypes: companyType,
       employeeCount,
       interestKeywords
     }
@@ -524,9 +533,9 @@ const SignupForm: React.FC = () => {
                 setLoading(true);
                 try {
                   await signupApi.signupInfo(reqBody);
-                } catch(err) {
+                } catch(err: any) {
                   setLoading(false);
-                  alert(signupExceptionMap.EMAIL_DUPLICATED.message);
+                  alert(err.response.data.error);
                   return;
                 }
                 setLoading(false);

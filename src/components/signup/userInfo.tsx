@@ -29,15 +29,16 @@ interface TextInputProps {
   tail?: React.ReactNode | string;
   disabled?: boolean;
   isPassword?: boolean;
+  submitValue: string;
 }
 
 interface NumberInputProps {
   type: "number";
-  defaultValue: string;
   description: string | null;
   maxLength?: number;
   tail?: React.ReactNode | string;
   disabled?: boolean;
+  submitValue: string;
 }
 
 interface ChoiceInputItem {
@@ -48,7 +49,7 @@ interface ChoiceInputItem {
 interface ChoiceInputProps {
   type: "choice";
   items: ChoiceInputItem[];
-  defaultPosition: number | null;
+  submitValue: string[];
 }
 
 interface InputProps {
@@ -61,16 +62,16 @@ interface InputProps {
     name: string;
     event: () => void;
   };
-  onSuccess: ((value: string) => void) | null;
+  onInput: ((value: string) => void) | null;
 }
 
 const ChoiceInput: React.FC<InputProps> = ({
   props,
-  onSuccess,
+  onInput,
   validator
 }) => {
-  const {defaultPosition, items} = props as ChoiceInputProps;
-  const [choices, setChoices] = useState<string[]>(defaultPosition ? [items[defaultPosition].name] : []);
+  const {items, submitValue} = props as ChoiceInputProps;
+  // const [choices, setChoices] = useState<string[]>(defaultPosition ? [items[defaultPosition].name] : []);
 
   return (
     <div className="grid grid-cols-4 gap-2 max-h-[120px] overflow-auto">
@@ -78,31 +79,28 @@ const ChoiceInput: React.FC<InputProps> = ({
         items.map((item) => (
           <EventButton key={item.id}
             onClick={() => {
-              if (!choices.includes(item.name)) {
-                let _choices = [...choices, item.name];
-                let value = JSON.stringify(_choices);
+              if (!submitValue.includes(item.name)) {
+                let choices = [...submitValue, item.name];
+                let value = JSON.stringify(choices);
                 if (validator!(value)) {
-                  setChoices(_choices);
-                  onSuccess!(value);
+                  onInput!(value);
                 } else {
-                  if (choices.length === 1) {
-                    _choices.shift();
-                    setChoices(_choices);
-                    onSuccess!(JSON.stringify(_choices));
+                  if (submitValue.length === 1) {
+                    choices.shift();
+                    onInput!(JSON.stringify(choices));
                   }
                 }
               } else {
-                let _choices = choices.filter((v) => v !== item.name);
-                let value = JSON.stringify(_choices);
+                let choices = submitValue.filter((v) => v !== item.name);
+                let value = JSON.stringify(choices);
                 if (validator!(value)) {
-                  setChoices(_choices);
-                  onSuccess!(value);
+                  onInput!(value);
                 }
               }
             }}
-            theme={choices.includes(item.name) ? "default" : "none"}
+            theme={submitValue.includes(item.name) ? "default" : "none"}
             className={classNames(
-              !choices.includes(item.name) ? "border border-lightGray" : "",
+              !submitValue.includes(item.name) ? "border border-lightGray" : "",
               "text-sm rounded-sm"
             )}
             width={90}
@@ -142,7 +140,7 @@ export const InfoInputField: React.FC<InputProps> = (_props) => {
     failMessage,
     validator,
     verification,
-    onSuccess
+    onInput
   } = _props;
   const [failDescription, setFailDescription] = useState<string | null>(null);
 
@@ -151,15 +149,16 @@ export const InfoInputField: React.FC<InputProps> = (_props) => {
     const value = e.target.value;
     if (validator) {
       if (validator(value)) {
-        onSuccess && onSuccess(value);
+        onInput && onInput(value);
       } else {
+        onInput && onInput(value);
         setFailDescription(failMessage);
       }
     }
-  }, [setFailDescription, validator, onSuccess, setFailDescription, failMessage]);
+  }, [setFailDescription, validator, onInput, setFailDescription, failMessage]);
 
   if (props.type === "text") {
-    const { placeholder, description, tail, maxLength, disabled, isPassword } = props;
+    const { placeholder, description, tail, maxLength, disabled, isPassword, submitValue } = props;
     return (
       <InputBlock>
         {required && <RequireSymbol/>}
@@ -173,6 +172,7 @@ export const InfoInputField: React.FC<InputProps> = (_props) => {
             }}
             className="placeholder:text-lightGray placeholder:text-sm"
             onChange={handleChange}
+            value={submitValue}
           />
           <Description main={description} fail={failDescription}/>
         </div>
@@ -189,7 +189,7 @@ export const InfoInputField: React.FC<InputProps> = (_props) => {
     );
   }
   if (props.type === "number") {
-    const { defaultValue, description, maxLength, tail, disabled } = props;
+    const { submitValue, description, maxLength, tail, disabled } = props;
     return (
       <InputBlock>
         {required && <RequireSymbol/>}
@@ -197,16 +197,14 @@ export const InfoInputField: React.FC<InputProps> = (_props) => {
         <div className="relative">
           <StyledInput type="number"
             {...{
-              defaultValue,
               maxLength,
               disabled
             }}
             onChange={(e) => {
-              if (e.target.value === "") e.target.placeholder = "0";
               e.target.value = e.target.value.slice(0, maxLength);
               handleChange(e);
             }}
-            className="placeholder:text-black"
+            value={submitValue}
           />
           <Description main={description} fail={failDescription}/>
         </div>

@@ -17,7 +17,6 @@ import type {
 } from "./signup.interface";
 import {
   CompanySizeEnum,
-  CompanyTypeEnum,
   MAX_INTEREST_KEYWORD_COUNT
 } from "../../policies/company.policy";
 import {
@@ -88,7 +87,7 @@ export const defaultSignupinfoRequest: SignupinfoRequest = {
   establishDate: '',
   CEO: '',
   companySize: CompanySizeEnum.ETC,
-  companyType: CompanyTypeEnum.NA,
+  companyTypes: [],
   employeeCount: 0,
   interestKeywords: []
 }
@@ -145,7 +144,7 @@ export function useSignupSerializer(): SignupSerializer {
     const data = dataRef.current;
     const obj = {
       "AgreeService": data.isAgreeService,
-      "AgreePrivacey": data.isAgreePrivacy,
+      "AgreePrivacy": data.isAgreePrivacy,
       "AgreeMarketing": data.isAgreeMarketing,
       "Email_ID": data.email,
       "Name": data.name,
@@ -157,7 +156,7 @@ export function useSignupSerializer(): SignupSerializer {
       "EstablishedDate": data.establishDate,
       "CEO": data.CEO,
       "CompanySize": data.companySize,
-      "CompanyType": data.companyType,
+      "CompanyType": data.companyTypes.join('|'),
       "EmployeeCount": data.employeeCount,
       "InterestKeywords": data.interestKeywords.join('|')
     }

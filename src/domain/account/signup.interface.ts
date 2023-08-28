@@ -32,7 +32,7 @@ export interface CompanyRegisterInfo {
 
 export interface CompanyDetailInfo {
   targetAreas: string[];
-  companyType: CompanyTypeEnum;
+  companyTypes: CompanyTypeEnum[];
   employeeCount: number;
   interestKeywords: string[];
 }

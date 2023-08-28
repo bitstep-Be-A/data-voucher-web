@@ -3,8 +3,8 @@ import { useLocation } from "react-router";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
-import { useAuth } from "../../contexts/auth.context";
-import { ContainerContext } from "../../contexts/base.context";
+import { useAuth } from "../../context/auth.context";
+import { ContainerContext } from "../../context/base.context";
 
 import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
@@ -122,7 +122,7 @@ const TopNavbar = () => {
   const { pathname } = useLocation();
   const auth = useAuth();
 
-  const isLogined = useMemo(() => !!auth.tokenRef.current, [auth]);
+  const isLogined = useMemo(() => !!auth.userIdRef.current, [auth]);
 
   return (
     <div className="w-full border-b border-gray-400 py-4">

@@ -1,9 +1,9 @@
 import {
   signupValidator,
-} from "../domains/account/signup.impl";
+} from "../domain/account/signup.impl";
 import {
   JoinAgreement,
-} from "../domains/account/signup.interface";
+} from "../domain/account/signup.interface";
 
 describe('회원가입', () => {
   const validator = signupValidator;

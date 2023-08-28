@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 
 export interface IAuthContext {
   tokenRef: React.MutableRefObject<string>;
+  userIdRef: React.MutableRefObject<string>;
 }
 
 export const AuthContext = createContext<IAuthContext | undefined>(undefined);

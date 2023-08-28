@@ -3,10 +3,11 @@ import { useSearchParams, Link } from "react-router-dom";
 
 import Nav from "../../components/Nav";
 import { classNames } from "../../utils";
-import { SignupContext, useSignup } from "../../contexts/account.context";
-import { useSignupSerializer } from "../../domains/account/signup.impl";
+import { SignupContext, useSignup } from "../../context/account.context";
+import { useSignupSerializer } from "../../domain/account/signup.impl";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Loading from "../../components/Loading";
 
 interface StatusItemProps {
   isActive: boolean;
@@ -27,7 +28,7 @@ const StatusItem: React.FC<StatusItemProps> = ({
       )}>{text}</span>
       {
         !isLast && (
-          <span className="mr-5 text-themegray text-sm">{ ">" }</span>
+          <span className="mr-5 text-lightGray text-sm">{ ">" }</span>
         )
       }
     </div>
@@ -66,7 +67,7 @@ const StepNavbar = () => {
             <StatusItem
               isActive={step === 3}
               isLast={ true }
-              text="Step3. 가입완료"
+              text="Step3. 이메일 인증"
             />
           ),
           className: "cursor-default"
@@ -81,6 +82,8 @@ const SignupContainer = ({ children }: {
 }) => {
   const [searchParams, _] = useSearchParams();
   const [accepted, setAccepted] = useState<boolean[]>([false, false, false]);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const serializer = useSignupSerializer();
   const step = useMemo(() => {
     const stepParam = searchParams.get('step');
@@ -90,7 +93,7 @@ const SignupContainer = ({ children }: {
 
   return (
     <SignupContext.Provider value={{
-      accepted, setAccepted, serializer, step
+      accepted, setAccepted, serializer, step, loading, setLoading
     }}>
       <div className="w-full h-full flex flex-col items-center px-16">
         <div className="relative w-full flex flex-row justify-center py-5">
@@ -101,11 +104,16 @@ const SignupContainer = ({ children }: {
               </Link>
             )
           }
-          <h1 className="text-lg">회원가입</h1>
+          <h1 className="text-lg font-bold">회원가입</h1>
         </div>
         <StepNavbar/>
         { children }
       </div>
+      {
+        loading && (
+          <Loading/>
+        )
+      }
     </SignupContext.Provider>
   );
 }

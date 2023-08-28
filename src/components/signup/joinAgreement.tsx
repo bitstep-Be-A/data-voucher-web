@@ -15,7 +15,7 @@ export interface AgreementCheckFieldProps {
   checked: boolean;
 }
 
-const AgreementCheckField: React.FC<AgreementCheckFieldProps> = ({
+export const AgreementCheckField: React.FC<AgreementCheckFieldProps> = ({
   policyContext,
   setChecked,
   checked
@@ -41,5 +41,3 @@ const AgreementCheckField: React.FC<AgreementCheckFieldProps> = ({
     </div>
   );
 }
-
-export default AgreementCheckField;

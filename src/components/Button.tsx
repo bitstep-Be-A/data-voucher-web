@@ -1,6 +1,6 @@
 import { classNames } from "../utils";
 
-import { themeGray } from "../styles/constant";
+import { lightGray } from "../styles/constant";
 
 export interface EventButtonProps {
   children?: React.ReactNode;
@@ -32,7 +32,7 @@ export const EventButton: React.FC<EventButtonProps> = ({
   if (theme === "default" || typeof theme === "undefined") {
     baseStyle = {
       ...baseStyle,
-      backgroundColor: themeGray,
+      backgroundColor: lightGray,
       color: "white"
     }
   }
@@ -43,8 +43,6 @@ export const EventButton: React.FC<EventButtonProps> = ({
         ...style
       }}
       className={classNames(
-        (theme === "default" || typeof theme === "undefined") ?
-          "rounded-sm text-sm" : "",
         className
       )}
       type={ type }

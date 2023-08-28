@@ -1,13 +1,19 @@
 /**
  * Step2. 회원가입 정보입력
  */
-import { useCallback, useState, useMemo } from "react";
-import styled from "styled-components";
+import { useCallback, useState } from "react";
 
-import { deepGray } from "../../styles/constant";
+import { classNames } from "../../utils";
 
 import { EventButton } from "../Button";
-
+import {
+  StyledInput,
+  Frame,
+  InputBlock,
+  RequireSymbol,
+  Label,
+  Description
+} from "./common";
 
 export interface InfoInputFieldsetProps {
   title: string;
@@ -58,56 +64,57 @@ interface InputProps {
   onSuccess: ((value: string) => void) | null;
 }
 
-const Frame = styled.div`
-  width: 560px;
-`;
+const ChoiceInput: React.FC<InputProps> = ({
+  props,
+  onSuccess,
+  validator
+}) => {
+  const {defaultPosition, items} = props as ChoiceInputProps;
+  const [choices, setChoices] = useState<string[]>(defaultPosition ? [items[defaultPosition].name] : []);
 
-const InputBlock = styled(Frame)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const RequireSymbol = () => {
   return (
-    <span className="text-red-500">{"*"}</span>
-  );
-}
-
-const Label = ({label}: {label: React.ReactNode}) => {
-  return (
-    <div className="w-32 ml-2 mr-8" style={{color: deepGray}}>
-      {label}
+    <div className="grid grid-cols-4 gap-2 max-h-[120px] overflow-auto">
+      {
+        items.map((item) => (
+          <EventButton key={item.id}
+            onClick={() => {
+              if (!choices.includes(item.name)) {
+                let _choices = [...choices, item.name];
+                let value = JSON.stringify(_choices);
+                if (validator!(value)) {
+                  setChoices(_choices);
+                  onSuccess!(value);
+                } else {
+                  if (choices.length === 1) {
+                    _choices.shift();
+                    setChoices(_choices);
+                    onSuccess!(JSON.stringify(_choices));
+                  }
+                }
+              } else {
+                let _choices = choices.filter((v) => v !== item.name);
+                let value = JSON.stringify(_choices);
+                if (validator!(value)) {
+                  setChoices(_choices);
+                  onSuccess!(value);
+                }
+              }
+            }}
+            theme={choices.includes(item.name) ? "default" : "none"}
+            className={classNames(
+              !choices.includes(item.name) ? "border border-lightGray" : "",
+              "text-sm rounded-sm"
+            )}
+            width={90}
+            paddingY={6}
+          >
+            {item.name}
+          </EventButton>
+        ))
+      }
     </div>
   )
 }
-
-const Description = ({main, fail}: {main: string | null; fail: string | null}) => {
-  const message = useMemo(() => {
-    if (fail) {
-      return <span className="text-red-500">{fail}</span>;
-    }
-    else if (main) {
-      return <>{"※ " + main}</>
-    }
-    return <></>;
-  }, [main, fail]);
-
-  return (
-    <div className="absolute top-[28px] h-4 text-xs text-deepgray w-[400px]">
-      {message}
-    </div>
-  )
-}
-
-const ChangedInput = styled.input`
-  border-width: 1px;
-  border-color: rgb(107 114 128);
-  border-radius: 2px;
-  padding-left: 0.5rem; /* 8px */
-  padding-right: 0.5rem; /* 8px */
-  width: 276px;
-`
 
 const VerificationButton = ({
   onClick,
@@ -117,7 +124,7 @@ const VerificationButton = ({
   name: string;
 }) => {
   return (
-    <EventButton className="text-lg font-bold ml-4"
+    <EventButton className="text-sm font-bold ml-4 rounded-sm"
       width={92}
       paddingY={6}
       onClick={onClick}
@@ -127,15 +134,16 @@ const VerificationButton = ({
   )
 }
 
-export const InfoInputField: React.FC<InputProps> = ({
-  required,
-  label,
-  props,
-  failMessage,
-  validator,
-  verification,
-  onSuccess
-}) => {
+export const InfoInputField: React.FC<InputProps> = (_props) => {
+  const {
+    required,
+    label,
+    props,
+    failMessage,
+    validator,
+    verification,
+    onSuccess
+  } = _props;
   const [failDescription, setFailDescription] = useState<string | null>(null);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,13 +165,13 @@ export const InfoInputField: React.FC<InputProps> = ({
         {required && <RequireSymbol/>}
         <Label label={label}/>
         <div className="relative">
-          <ChangedInput type={isPassword ? "password" : "text"}
+          <StyledInput type={isPassword ? "password" : "text"}
             {...{
               placeholder,
               maxLength,
               disabled
             }}
-            className="placeholder:text-themegray placeholder:text-sm"
+            className="placeholder:text-lightGray placeholder:text-sm"
             onChange={handleChange}
           />
           <Description main={description} fail={failDescription}/>
@@ -187,7 +195,7 @@ export const InfoInputField: React.FC<InputProps> = ({
         {required && <RequireSymbol/>}
         <Label label={label}/>
         <div className="relative">
-          <ChangedInput type="number"
+          <StyledInput type="number"
             {...{
               defaultValue,
               maxLength,
@@ -216,20 +224,24 @@ export const InfoInputField: React.FC<InputProps> = ({
   }
   if (props.type === "choice") {
     return (
-      <></>
+      <InputBlock>
+        {required && <RequireSymbol/>}
+        <Label label={label}/>
+        <ChoiceInput {..._props}/>
+      </InputBlock>
     );
   }
   throw Error("Cannot find input type");
 }
 
-const InfoInputFieldset: React.FC<InfoInputFieldsetProps> = ({ title, reason, inputs }) => {
+export const InfoInputFieldset: React.FC<InfoInputFieldsetProps> = ({ title, reason, inputs }) => {
   return (
     <fieldset className="w-full flex flex-col items-center py-8 border-b border-gray-300">
       <Frame className="mb-5">
-        <h2 className="text-deepgray font-bold text-xl">{title}</h2>
+        <h2 className="text-deepGray font-bold text-xl">{title}</h2>
         {
           reason && (
-            <div className="mt-4 leading-none flex flex-row text-xs text-deepgray space-x-1">
+            <div className="mt-4 leading-none flex flex-row text-xs text-deepGray space-x-1">
               <span>{"※ "}</span>
               <span>{reason}</span>
             </div>
@@ -244,5 +256,3 @@ const InfoInputFieldset: React.FC<InfoInputFieldsetProps> = ({ title, reason, in
     </fieldset>
   );
 }
-
-export default InfoInputFieldset;

@@ -2,13 +2,12 @@ import './App.css';
 
 import { useRef, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
 
 import PublicRoute from './routes/PublicRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import { routes } from './routes/path';
-import { AUTH_TOKEN_COOKIE_KEY } from './constants/auth.constant';
-import { AuthContext } from './contexts/auth.context';
+import { USER_ID_SESSION_KEY } from './constants/auth.constant';
+import { AuthContext } from './context/auth.context';
 
 import LoginPage from './pages/Login';
 import NotFound from './pages/NotFound';
@@ -21,21 +20,21 @@ import BookmarkPage from './pages/Bookmark';
 interface AuthProviderProps { children?: React.ReactNode; }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [cookies, _, removeCookie] = useCookies([AUTH_TOKEN_COOKIE_KEY]);
-
+  const userIdRef = useRef<string>('');
   const authTokenRef = useRef<string>('');
 
   useEffect(() => {
-    if (cookies[AUTH_TOKEN_COOKIE_KEY]) {
-      authTokenRef.current = cookies[AUTH_TOKEN_COOKIE_KEY];
-    } else {
-      removeCookie(AUTH_TOKEN_COOKIE_KEY);
+    const userId = sessionStorage.getItem(USER_ID_SESSION_KEY);
+
+    if (userId) {
+      userIdRef.current = userId;
     }
-  }, [cookies]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{
-      tokenRef: authTokenRef
+      tokenRef: authTokenRef,
+      userIdRef: userIdRef
     }}>
       {children}
     </AuthContext.Provider>

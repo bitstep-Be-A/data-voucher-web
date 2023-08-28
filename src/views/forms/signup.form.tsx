@@ -2,16 +2,16 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useSignup } from "../../contexts/account.context";
-import type { SignupinfoRequest, JoinAgreement, MyInfo, CompanyDetailInfo, CompanyRegisterInfo } from "../../domains/account/signup.interface";
-import { signupExceptionMap, signupValidator, useSignupSerializer } from "../../domains/account/signup.impl";
+import { signupApi } from "../../api/account";
+import { useSignup } from "../../context/account.context";
+import type { SignupinfoRequest, JoinAgreement, MyInfo, CompanyDetailInfo, CompanyRegisterInfo } from "../../domain/account/signup.interface";
+import { signupExceptionMap, signupValidator, useSignupSerializer } from "../../domain/account/signup.impl";
 import agreementPolicy from "../../policies/agreement.policy";
 import { routes } from "../../routes/path";
 import {
   CompanySizeEnum,
   CompanyTypeEnum,
   EMPLOY_MAX_LENGTH,
-  MAX_INTEREST_KEYWORD_COUNT
 } from "../../policies/company.policy";
 import { interestTags, locations } from "../../policies/global.policy";
 import {
@@ -20,10 +20,12 @@ import {
   NAME_MAX_LENGTH,
   PHONE_NUMBER_MAX_LENGTH
 } from "../../policies/signup.policy";
-import { useContainer } from "../../contexts/base.context";
+import { useContainer } from "../../context/base.context";
+import { USER_ID_SESSION_KEY } from "../../constants/auth.constant";
 
-import AgreementCheckField from "../../components/signup/AgreementCheckField";
-import InfoInputFieldset, { InfoInputField } from "../../components/signup/InfoInputFieldset";
+import { AgreementCheckField } from "../../components/signup/joinAgreement";
+import { InfoInputField, InfoInputFieldset } from "../../components/signup/userInfo";
+import { EmailVerification } from "../../components/signup/emailVerification";
 
 interface StepSectionProps<T> {
   submit: (data: T) => void;
@@ -89,7 +91,6 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
   submit,
   formData
 }) => {
-  const { verifyEmail } = useSignupSerializer();
   return (
     <InfoInputFieldset
       title="개인정보"
@@ -103,12 +104,6 @@ const MyInfoStep: React.FC<StepSectionProps<MyInfo>> = ({
             placeholder: "아이디(이메일 주소)를 입력하세요.",
             description: null,
             maxLength: EMAIL_MAX_LENGTH
-          }}
-          verification={{
-            name: "중복확인",
-            event: () => {
-              verifyEmail();
-            }
           }}
           failMessage={signupExceptionMap.INVALID_EMAIL_FORMAT.message}
           validator={(value: string) => signupValidator.checkValidEmail(value)}
@@ -258,7 +253,7 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
             defaultPosition: 0
           }}
           failMessage={signupExceptionMap.COMPANY_SIZE_NOT_SELECTED.message}
-          validator={(value: string) => JSON.parse(value).length === 1}
+          validator={signupValidator.checkValidCompanySize}
           onSuccess={(value: string) => submit({...formData, companySize: JSON.parse(value)[0]})}
         />,
       ]}
@@ -298,15 +293,11 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
                 id: 4,
                 name: CompanyTypeEnum.DIB
               },
-              {
-                id: 5,
-                name: CompanyTypeEnum.NA
-              }
             ],
-            defaultPosition: 4
+            defaultPosition: null
           }}
           failMessage={signupExceptionMap.COMPANY_TYPE_NOT_SELECTED.message}
-          validator={(value: string) => JSON.parse(value).length === 1}
+          validator={signupValidator.checkValidCompanyType}
           onSuccess={(value: string) => submit({...formData, companyType: JSON.parse(value)[0]})}
         />,
         <InfoInputField
@@ -329,7 +320,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
             defaultPosition: null
           }}
           failMessage={signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED.message}
-          validator={(value: string) => JSON.parse(value).length >= 1}
+          validator={signupValidator.checkValidTargetAreas}
           onSuccess={(value: string) => submit({...formData, targetAreas: JSON.parse(value)})}
         />,
         <InfoInputField
@@ -353,7 +344,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
           label={(
             <div>
               <p>추가 관심 키워드</p>
-              <p>(선택사항)</p>
+              <p>(최대 3개)</p>
             </div>
           )}
           props={{
@@ -366,7 +357,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
             }),
             defaultPosition: null
           }}
-          validator={(value: string) => JSON.parse(value).length <= MAX_INTEREST_KEYWORD_COUNT}
+          validator={signupValidator.checkValidInterestKeywords}
           failMessage={null}
           onSuccess={(value: string) => submit({...formData, interestKeywords: JSON.parse(value)})}
         />,
@@ -375,15 +366,29 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
   )
 }
 
-const SignupSuccessStep: React.FC = () => {
+const EmailVerificationStep: React.FC = () => {
+  const navigate = useNavigate();
   return (
-    <></>
+    <EmailVerification duration={300} failMessage="인증에 실패하였습니다." verify={async (value: string) => {
+        try {
+          const res = await signupApi.signupVerify(value);
+          return !!res;
+        } catch {
+          return false;
+        }
+      }}
+      complete={async () => {
+        const {userId} = await signupApi.signupComplete();
+        sessionStorage.setItem(USER_ID_SESSION_KEY, JSON.stringify(userId));
+        navigate(routes.search.path);
+      }}
+    />
   );
 }
 
 const SignupForm: React.FC = () => {
   const navigate = useNavigate();
-  const { setAccepted, serializer, step } = useSignup();
+  const { setAccepted, serializer, step, setLoading } = useSignup();
 
   const [formData, setFormData] = useState<SignupinfoRequest>(serializer.toData());
 
@@ -462,7 +467,7 @@ const SignupForm: React.FC = () => {
             formData={formData}
           />
           <NextButton
-            className="border border-themegray"
+            className="border border-lightGray"
             onClick={() => {
               serializer.submitAgreement(joinAgreementValue);
 
@@ -508,15 +513,25 @@ const SignupForm: React.FC = () => {
             formData={formData}
           />
           <NextButton
-            className="border border-themegray"
-            onClick={() => {
+            className="border border-lightGray"
+            onClick={async () => {
               serializer.submitMyInfo(myInfoValue);
               serializer.submitCompanyRegisterInfo(companyRegisterInfoValue);
               serializer.submitCompanyDetailInfo(companyDetailInfoValue);
 
               if (serializer.isValid()) {
+                const reqBody = serializer.toObject();
+                setLoading(true);
+                try {
+                  await signupApi.signupInfo(reqBody);
+                } catch(err) {
+                  setLoading(false);
+                  alert(signupExceptionMap.EMAIL_DUPLICATED.message);
+                  return;
+                }
+                setLoading(false);
                 setAccepted([true, true, false]);
-                navigate(`${routes.signup.path}?step=2`);
+                navigate(`${routes.signup.path}?step=3`);
                 if (mainScreenRef.current) mainScreenRef.current.scrollTop = 0;
                 return;
               }
@@ -528,7 +543,7 @@ const SignupForm: React.FC = () => {
     case 3:
       return (
         <Section>
-          <SignupSuccessStep/>
+          <EmailVerificationStep/>
         </Section>
       );
     default:

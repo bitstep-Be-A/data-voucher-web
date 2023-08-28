@@ -17,7 +17,8 @@ import type {
 } from "./signup.interface";
 import {
   CompanySizeEnum,
-  CompanyTypeEnum
+  CompanyTypeEnum,
+  MAX_INTEREST_KEYWORD_COUNT
 } from "../../policies/company.policy";
 import {
   EMAIL_REGEX,
@@ -89,7 +90,7 @@ export const defaultSignupinfoRequest: SignupinfoRequest = {
   companySize: CompanySizeEnum.ETC,
   companyType: CompanyTypeEnum.NA,
   employeeCount: 0,
-  interestKeywords: ''
+  interestKeywords: []
 }
 
 export const signupValidator: SignupValidator = {
@@ -102,7 +103,7 @@ export const signupValidator: SignupValidator = {
   checkValidEmail: function (email: string) {
     return EMAIL_REGEX.test(email);
   },
-  checkDuplicatedEmail: async function (email: string) {
+  checkVerifiedEmail: function () {
     return true;
   },
   checkValidPassword: function (password: string) {
@@ -116,6 +117,21 @@ export const signupValidator: SignupValidator = {
   },
   checkValidName: function (name: string) {
     return NAME_REGEX.test(name);
+  },
+  checkVerifiedCompany: function () {
+    return true;
+  },
+  checkValidCompanySize: function (value: string) {
+    return JSON.parse(value).length === 1;
+  },
+  checkValidCompanyType: function (value: string) {
+    return JSON.parse(value).length >= 0;
+  },
+  checkValidTargetAreas: function (value: string) {
+    return JSON.parse(value).length >= 1;
+  },
+  checkValidInterestKeywords: function (value: string) {
+    return JSON.parse(value).length <= MAX_INTEREST_KEYWORD_COUNT;
   }
 }
 
@@ -126,7 +142,26 @@ export function useSignupSerializer(): SignupSerializer {
   const dataRef = useRef<SignupinfoRequest>(_.cloneDeep(defaultSignupinfoRequest));
 
   function toObject() {
-    return {}
+    const data = dataRef.current;
+    const obj = {
+      "AgreeService": data.isAgreeService,
+      "AgreePrivacey": data.isAgreePrivacy,
+      "AgreeMarketing": data.isAgreeMarketing,
+      "Email_ID": data.email,
+      "Name": data.name,
+      "Password": data.password,
+      "ConfirmPassword": data.confirmPassword,
+      "PhoneNumber": data.phoneNumber,
+      "BusinessRegistrationNumber": data.businessRegistrationNumber,
+      "CompanyAddress": data.targetAreas.join('|'),
+      "EstablishedDate": data.establishDate,
+      "CEO": data.CEO,
+      "CompanySize": data.companySize,
+      "CompanyType": data.companyType,
+      "EmployeeCount": data.employeeCount,
+      "InterestKeywords": data.interestKeywords.join('|')
+    }
+    return obj;
   }
 
   function toData() {
@@ -142,8 +177,6 @@ export function useSignupSerializer(): SignupSerializer {
     exceptionsRef.current = [];
     return value;
   }
-
-  async function verifyEmail() {}
 
   async function verifyCompany() {}
 
@@ -212,7 +245,6 @@ export function useSignupSerializer(): SignupSerializer {
     toObject,
     toData,
     isValid,
-    verifyEmail,
     verifyCompany,
     submitAgreement,
     submitMyInfo,

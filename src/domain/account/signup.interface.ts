@@ -34,7 +34,7 @@ export interface CompanyDetailInfo {
   targetAreas: string[];
   companyType: CompanyTypeEnum;
   employeeCount: number;
-  interestKeywords?: string;
+  interestKeywords: string[];
 }
 
 export interface CompanyInfo extends CompanyRegisterInfo, CompanyDetailInfo {}
@@ -44,11 +44,16 @@ export interface SignupinfoRequest extends JoinAgreement, MyInfo, CompanyInfo {}
 export interface SignupValidator {
   checkRequiredAgreement: (agreement: JoinAgreement) => boolean;
   checkValidEmail: (email: string) => boolean;
-  checkDuplicatedEmail: (email: string) => Promise<boolean>;
+  checkVerifiedEmail: () => boolean;
   checkValidPassword: (password: string) => boolean;
   checkPasswordConfirmed: (password: string, confirmPassword: string) => boolean;
   checkValidPhoneNumber: (phoneNumber: string) => boolean;
   checkValidName: (name: string) => boolean;
+  checkVerifiedCompany: () => boolean;
+  checkValidCompanySize: (value: string) => boolean;
+  checkValidCompanyType: (value: string) => boolean;
+  checkValidTargetAreas: (value: string) => boolean;
+  checkValidInterestKeywords: (value: string) => boolean;
 }
 
 export interface SignupService {
@@ -56,7 +61,6 @@ export interface SignupService {
   submitMyInfo: (my: MyInfo) => Promise<void>;
   submitCompanyRegisterInfo: (company: CompanyRegisterInfo) => void;
   submitCompanyDetailInfo: (company: CompanyDetailInfo) => void;
-  verifyEmail: () => Promise<void>;
   verifyCompany: () => Promise<void>;
 }
 

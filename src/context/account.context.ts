@@ -1,12 +1,14 @@
 import { createContext, useContext } from "react";
 
-import type { SignupSerializer } from "../domains/account/signup.impl";
+import type { SignupSerializer } from "../domain/account/signup.impl";
 
 export interface ISignupContext {
   accepted: boolean[];
   setAccepted: (accepted: boolean[]) => void;
   serializer: SignupSerializer;
   step: number;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 export const SignupContext = createContext<ISignupContext | undefined>(undefined);

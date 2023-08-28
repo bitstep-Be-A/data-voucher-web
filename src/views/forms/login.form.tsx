@@ -24,6 +24,7 @@ const FindCredentialPwInputField: React.FC<FindCredentialPwInputFieldProps> = ({
         buttonText && (
           <EventButton
             width={'90px'}
+            className="text-sm rounded-sm"
           >
             {buttonText}
           </EventButton>
@@ -57,6 +58,7 @@ export const FindCredentialPwForm: React.FC = () => {
       <EventButton
         width={160}
         type={"submit"}
+        className="text-sm rounded-sm"
       >
         비밀번호 재설정
       </EventButton>
@@ -79,6 +81,7 @@ const FindCredentialIdInputField: React.FC<FindCredentialIdInputFieldProps> = ({
       <UnderlinedTextInput placeholder={placeholder} width={224} />
       <EventButton
         width={'90px'}
+        className="text-sm rounded-sm"
       >
         {buttonText}
       </EventButton>
@@ -103,6 +106,7 @@ export const FindCredentialIdForm: React.FC = () => {
       <EventButton
         width={160}
         type={"submit"}
+        className="text-sm rounded-sm"
       >
         아이디 찾기
       </EventButton>
@@ -128,7 +132,7 @@ const LoginInputField: React.FC<LoginInputFieldProps> = ({
 
 const HelpCredentialInfo: React.FC = () => {
   return (
-    <div className="flex flex-row items-center justify-end text-xs text-themegray space-x-3">
+    <div className="flex flex-row items-center justify-end text-xs text-lightGray space-x-3">
       <span>계정 정보를 잊으셨나요?</span>
       <div className="space-x-2">
         <Link to={routes.findCredentialId.path}
@@ -163,6 +167,7 @@ export const LoginForm: React.FC = () => {
         style={{
           borderRadius: "4px",
         }}
+        className="text-sm"
       >
         로그인
       </EventButton>

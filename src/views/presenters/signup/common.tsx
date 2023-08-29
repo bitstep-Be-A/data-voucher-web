@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { styled } from "styled-components";
 
-import { deepGray } from "../../styles/constant";
+import { deepGray } from "../../../styles/constant";
 
 export const StyledInput = styled.input`
   border-width: 1px;

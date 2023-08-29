@@ -3,8 +3,8 @@ import styled from "styled-components";
 
 import { Description, InputBlock } from "./common";
 
-import Timer from "../Timer";
-import { EventButton } from "../Button";
+import Timer from "../../../components/Timer";
+import { EventButton } from "../../../components/Button";
 
 export interface EmailVerificationProps {
   duration: number;

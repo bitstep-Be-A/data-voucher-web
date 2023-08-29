@@ -23,9 +23,9 @@ import {
 import { useContainer } from "../../context/base.context";
 import { USER_ID_SESSION_KEY } from "../../constants/auth.constant";
 
-import { AgreementCheckField } from "../../components/signup/joinAgreement";
-import { InfoInputField, InfoInputFieldset } from "../../components/signup/userInfo";
-import { EmailVerification } from "../../components/signup/emailVerification";
+import { AgreementCheckField } from "../presenters/signup/joinAgreement";
+import { InfoInputField, InfoInputFieldset } from "../presenters/signup/userInfo";
+import { EmailVerification } from "../presenters/signup/emailVerification";
 
 interface StepSectionProps<T> {
   submit: (data: T) => void;

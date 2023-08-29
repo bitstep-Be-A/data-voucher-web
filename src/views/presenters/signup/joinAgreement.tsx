@@ -5,7 +5,7 @@
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
-import type { AgreementPolicy } from '../../policies/agreement.policy';
+import type { AgreementPolicy } from '../../../policies/agreement.policy';
 
 import Checkbox from '@mui/material/Checkbox';
 

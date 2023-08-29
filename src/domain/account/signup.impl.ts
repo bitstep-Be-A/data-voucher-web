@@ -8,7 +8,7 @@ import {
 import type {
   JoinAgreement,
   MyInfo,
-  SignupService,
+  SignupUseCase,
   SignupinfoRequest,
   SignupExceptionMap,
   SignupValidator,
@@ -134,7 +134,7 @@ export const signupValidator: SignupValidator = {
   }
 }
 
-export interface SignupSerializer extends Serializer<SignupinfoRequest>, SignupService {};
+export interface SignupSerializer extends Serializer<SignupinfoRequest>, SignupUseCase {};
 
 export function useSignupSerializer(): SignupSerializer {
   const exceptionsRef = useRef<ExceptionDetail[]>([]);

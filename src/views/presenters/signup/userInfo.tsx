@@ -3,9 +3,9 @@
  */
 import { useCallback, useState } from "react";
 
-import { classNames } from "../../utils";
+import { classNames } from "../../../utils";
 
-import { EventButton } from "../Button";
+import { EventButton } from "../../../components/Button";
 import {
   StyledInput,
   Frame,

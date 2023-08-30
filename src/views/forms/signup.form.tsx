@@ -383,6 +383,7 @@ const EmailVerificationStep: React.FC = () => {
           const res = await signupApi.signupVerify(value);
           return !!res;
         } catch (err: any) {
+          console.error(err);
           return false;
         }
       }}
@@ -535,7 +536,10 @@ const SignupForm: React.FC = () => {
                   await signupApi.signupInfo(reqBody);
                 } catch(err: any) {
                   setLoading(false);
-                  alert(err.response.data.error);
+                  const res = err.response;
+                  if (res.data)
+                    alert(res.data.error);
+                  else console.error(err);
                   return;
                 }
                 setLoading(false);

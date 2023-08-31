@@ -56,7 +56,7 @@ export interface SignupValidator {
   checkValidInterestKeywords: (value: string) => boolean;
 }
 
-export interface SignupUseCase {
+export interface SignupService {
   submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
   submitCompanyRegisterInfo: (company: CompanyRegisterInfo) => void;

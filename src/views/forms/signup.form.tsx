@@ -12,8 +12,9 @@ import {
   CompanySizeEnum,
   CompanyTypeEnum,
   EMPLOY_MAX_LENGTH,
+  interestTags,
 } from "../../policies/company.policy";
-import { interestTags, locations } from "../../policies/global.policy";
+import { locations } from "../../policies/global.policy";
 import {
   EMAIL_MAX_LENGTH,
   PASSWORD_MAX_LENGTH,
@@ -215,11 +216,12 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
             description: null,
-            disabled: true,
+            // disabled: true,
             submitValue: String(formData.CEO)
           }}
           failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          onInput={null}
+          validator={(value: string) => true}
+          onInput={(value: string) => submit({...formData, CEO: value})}
         />,
         <InfoInputField
           key="start"
@@ -229,11 +231,12 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
             type: "text",
             placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
             description: null,
-            disabled: true,
+            // disabled: true,
             submitValue: String(formData.establishDate)
           }}
           failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          onInput={null}
+          validator={(value: string) => true}
+          onInput={(value: string) => submit({...formData, establishDate: value})}
         />,
         <InfoInputField
           key="size"
@@ -537,9 +540,9 @@ const SignupForm: React.FC = () => {
                 } catch(err: any) {
                   setLoading(false);
                   const res = err.response;
-                  if (res.data)
+                  if (res?.data) {
                     alert(res.data.error);
-                  else console.error(err);
+                  } else { console.error(err) }
                   return;
                 }
                 setLoading(false);

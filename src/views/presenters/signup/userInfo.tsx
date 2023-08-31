@@ -42,7 +42,7 @@ interface NumberInputProps {
 }
 
 interface ChoiceInputItem {
-  id: number;
+  id: number | string;
   name: string;
 }
 

@@ -34,7 +34,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       tokenRef: authTokenRef,
-      userIdRef: userIdRef
+      userIdRef: userIdRef,
+      logout() {
+        sessionStorage.removeItem(USER_ID_SESSION_KEY);
+        window.location.replace(routes.login.path);
+      },
     }}>
       {children}
     </AuthContext.Provider>

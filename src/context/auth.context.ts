@@ -5,6 +5,7 @@ import { ID } from "../types/common";
 export interface IAuthContext {
   tokenRef: React.MutableRefObject<string>;
   userIdRef: React.MutableRefObject<ID>;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<IAuthContext | undefined>(undefined);

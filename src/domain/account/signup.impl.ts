@@ -140,7 +140,7 @@ export function useSignupSerializer(): SignupSerializer {
   const exceptionsRef = useRef<ExceptionDetail[]>([]);
   const dataRef = useRef<SignupinfoRequest>(_.cloneDeep(defaultSignupinfoRequest));
 
-  function toObject() {
+  function toEntity() {
     const data = dataRef.current;
     const obj = {
       "AgreeService": data.isAgreeService,
@@ -163,7 +163,7 @@ export function useSignupSerializer(): SignupSerializer {
     return obj;
   }
 
-  function toData() {
+  function getData() {
     return dataRef.current;
   }
 
@@ -241,8 +241,8 @@ export function useSignupSerializer(): SignupSerializer {
   }
 
   return {
-    toObject,
-    toData,
+    toEntity,
+    getData,
     isValid,
     verifyCompany,
     submitAgreement,

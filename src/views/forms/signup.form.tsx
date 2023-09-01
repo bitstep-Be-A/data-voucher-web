@@ -12,8 +12,8 @@ import {
   CompanySizeEnum,
   CompanyTypeEnum,
   EMPLOY_MAX_LENGTH,
-  interestTags,
 } from "../../policies/company.policy";
+import { interestTags } from "../../policies/recommendation.policy";
 import { locations } from "../../policies/global.policy";
 import {
   EMAIL_MAX_LENGTH,
@@ -403,7 +403,7 @@ const SignupForm: React.FC = () => {
   const navigate = useNavigate();
   const { setAccepted, serializer, step, setLoading } = useSignup();
 
-  const [formData, setFormData] = useState<SignupinfoRequest>(serializer.toData());
+  const [formData, setFormData] = useState<SignupinfoRequest>(serializer.getData());
 
   const joinAgreementValue = useMemo<JoinAgreement>(() => {
     const {
@@ -533,7 +533,7 @@ const SignupForm: React.FC = () => {
               serializer.submitCompanyDetailInfo(companyDetailInfoValue);
 
               if (serializer.isValid()) {
-                const reqBody = serializer.toObject();
+                const reqBody = serializer.toEntity();
                 setLoading(true);
                 try {
                   await signupApi.signupInfo(reqBody);

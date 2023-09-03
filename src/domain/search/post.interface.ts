@@ -1,8 +1,9 @@
-import { Location } from "../../policies/global.policy";
-import type { ID } from "../../types/common";
-import {
+import type { Location } from "../../policies/global.policy";
+import type { ID, ToggleType } from "../../types/common";
+import type {
   RecruitEnum,
-  TargetEnterpriseEnum
+  TargetEnterpriseEnum,
+  PartCategoryEnum
 } from "../../policies/recommendation.policy";
 
 export interface PostBase {
@@ -52,11 +53,10 @@ export interface SearchFilter {
   targetEnterprises?: TargetEnterpriseEnum[];
   employeeCount?: number;
   recruitType?: RecruitEnum;
-  interestParts?: string[];
+  interestParts?: PartCategoryEnum[];
   applyStart?: string;
   applyEnd?: string;
-  excludeClosing?: 'Y' | 'N';
-  // budgetRange: [number, number];
+  excludeClosing?: ToggleType;
 }
 
 export interface FilterTag {
@@ -81,6 +81,5 @@ export interface PostService {
   }) => PostSummary[];
   showDetail: (postId: ID) => PostDetail;
   saveBookmark: (postId: ID, userId: ID) => void;
-  getFilterTags: (filter: SearchFilter) => FilterTag[];
   removeFilter: (tagId: number) => void;
 }

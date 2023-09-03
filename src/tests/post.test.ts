@@ -1,16 +1,25 @@
 import {
   PostSummaryModel,
-  postSummaryManager
-} from "../domain/account/post.impl";
-import { FilterTag, SearchFilter } from "../domain/account/post.interface";
+  postSummaryManager,
+  PostDetailModel
+} from "../domain/search/post.impl";
+import {
+  FilterTag,
+  SearchFilter,
+  PostDetail,
+  PostSummary
+} from "../domain/search/post.interface";
 import { locations } from "../policies/global.policy";
-import { TargetEnterpriseEnum } from "../policies/recommendation.policy";
+import { PartCategoryEnum, TargetEnterpriseEnum } from "../policies/recommendation.policy";
 
 describe('공고검색', () => {
-  let postSummaryModels: PostSummaryModel[];
+  let postSummaryModels: PostSummary[];
+  let postDetailModel: PostDetail;
+
   beforeEach(() => {
     postSummaryModels = postSummaryEntities.map((v) => new PostSummaryModel(v));
-  })
+    postDetailModel = new PostDetailModel(postDetailEntity);
+  });
 
   it('필터의 key와 필터 태그의 filterKey가 동일한지 여부를 검토합니다.', () => {
     const filter: SearchFilter = {
@@ -21,13 +30,13 @@ describe('공고검색', () => {
         TargetEnterpriseEnum.SE
       ],
       interestParts: [
-        "인력"
+        PartCategoryEnum.HR
       ],
       employeeCount: undefined,
       recruitType: undefined,
       applyStart: "2023-01-01",
       applyEnd: "2023-12-31",
-      excludeClosing: "N"
+      excludeClosing: "N",
     }
     const filterTags: FilterTag[] = [
       {id: '1', name: 'name1', filterKey: 'locations'},
@@ -202,3 +211,47 @@ const postSummaryEntities = [
     "views": 0
   }
 ];
+
+const postDetailEntity = {
+  "PostID": 1,
+  "apply_end": "2023-06-09",
+  "apply_start": "2023-05-26",
+  "attachments": [
+      {
+          "pfi_filename": "첨부파일_테스트_3aee00.txt",
+          "pfi_originname": "첨부파일_테스트.txt"
+      },
+      {
+          "pfi_filename": "첨부파일_테스트_6e13bf.txt",
+          "pfi_originname": "첨부파일_테스트2.txt"
+      }
+  ],
+  "budget": "1인당 월 250만원 /최대 2명",
+  "days_left": 84,
+  "department": "세종특별자치시",
+  "notice": "[세종] 전문인력 지원사업(신규 및 재심사)(2023년 2차 (예비)사회적기업 지정 및 재정지원 공고)",
+  "object": "국내전문인력",
+  "organization": "직접수행",
+  "overview": "「세종특별자치시 사회적경제 육성 지원에 관한 조례」및「고용노동부 사회적기업 재정지원사업 지침」에 따라 2023년도 (예비)사회적기업 지정 및 재정지원사업(일자리창출, 전문인력, 사업개발비)을 다음과 같이 공고합니다.☞ 세종시 소재 유급근로자 1명 이상 고용한 고용노동부 인증 사회적기업 및 예비사회적기업(지역형, 부처형)☞ 1인당 월 250만원 한도 내 인건비 일부를 지원(인증사회적기업 기업당 최대 2명, 예비사회적기업 기업당 최대 1명)",
+  "part": "인력",
+  "post_date": "2023-08-09"
+};
+
+const searchFilterEntity = {
+  "MemberNo": 66,
+  "department": [
+    "세종특별자치시"
+  ],
+  "company": [
+    "사회적기업"
+  ],
+  "supportType": "일반 지원",
+  "part": [
+    "인력"
+  ],
+  "postDateYN": "Y",
+  "startDate": "2023-01-01",
+  "endDate": "2023-12-31",
+  "registerClosingYN": "N",
+  "bookmarkPageYN": "N"
+}

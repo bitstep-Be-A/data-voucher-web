@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { PostService } from "../domain/account/post.interface";
+import type { PostService } from "../domain/search/post.interface";
 
 export const PostContext = createContext<PostService | undefined>(undefined);
 

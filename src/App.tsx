@@ -8,6 +8,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import { routes } from './routes/path';
 import { USER_ID_SESSION_KEY } from './constants/auth.constant';
 import { AuthContext } from './context/auth.context';
+import { ID } from './types/common';
 
 import LoginPage from './pages/Login';
 import NotFound from './pages/NotFound';
@@ -16,6 +17,7 @@ import SearchPage from './pages/Search';
 import MyPage from './pages/My';
 import DocsPage from './pages/Docs';
 import BookmarkPage from './pages/Bookmark';
+import HomePage from './pages/Home';
 
 interface AuthProviderProps { children?: React.ReactNode; }
 
@@ -39,6 +41,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         sessionStorage.removeItem(USER_ID_SESSION_KEY);
         window.location.replace(routes.login.path);
       },
+      login(userId: ID) {
+        sessionStorage.setItem(USER_ID_SESSION_KEY, JSON.stringify(userId));
+        window.location.replace(routes.home.path);
+      }
     }}>
       {children}
     </AuthContext.Provider>
@@ -50,6 +56,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path={routes.home.path} element={<HomePage/>}/>
           <Route path='/' element={<PrivateRoute/>}>
             <Route path={routes.search.path} element={<SearchPage/>}/>
             <Route path={routes.my.path} element={<MyPage/>}/>

@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { routes } from "../../routes/path";
+import { LoginRequest, LoginService } from "../../domain/account/login.interface";
+import { defaultLoginRequest } from "../../domain/account/login.impl";
 
 import { EventButton } from "../../components/Button";
 import { UnderlinedTextInput, BlockedTextInput } from "../../components/Input";
@@ -117,15 +120,19 @@ export const FindCredentialIdForm: React.FC = () => {
 // Login
 interface LoginInputFieldProps {
   labelName: string;
+  updateValue: (value: string) => void;
+  value: string;
 }
 
 const LoginInputField: React.FC<LoginInputFieldProps> = ({
   labelName,
+  updateValue,
+  value
 }) => {
   return (
     <div className="w-full flex justify-between items-center space-x-4">
       <label className="text-sm">{labelName}</label>
-      <BlockedTextInput width={208} />
+      <BlockedTextInput width={208} type={labelName === "비밀번호" ? "password" : "text"} value={value} onChange={(e) => updateValue(e.target.value)} />
     </div>
   )
 }
@@ -150,14 +157,21 @@ const HelpCredentialInfo: React.FC = () => {
   )
 }
 
-export const LoginForm: React.FC = () => {
+export const LoginForm: React.FC<LoginService> = ({
+  login
+}) => {
+  const [formData, setFormData] = useState<LoginRequest>(defaultLoginRequest);
+
   return (
-    <form className="w-[286px] flex flex-col items-end">
+    <form className="w-[286px] flex flex-col items-end" onSubmit={(e) => {
+      e.preventDefault();
+      login(formData);
+    }}>
       <div className="mb-6">
         <fieldset>
           <div className="space-y-4 my-2 py-2">
-            <LoginInputField labelName="아이디" />
-            <LoginInputField labelName="비밀번호" />
+            <LoginInputField labelName="아이디" updateValue={(v) => setFormData({...formData, emailId: v})} value={formData.emailId} />
+            <LoginInputField labelName="비밀번호" updateValue={(v) => setFormData({...formData, password: v})} value={formData.password} />
           </div>
         </fieldset>
         <HelpCredentialInfo />
@@ -168,9 +182,10 @@ export const LoginForm: React.FC = () => {
           borderRadius: "4px",
         }}
         className="text-sm"
+        type={"submit"}
       >
         로그인
       </EventButton>
     </form>
-  )
+  );
 }

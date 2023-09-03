@@ -27,6 +27,7 @@ import { USER_ID_SESSION_KEY } from "../../constants/auth.constant";
 import { AgreementCheckField } from "../presenters/signup/joinAgreement";
 import { InfoInputField, InfoInputFieldset } from "../presenters/signup/userInfo";
 import { EmailVerification } from "../presenters/signup/emailVerification";
+import { useAuth } from "../../context/auth.context";
 
 interface StepSectionProps<T> {
   submit: (data: T) => void;
@@ -379,7 +380,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
 }
 
 const EmailVerificationStep: React.FC = () => {
-  const navigate = useNavigate();
+  const auth = useAuth();
   return (
     <EmailVerification duration={300} failMessage="인증에 실패하였습니다." verify={async (value: string) => {
         try {
@@ -392,8 +393,7 @@ const EmailVerificationStep: React.FC = () => {
       }}
       complete={async () => {
         const {userId} = await signupApi.signupComplete();
-        sessionStorage.setItem(USER_ID_SESSION_KEY, JSON.stringify(userId));
-        navigate(routes.search.path);
+        auth.login(userId);
       }}
     />
   );

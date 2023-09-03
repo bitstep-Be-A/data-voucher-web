@@ -5,10 +5,10 @@ import type {
   PostDetail,
   SearchFilter,
   PostService
-} from "../../domain/account/post.interface";
+} from "../../domain/search/post.interface";
 
 interface PostListProps {
-  filters: SearchFilter[];
+  filter: SearchFilter;
 }
 
 export const PostList: React.FC<PostListProps> = () => {

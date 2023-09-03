@@ -1,16 +1,47 @@
-import { useQuery } from "@tanstack/react-query";
-
 import type {
   PostSummary,
-  PostDetail,
-  SearchFilter,
-  PostService,
   PostSummaryManager,
-  FilterTag
+  PostDetail,
+  Attachment
 } from "./post.interface";
 import { ID } from "../../types/common";
 import { locations } from "../../policies/global.policy";
 import * as recommendation from "../../policies/recommendation.policy";
+
+export class PostDetailModel implements PostDetail {
+  public postId: ID;
+  public logo?: string;
+  public notice: string;
+  public daysLeft: number;
+  public organization: string;
+  public part: string;
+  public purpose?: string | undefined;
+  public department: string;
+  public postDate: string | null;
+  public applyStart: string;
+  public applyEnd: string;
+  public connectWith?: string | undefined;
+  public standardPriceMethod?: string | undefined;
+  public overview: string;
+  public budget?: string | undefined;
+  public attachments: Attachment[];
+
+  constructor(entity: any) {
+    this.postId = entity["PostID"];
+    this.applyEnd = entity["apply_end"];
+    this.applyStart = entity["apply_start"];
+    this.attachments = entity["attachments"];
+    this.budget = entity["budget"];
+    this.daysLeft = entity["days_left"];
+    this.department = entity["department"];
+    this.notice = entity["notice"];
+    this.purpose = entity["object"];
+    this.organization = entity["organization"];
+    this.overview = entity["overview"];
+    this.part = entity["part"];
+    this.postDate = entity["post_date"];
+  }
+}
 
 export const postSummaryManager: PostSummaryManager = {
   organizeKeywords(keywords) {
@@ -110,27 +141,6 @@ export class PostSummaryModel implements PostSummary {
   }
 
   get searchTags(): string[] {
-    return this._searchTags.map((v) => v.toUpperCase().replace(/(\s*)/g, ""));
+    return this._searchTags;
   }
 }
-
-// export const usePostService = (): PostService => {
-
-//   return {
-//     search(filter, options) {
-      
-//     },
-//     showDetail(postId) {
-      
-//     },
-//     saveBookmark(postId, userId) {
-      
-//     },
-//     getFilterTags(filter) {
-      
-//     },
-//     removeFilter(tagId) {
-      
-//     },
-//   }
-// }

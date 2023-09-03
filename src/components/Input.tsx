@@ -1,10 +1,7 @@
 import { classNames } from "../utils";
 
-export interface InputAttributeProps {
-  placeholder?: string;
+export interface InputAttributeProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   width?: number | string;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 export interface UnderlinedTextInputProps extends InputAttributeProps { };
@@ -31,12 +28,13 @@ export const UnderlinedTextInput: React.FC<UnderlinedTextInputProps> = ({
 
 export interface BlockedTextInputProps extends InputAttributeProps { };
 
-export const BlockedTextInput: React.FC<BlockedTextInputProps> = ({
-  placeholder,
-  width,
-  className,
-  style
-}) => {
+export const BlockedTextInput: React.FC<BlockedTextInputProps> = (props) => {
+  const {
+    placeholder,
+    width,
+    className,
+    style
+  } = props;
   return (
     <input type="text" placeholder={placeholder}
       className={classNames(
@@ -47,6 +45,7 @@ export const BlockedTextInput: React.FC<BlockedTextInputProps> = ({
         width: width,
         ...style
       }}
+      {...props}
     />
   );
 }

@@ -1,6 +1,7 @@
 import { Axios } from "./axios";
 
 import { ID } from "../types/common";
+import { LoginResponse } from "../domain/account/login.interface";
 
 export const signupApi = {
   signupInfo: async (data: object) => {
@@ -15,5 +16,12 @@ export const signupApi = {
     const response = await Axios.post('/signup/complete');
     const data = response.data;
     return {userId: data['MemberNo'] as ID}
+  }
+}
+
+export const loginApi = {
+  login: async (data: object): Promise<LoginResponse> => {
+    const response = await Axios.post('/로그인/login', data);
+    return {userId: response.data['MemberNo'] as ID};
   }
 }

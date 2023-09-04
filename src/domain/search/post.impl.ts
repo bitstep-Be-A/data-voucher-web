@@ -1,12 +1,83 @@
-import type {
-  PostSummary,
-  PostSummaryManager,
-  PostDetail,
-  Attachment
+import { atom, useRecoilState } from "recoil";
+
+import {
+  type PostSummary,
+  type PostSummaryManager,
+  type PostDetail,
+  type Attachment,
+  type SearchFilter,
+  SearchFilterOpt,
 } from "./post.interface";
 import { ID } from "../../types/common";
 import { locations } from "../../policies/global.policy";
 import * as recommendation from "../../policies/recommendation.policy";
+import { POST_SEARCH_LIMIT } from "../../policies/search.policy";
+
+export const defaultSearchFilter: SearchFilter = {
+  locations: [],
+  targetEnterprises: [],
+  recruitType: undefined,
+  interestParts: [],
+  applyStart: undefined,
+  applyEnd: undefined,
+  excludeClosing: 'Y',
+  bookmarkOnly: 'N'
+}
+
+const searchFilterState = atom<SearchFilter>({
+  key: "search/post/SearchFilter",
+  default: defaultSearchFilter
+});
+
+export const useSearchFilter = () => {
+  const [searchFilter, setSearchFilter] = useRecoilState(searchFilterState);
+  return {
+    searchFilter,
+    setSearchFilter
+  }
+}
+
+const searchFilterOptState = atom<SearchFilterOpt>({
+  key: "search/post/SearchFilterOpt",
+  default: {
+    keyword: "",
+    limit: POST_SEARCH_LIMIT,
+    offset: 0
+  }
+});
+
+export const useSearchFilterOpt = () => {
+  const [searchFilterOpt, setSearchFilterOpt] = useRecoilState(searchFilterOptState);
+  return {
+    searchFilterOpt,
+    setSearchFilterOpt
+  }
+}
+
+export class SearchFilterSerializer {
+  private filter: SearchFilter;
+  private userId: ID;
+
+  constructor(filter: SearchFilter, userId: ID) {
+    this.filter = filter;
+    this.userId = userId;
+  }
+
+  toEntity() {
+    return {
+      "MemberNo": this.userId,
+      "department": this.filter.locations.map((v) => v.sidoName),
+      "company": this.filter.targetEnterprises,
+      "supportType": this.filter.recruitType ?? "",
+      "part": this.filter.interestParts,
+      "postDateYN": "N",
+      "startDate": this.filter.applyStart,
+      "endDate": this.filter.applyEnd,
+      "registerClosingYN": this.filter.excludeClosing,
+      "bookmarkPageYN": this.filter.bookmarkOnly
+    }
+  }
+}
 
 export class PostDetailModel implements PostDetail {
   public postId: ID;
@@ -56,10 +127,12 @@ export const postSummaryManager: PostSummaryManager = {
     const locationNames = this.organizeKeywords(locationKeywords);
     return searchTags.filter((v) => !locationNames.includes(v));
   },
+  isKeywordIncludingNotice(keyword, notice) {
+    const organizedKeyword = this.organizeKeywords([keyword])[0];
+    const organizedNotice = this.organizeKeywords([notice.replace(/[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F\uA960-\uA97Fa-zA-Z0-9\s]/g, '')])[0];
+    return organizedNotice.includes(organizedKeyword);
+  },
   removeIncludesNoticeInfo(searchTags, notice) {
-    let filteredNotice = notice.replace(/[^\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F\uA960-\uA97Fa-zA-Z0-9\s]/g, '');
-    filteredNotice = filteredNotice.toUpperCase().replace(/\s/g, '');
-
     const _stack: string[] = [];
     const searchTagStatus: {[key: number]: {
       value: string;
@@ -72,7 +145,7 @@ export const postSummaryManager: PostSummaryManager = {
       }
     });
     searchTags.forEach((v, i) => {
-      if (filteredNotice.includes(v)) {
+      if (this.isKeywordIncludingNotice(v, notice)) {
         _stack.push(v);
         searchTagStatus[i].isActive = false;
       }

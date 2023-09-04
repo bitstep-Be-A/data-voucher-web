@@ -27,6 +27,7 @@ export interface PostSummaryManager {
   removeIncludesNoticeInfo: (searchTags: string[], notice: string) => string[];
   recommendationOrderedFirst: (searchTags: string[]) => string[];
   selectTags: (searchTags: string[]) => string[];  // n개씩만 가져오기
+  isKeywordIncludingNotice: (keyword: string, notice: string) => boolean;
 }
 
 export interface PostDetail extends PostBase {
@@ -49,14 +50,15 @@ export interface Attachment {
 }
 
 export interface SearchFilter {
-  locations?: Location[];
-  targetEnterprises?: TargetEnterpriseEnum[];
+  locations: Location[];
+  targetEnterprises: TargetEnterpriseEnum[];
+  excludeClosing: ToggleType;
+  bookmarkOnly: ToggleType;
+  interestParts: PartCategoryEnum[];
   employeeCount?: number;
   recruitType?: RecruitEnum;
-  interestParts?: PartCategoryEnum[];
   applyStart?: string;
   applyEnd?: string;
-  excludeClosing?: ToggleType;
 }
 
 export interface FilterTag {
@@ -73,13 +75,18 @@ export interface FilterTag {
     'excludeClosing';
 }
 
+export interface SearchFilterOpt {
+  keyword: string;
+  limit: number;
+  offset: number;
+}
+
 export interface PostService {
   search: (filter: SearchFilter, options: {
     keyword: string;
     limit: number;
     offset: number;
-  }) => PostSummary[];
-  showDetail: (postId: ID) => PostDetail;
-  saveBookmark: (postId: ID, userId: ID) => void;
-  removeFilter: (tagId: number) => void;
+  }) => Promise<PostSummary[] | void>;
+  showDetail: (postId: ID) => Promise<PostDetail | void>;
+  saveBookmark: (userId: ID, postId: ID) => void;
 }

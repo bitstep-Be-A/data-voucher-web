@@ -21,6 +21,37 @@ describe('공고검색', () => {
     postDetailModel = new PostDetailModel(postDetailEntity);
   });
 
+  it('공고 제목에 검색 키워드에 해당하는 단어가 있는지 검토합니다.', () => {
+    const notice = "[세종] 전문인력 지원사업(신규 및 재심사)(2023년 2차 (예비)신성장산업(ICTㆍ바이오)";
+    const includedKeywords = [
+      "세종",
+      "전문인력",
+      "지원사업",
+      "신규",
+      "재심사",
+      "2023",
+      "예비",
+      "성장",
+      "사업",
+      "산업",
+      "ICt",
+      "바이오"
+    ];
+    const unIncludedKeywords = [
+      "충남",
+      "2022",
+      "it",
+      "3차",
+      "1차",
+    ];
+    includedKeywords.forEach((keyword) => {
+      expect(postSummaryManager.isKeywordIncludingNotice(keyword, notice)).toBe(true);
+    });
+    unIncludedKeywords.forEach((keyword) => {
+      expect(postSummaryManager.isKeywordIncludingNotice(keyword, notice)).toBe(false);
+    })
+  });
+
   it('필터의 key와 필터 태그의 filterKey가 동일한지 여부를 검토합니다.', () => {
     const filter: SearchFilter = {
       locations: [
@@ -37,6 +68,7 @@ describe('공고검색', () => {
       applyStart: "2023-01-01",
       applyEnd: "2023-12-31",
       excludeClosing: "N",
+      bookmarkOnly: "N"
     }
     const filterTags: FilterTag[] = [
       {id: '1', name: 'name1', filterKey: 'locations'},

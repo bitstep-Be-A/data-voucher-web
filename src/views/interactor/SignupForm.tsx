@@ -22,7 +22,6 @@ import {
   PHONE_NUMBER_MAX_LENGTH
 } from "../../policies/signup.policy";
 import { useContainer } from "../../context/base.context";
-import { USER_ID_SESSION_KEY } from "../../constants/auth.constant";
 
 import { AgreementCheckField } from "../presenters/signup/joinAgreement";
 import { InfoInputField, InfoInputFieldset } from "../presenters/signup/userInfo";

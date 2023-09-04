@@ -5,7 +5,7 @@ import {
   LoginForm,
   FindCredentialIdForm,
   FindCredentialPwForm
-} from "../views/forms/login.form";
+} from "../views/interactor/LoginForm";
 import { CenteredContainer } from "../views/containers/base.container";
 import type { LoginRequest } from "../domain/account/login.interface";
 import { useAuth } from "../context/auth.context";

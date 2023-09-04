@@ -1,5 +1,5 @@
 import SignupContainer from "../views/containers/signup.container";
-import SignupForm from "../views/forms/signup.form";
+import SignupForm from "../views/interactor/SignupForm";
 
 export default function SignupPage() {
   return (

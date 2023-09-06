@@ -391,8 +391,8 @@ const EmailVerificationStep: React.FC = () => {
         }
       }}
       complete={async () => {
-        const {userId} = await signupApi.signupComplete();
-        auth.login(userId);
+        await signupApi.signupComplete();
+        window.location.replace(routes.login.path);
       }}
     />
   );

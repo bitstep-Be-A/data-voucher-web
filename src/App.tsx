@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       },
       login(userId: ID) {
         sessionStorage.setItem(USER_ID_SESSION_KEY, JSON.stringify(userId));
-        // window.location.replace(routes.home.path);
+        window.location.replace(routes.home.path);
       }
     }}>
       {children}

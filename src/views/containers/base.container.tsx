@@ -162,6 +162,16 @@ const TopNavbar = () => {
                 isActive={
                   routes.my.re.test(pathname)
                 }
+                isLast={false}
+              />
+            )
+          },
+          {
+            onClick: () => auth.logout(),
+            item: (
+              <TopNavItem
+                text={"로그아웃"}
+                isActive={false}
                 isLast={true}
               />
             )

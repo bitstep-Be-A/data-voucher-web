@@ -23,7 +23,9 @@ const PostServiceProvider = ({ children }: {
         let payload;
         try {
           payload = await postApi.searchList(requestData);
-        } catch { logout(); return }
+        // } catch { logout(); return }
+        } catch(e) { console.log(e) }
+
         let postSummaries: PostSummary[] = payload.documents.map((v: any) => new PostSummaryModel(v));
         
         if (!!options.keyword) {

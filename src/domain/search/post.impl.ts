@@ -1,11 +1,11 @@
 import { atom, useRecoilState } from "recoil";
 
 import {
-  type PostSummary,
-  type PostSummaryManager,
-  type PostDetail,
-  type Attachment,
-  type SearchFilter,
+  PostSummary,
+  PostSummaryManager,
+  PostDetail,
+  Attachment,
+  SearchFilter,
   SearchFilterOpt,
 } from "./post.interface";
 import { ID } from "../../types/common";
@@ -65,7 +65,7 @@ export class SearchFilterSerializer {
 
   toEntity() {
     return {
-      "MemberNo": this.userId,
+      "MemberNo": Number(this.userId),
       "department": this.filter.locations.map((v) => v.sidoName),
       "company": this.filter.targetEnterprises,
       "supportType": this.filter.recruitType ?? "",
@@ -83,7 +83,7 @@ export class PostDetailModel implements PostDetail {
   public postId: ID;
   public logo?: string;
   public notice: string;
-  public daysLeft: number;
+  public dDay: string;
   public organization: string;
   public part: string;
   public purpose?: string | undefined;
@@ -103,7 +103,14 @@ export class PostDetailModel implements PostDetail {
     this.applyStart = entity["apply_start"];
     this.attachments = entity["attachments"];
     this.budget = entity["budget"];
-    this.daysLeft = entity["days_left"];
+    const daysLeft = entity["days_left"];
+    if (daysLeft === 0) {
+      this.dDay = "D-day"
+    } else if (daysLeft < 0) {
+      this.dDay = `D${daysLeft}`;
+    } else {
+      this.dDay = `접수마감`;
+    }
     this.department = entity["department"];
     this.notice = entity["notice"];
     this.purpose = entity["object"];
@@ -191,17 +198,25 @@ export class PostSummaryModel implements PostSummary {
   public postId: ID;
   public logo?: string;
   public notice: string;
-  public daysLeft: number;
+  public dDay: string;
   public organization: string;
   public projectAmount: string;
   public readCount: number;
   private _searchTags: string[];
+  public isBookmarked: boolean;
 
   constructor(entity: any) {
     this.postId = entity['PostID'];
     this.logo = undefined;
     this.notice = entity['notice'];
-    this.daysLeft = entity['days_left'];
+    const daysLeft = entity["apply_end"];
+    if (daysLeft === 0) {
+      this.dDay = "D-day"
+    } else if (daysLeft < 0) {
+      this.dDay = `D${daysLeft}`;
+    } else {
+      this.dDay = `접수마감`;
+    }
     this.organization = entity['organization'];
     this.projectAmount = entity['budget'];
     this.readCount = entity['views'];
@@ -211,6 +226,13 @@ export class PostSummaryModel implements PostSummary {
     this._searchTags = postSummaryManager.removeLocationsFromTags(this._searchTags);
     this._searchTags = postSummaryManager.recommendationOrderedFirst(this._searchTags);
     this._searchTags = postSummaryManager.selectTags(this._searchTags);
+
+    const bookmarkYN = entity["bookmarkYN"];
+    if (bookmarkYN === "Y") {
+      this.isBookmarked = true;
+    } else if (bookmarkYN === "N") {
+      this.isBookmarked = false;
+    } else { throw new Error("bookmark에는 Y, N만 허용됩니다.") }
   }
 
   get searchTags(): string[] {

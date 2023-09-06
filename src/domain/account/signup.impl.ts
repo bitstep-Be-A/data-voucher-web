@@ -5,7 +5,7 @@ import type { ExceptionDetail } from "../../utils/exceptions";
 import {
   Serializer
 } from "../../utils/serializer";
-import type {
+import {
   JoinAgreement,
   MyInfo,
   SignupService,

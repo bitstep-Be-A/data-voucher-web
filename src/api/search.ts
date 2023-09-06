@@ -11,11 +11,18 @@ export const postApi = {
     const response = await Axios.get(`/공고상세보기/post/lists/${postId}`);
     return response.data;
   },
-  insertBookmark: async (userId: ID, postId: ID) => {
-    const response = await Axios.post(`/즐겨찾기추가/post/bookmark/insert`, {
+  insertBookmark: (userId: ID, postId: ID) => {
+    Axios.post(`/즐겨찾기추가/post/bookmark/insert`, {
       "MemberNo": userId,
       "PostID": postId
     });
-    return response.data;
+    return null;
+  },
+  deleteBookmark: (userId: ID, postId: ID) => {
+    Axios.delete(`/즐겨찾기삭제/post/bookmark/delete`, {data: {
+      "MemberNo": userId,
+      "PostID": postId
+    }});
+    return null;
   }
 }

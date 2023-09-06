@@ -10,7 +10,7 @@ export interface PostBase {
   postId: ID;
   logo?: string;
   notice: string;
-  daysLeft: number;
+  dDay: string;
   organization: string;
 }
 
@@ -18,6 +18,7 @@ export interface PostSummary extends PostBase {
   readCount: number;
   searchTags: string[];
   projectAmount: string;
+  isBookmarked: boolean;
 }
 
 export interface PostSummaryManager {
@@ -45,7 +46,7 @@ export interface PostDetail extends PostBase {
 }
 
 export interface Attachment {
-  pfi_filname: string;
+  pfi_filename: string;
   pfi_originname: string;
 }
 
@@ -89,4 +90,5 @@ export interface PostService {
   }) => Promise<PostSummary[] | void>;
   showDetail: (postId: ID) => Promise<PostDetail | void>;
   saveBookmark: (userId: ID, postId: ID) => void;
+  removeBookmark: (userId: ID, postId: ID) => void;
 }

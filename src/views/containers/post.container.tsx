@@ -43,6 +43,11 @@ const PostServiceProvider = ({ children }: {
         try {
           postApi.insertBookmark(userId, postId);
         } catch { logout(); }
+      },
+      removeBookmark(userId, postId) {
+        try {
+          postApi.deleteBookmark(userId, postId);
+        } catch { logout(); }
       }
     }}>
       {children}

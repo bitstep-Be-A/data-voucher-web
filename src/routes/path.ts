@@ -1,6 +1,7 @@
 export interface RouteExp {
   path: string;
   re: RegExp;
+  detail?: (id: string) => string;
 }
 
 interface PublicRoutesType {
@@ -44,7 +45,7 @@ interface AuthPermissionRoutesType {
 export const authPermissionRoutes: AuthPermissionRoutesType = {
   search: {
     path: '/search',
-    re: new RegExp('^/search')
+    re: new RegExp('^/search'),
   },
   bookmark: {
     path: '/bookmark',

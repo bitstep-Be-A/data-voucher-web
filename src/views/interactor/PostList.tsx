@@ -51,8 +51,14 @@ const PostList: React.FC = () => {
   }, [searchParams, showDetail]);
 
   useEffect(() => {
-    if (mainScreenRef.current) {
-      mainScreenRef.current.style.backgroundColor = "rgb(244 244 245)";
+    if (!mainScreenRef.current) return;
+
+    mainScreenRef.current.style.backgroundColor = "rgb(244 244 245)";
+
+    return () => {
+      if (mainScreenRef.current) {
+        mainScreenRef.current.style.backgroundColor = "";
+      }
     }
   }, []);
 
@@ -60,7 +66,7 @@ const PostList: React.FC = () => {
     <div className="w-full h-full">
       <SearchBar
         clickFilter={() => {
-          setSearchFilterModal(true);        
+          setSearchFilterModal(true);
         }}
         writeDown={_.debounce((value: string) => {
           setSearchFilterOpt({

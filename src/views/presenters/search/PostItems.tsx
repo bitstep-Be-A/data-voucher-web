@@ -53,7 +53,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
               }
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
-              <span style={{backgroundColor: "#E9FFE9", color: "#009A2B"}} className="grow">{content.dDay}</span>
+              <span style={{backgroundColor: "#E9FFE9", color: "#009A2B"}} className="block">{content.dDay}</span>
               <p className="truncate">{content.notice}</p>
             </div>
             <div className="w-full flex flex-row items-center justify-between">

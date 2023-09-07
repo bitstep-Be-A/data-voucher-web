@@ -7,6 +7,7 @@ import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
+import { useContainer } from "../../context/base.context";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
@@ -31,6 +32,9 @@ const PostList: React.FC = () => {
   const {searchFilter, setSearchFilter} = useSearchFilter();
   const {searchFilterOpt, setSearchFilterOpt} = useSearchFilterOpt();
 
+  const {setSearchFilterModal} = useSearchFilterModal();
+  const {mainScreenRef} = useContainer();
+
   useEffect(() => {
     search(searchFilter, searchFilterOpt).then(
       (list => setPostSummaries(list!))
@@ -46,10 +50,14 @@ const PostList: React.FC = () => {
       .catch(() => setPostDetail(null));
   }, [searchParams, showDetail]);
 
-  const {setSearchFilterModal} = useSearchFilterModal();
+  useEffect(() => {
+    if (mainScreenRef.current) {
+      mainScreenRef.current.style.backgroundColor = "rgb(244 244 245)";
+    }
+  }, []);
 
   return (
-    <div className="w-full h-full bg-zinc-100 overflow-hidden">
+    <div className="w-full h-full">
       <SearchBar
         clickFilter={() => {
           setSearchFilterModal(true);        

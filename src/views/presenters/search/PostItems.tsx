@@ -40,7 +40,10 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
                   <span>조회수 {content.readCount}</span>
                 </Noti>
               </div>
-              <BookmarkIcon className="w-6 h-6"/>
+              <BookmarkIcon className="w-6 h-6" style={{
+                backgroundColor: content.isBookmarked ? "#FFE500" : "transparent",
+                border: content.isBookmarked ? "none" : "solid"
+              }}/>
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
               <span style={{backgroundColor: "#E9FFE9"}}>{content.dDay}</span>

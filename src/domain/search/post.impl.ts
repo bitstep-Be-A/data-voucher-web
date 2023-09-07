@@ -232,7 +232,7 @@ export class PostSummaryModel implements PostSummary {
       this.isBookmarked = true;
     } else if (bookmarkYN === "N") {
       this.isBookmarked = false;
-    } else { throw new Error("bookmark에는 Y, N만 허용됩니다.") }
+    } else { this.isBookmarked = false }
   }
 
   get searchTags(): string[] {

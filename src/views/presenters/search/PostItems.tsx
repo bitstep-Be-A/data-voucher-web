@@ -19,6 +19,7 @@ interface PostItemsUx {
 const Noti = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 4px;
   font-size: 12px;
   color: #6C6C6C;
@@ -26,18 +27,18 @@ const Noti = styled.div`
 
 export const PostItems: React.FC<PostItemsUx> = (ux) => {
   return (
-    <ul className="w-full h-full flex flex-col items-center">
+    <ul className="w-full h-full flex flex-col items-center overflow-y-scroll">
       {
         ux.postContents.map((content) => (
-          <li key={content.postId} className="lg:w-[465px] max-w-[380px] w-full px-3 py-3">
+          <li key={content.postId} className="lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white">
             <div className="w-full flex flex-row items-center justify-between">
               <div className="flex flex-row items-center space-x-2">
                 <Noti>
-                  <PinDropIcon className="w-5 h-5" />
+                  <PinDropIcon className="w-4 h-4" />
                   <span>{content.organization}</span>
                 </Noti>
                 <Noti>
-                  <VisibilityIcon className="w-5 h-5" />
+                  <VisibilityIcon className="w-4 h-4" />
                   <span>조회수 {content.readCount}</span>
                 </Noti>
               </div>
@@ -52,14 +53,14 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
               }
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
-              <span style={{backgroundColor: "#E9FFE9"}}>{content.dDay}</span>
+              <span style={{backgroundColor: "#E9FFE9", color: "#009A2B"}} className="grow">{content.dDay}</span>
               <p className="truncate">{content.notice}</p>
             </div>
             <div className="w-full flex flex-row items-center justify-between">
               <div className="flex flex-row items-center lg:space-x-2 space-x-1 text-xs">
                 {
                   content.searchTags.map((tag, index) => (
-                    <div className="border rounded-md px-4 py-2" key={index}>#{tag}</div>
+                    <span key={index}>#{tag}</span>
                   ))
                 }
               </div>

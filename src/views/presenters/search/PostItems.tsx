@@ -34,11 +34,17 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
             <div className="w-full flex flex-row items-center justify-between">
               <div className="flex flex-row items-center space-x-2">
                 <Noti>
-                  <PinDropIcon className="w-4 h-4" />
+                  <PinDropIcon style={{
+                    width: 16,
+                    height: 16
+                  }} />
                   <span>{content.organization}</span>
                 </Noti>
                 <Noti>
-                  <VisibilityIcon className="w-4 h-4" />
+                  <VisibilityIcon style={{
+                    width: 16,
+                    height: 16
+                  }} />
                   <span>조회수 {content.readCount}</span>
                 </Noti>
               </div>

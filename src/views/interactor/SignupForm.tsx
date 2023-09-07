@@ -379,7 +379,7 @@ const CompanyDetailInfoStep: React.FC<StepSectionProps<CompanyDetailInfo>> = ({
 }
 
 const EmailVerificationStep: React.FC = () => {
-  const auth = useAuth();
+  // const auth = useAuth();
   return (
     <EmailVerification duration={300} failMessage="인증에 실패하였습니다." verify={async (value: string) => {
         try {

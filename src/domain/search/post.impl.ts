@@ -65,7 +65,7 @@ export class SearchFilterSerializer {
 
   toEntity() {
     return {
-      "MemberNo": Number(this.userId),
+      "MemberNo": this.userId,
       "department": this.filter.locations.map((v) => v.sidoName),
       "company": this.filter.targetEnterprises,
       "supportType": this.filter.recruitType ?? "",

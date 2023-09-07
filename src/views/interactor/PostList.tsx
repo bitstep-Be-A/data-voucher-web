@@ -16,7 +16,7 @@ import { PostItemSlot } from "../presenters/search/PostItemSlot";
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { userIdRef } = useAuth();
+  const { userId } = useAuth();
 
   const [postSummaries, setPostSummaries] = useState<PostSummary[]>([]);
   const [postDetail, setPostDetail] = useState<PostDetail | null>(null);
@@ -64,10 +64,10 @@ const PostList: React.FC = () => {
       <PostItems
         postContents={postSummaries}
         addBookmark={(postId) => {
-          saveBookmark(userIdRef.current, postId);
+          saveBookmark(userId, postId);
         }}
         cancelBookmark={(postId) => {
-          removeBookmark(userIdRef.current, postId);
+          removeBookmark(userId, postId);
         }}
         clickItem={(postId) => {
           searchParams.set("slot", String(postId));

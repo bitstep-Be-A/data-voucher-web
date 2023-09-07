@@ -122,7 +122,7 @@ const TopNavbar = () => {
   const { pathname } = useLocation();
   const auth = useAuth();
 
-  const isLogined = useMemo(() => !!auth.userIdRef.current, [auth]);
+  const isLogined = useMemo(() => !!auth.userId, [auth]);
 
   return (
     <div className="w-full border-b border-gray-400 py-4">

@@ -1,6 +1,6 @@
 import './App.css';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import PublicRoute from './routes/PublicRoute';
@@ -22,21 +22,21 @@ import HomePage from './pages/Home';
 interface AuthProviderProps { children?: React.ReactNode; }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const userIdRef = useRef<string>('');
+  const [userId, setUserId] = useState<ID>(0);
   const authTokenRef = useRef<string>('');
 
   useEffect(() => {
-    const userId = sessionStorage.getItem(USER_ID_SESSION_KEY);
+    const userIdSession = sessionStorage.getItem(USER_ID_SESSION_KEY);
 
-    if (userId) {
-      userIdRef.current = userId;
+    if (userIdSession) {
+      setUserId(userIdSession);
     }
   }, []);
 
   return (
     <AuthContext.Provider value={{
       tokenRef: authTokenRef,
-      userIdRef: userIdRef,
+      userId: Number(userId),
       logout() {
         sessionStorage.removeItem(USER_ID_SESSION_KEY);
         window.location.replace(routes.login.path);

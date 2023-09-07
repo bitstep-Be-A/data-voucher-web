@@ -12,12 +12,12 @@ import { postApi } from "../../api/search";
 const PostServiceProvider = ({ children }: {
   children: React.ReactNode
 }) => {
-  const { userIdRef, logout } = useAuth();
+  const { userId, logout } = useAuth();
 
   return (
     <PostContext.Provider value={{
       search: async (filter, options) => {
-        const serializer = new SearchFilterSerializer(filter, userIdRef.current);
+        const serializer = new SearchFilterSerializer(filter, userId);
         const requestData = serializer.toEntity();
 
         let payload;

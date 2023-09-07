@@ -2,6 +2,7 @@ import { useContext, createContext } from "react";
 
 interface IContainerContext {
   mainScreenRef: React.RefObject<HTMLDivElement | null>;
+  menuBarState: [boolean, (state: boolean) => void];
 }
 
 export const ContainerContext = createContext<IContainerContext | undefined>(undefined);

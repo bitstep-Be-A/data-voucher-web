@@ -7,6 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import { deepGray, deepGreen, lightGreen } from "../../../styles/constant";
 
 interface PostItemsUx {
   addBookmark: (postId: ID) => void;
@@ -22,7 +23,7 @@ const Noti = styled.div`
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #6C6C6C;
+  color: ${deepGray};
 `;
 
 export const PostItems: React.FC<PostItemsUx> = (ux) => {
@@ -60,8 +61,8 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
               <span style={{
-                backgroundColor: "#E9FFE9",
-                color: "#009A2B",
+                backgroundColor: lightGreen,
+                color: deepGreen,
                 whiteSpace: "nowrap"
               }}>{content.dDay}</span>
               <p className="truncate">{content.notice}</p>

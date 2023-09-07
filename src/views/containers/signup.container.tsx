@@ -95,7 +95,7 @@ const SignupContainer = ({ children }: {
     <SignupContext.Provider value={{
       accepted, setAccepted, serializer, step, loading, setLoading
     }}>
-      <div className="w-full h-full flex flex-col items-center px-16">
+      <div className="w-full h-full flex flex-col items-center sm:px-16 px-8">
         <div className="relative w-full flex flex-row justify-center py-5">
           {
             (step === 2 || step === 3) && (

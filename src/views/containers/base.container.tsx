@@ -1,28 +1,32 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
 import { useAuth } from "../../context/auth.context";
-import { ContainerContext } from "../../context/base.context";
+import { ContainerContext, useContainer } from "../../context/base.context";
+import useElementWidth from "../../hooks/useElementWidth";
 
 import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { IconButton, Toolbar } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
 
 interface SideNavItemProps {
   text: string;
-  HeroIcon: React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
-    title?: string | undefined;
-    titleId?: string | undefined;
-  } & React.RefAttributes<SVGSVGElement>>;
+  Icon: any;
   isActive: boolean;
 }
 
 const SideNavItem: React.FC<SideNavItemProps> = ({
   text,
-  HeroIcon,
+  Icon,
   isActive
 }) => {
   return (
@@ -30,13 +34,13 @@ const SideNavItem: React.FC<SideNavItemProps> = ({
       isActive ? "text-black" : "text-gray-400",
       "flex flex-row items-center pl-10 py-2 hover:bg-gray-100 hover:opacity-70"
     )}>
-      <HeroIcon
+      <Icon
         style={{
           width: 18,
           height: 18
         }}
       />
-      <span className="ml-4"
+      <span className="ml-4 whitespace-nowrap"
         style={{
           fontSize: 18
         }}
@@ -48,8 +52,21 @@ const SideNavItem: React.FC<SideNavItemProps> = ({
 const SideNavbar = () => {
   const { pathname } = useLocation();
 
+  const sideBoxRef = useRef<HTMLDivElement>(null);
+  const sideBoxWidth = useElementWidth(sideBoxRef);
+  const isSideNavBarHidden = useMemo(() => (sideBoxWidth !== null && sideBoxWidth < 186), [sideBoxWidth]);
+
+  const { menuBarState } = useContainer();
+
+  useEffect(() => {
+    if (isSideNavBarHidden) menuBarState[1](true);
+  }, [isSideNavBarHidden]);
+
   return (
-    <div className="w-[350px] flex flex-col border-r border-gray-400">
+    <div className={classNames(
+      isSideNavBarHidden ? "hidden" : "flex flex-col",
+      "w-full max-w-[350px] border-r border-gray-400"
+    )} ref={sideBoxRef}>
       <div className="h-[40px] my-12">
         <span className="hidden">Logo</span>
       </div>
@@ -61,7 +78,7 @@ const SideNavbar = () => {
             item: (
               <SideNavItem
                 text="공고검색"
-                HeroIcon={MagnifyingGlassIcon}
+                Icon={MagnifyingGlassIcon}
                 isActive={
                   !routes.bookmark.re.test(pathname) &&
                   !routes.docs.re.test(pathname)
@@ -74,7 +91,7 @@ const SideNavbar = () => {
             item: (
               <SideNavItem
                 text="즐겨찾기"
-                HeroIcon={BookmarkIcon}
+                Icon={BookmarkIcon}
                 isActive={
                   routes.bookmark.re.test(pathname)
                 }
@@ -86,7 +103,7 @@ const SideNavbar = () => {
             item: (
               <SideNavItem
                 text="문서관리"
-                HeroIcon={DocumentTextIcon}
+                Icon={DocumentTextIcon}
                 isActive={
                   routes.docs.re.test(pathname)
                 }
@@ -120,64 +137,117 @@ const TopNavItem: React.FC<TobNavItemProps> = ({
 
 const TopNavbar = () => {
   const { pathname } = useLocation();
-  const auth = useAuth();
+  const navigate = useNavigate();
 
-  const isLogined = useMemo(() => !!auth.userId, [auth]);
+  const auth = useAuth();
+  const isAuthorized = useMemo(() => !!auth.userId, [auth]);
+
+  const { menuBarState } = useContainer();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    <div className="w-full border-b border-gray-400 py-4">
-      <Nav
-        className="flex flex-row justify-end mr-5"
-        linkMenus={!isLogined ? [
+    <div className="border-b border-gray-400">
+      <Toolbar
+        className="flex flex-row justify-between"
+      >
+        <Box>
+          <IconButton
+            onClick={handleMenu}
+          >
+            <MenuIcon sx={{
+              display: menuBarState[0] ? "block" : "none"
+            }} />
+          </IconButton>
+          <Menu
+            id="burger-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left"
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left"
+            }}
+            open={!!anchorEl}
+            onClose={handleClose}
+          >
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                navigate(routes.search.path);
+              }}
+            >
+              공고검색
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                navigate(routes.bookmark.path);
+              }}
+            >
+              즐겨찾기
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleClose();
+                navigate(routes.docs.path);
+              }}
+            >
+              문서관리
+            </MenuItem>
+          </Menu>
+        </Box>
+        <Box>
           {
-            path: routes.login.path,
-            item: (
-              <TopNavItem
-                text={"로그인"}
-                isActive={
-                  routes.login.re.test(pathname)
-                }
-                isLast={false}
-              />
-            )
-          },
-          {
-            path: routes.signup.path,
-            item: (
-              <TopNavItem
-                text={"회원가입"}
-                isActive={
-                  routes.signup.re.test(pathname)
-                }
-                isLast={true}
-              />
-            )
+            !isAuthorized ? <>
+              <button onClick={() => navigate(routes.login.path)}>
+                <TopNavItem
+                  text={"로그인"}
+                  isActive={
+                    routes.login.re.test(pathname)
+                  }
+                  isLast={false}
+                />
+              </button>
+              <button onClick={() => navigate(routes.signup.path)}>
+                <TopNavItem
+                  text={"회원가입"}
+                  isActive={
+                    routes.signup.re.test(pathname)
+                  }
+                  isLast={true}
+                />
+              </button>
+            </> : <>
+              <button onClick={() => navigate(routes.signup.path)}>
+                <TopNavItem
+                  text={"마이페이지"}
+                  isActive={
+                    routes.my.re.test(pathname)
+                  }
+                  isLast={false}
+                />
+              </button>
+              <button onClick={() => auth.logout()}>
+                <TopNavItem
+                  text={"로그아웃"}
+                  isActive={false}
+                  isLast={true}
+                />
+              </button>
+            </>
           }
-        ] : [
-          {
-            path: routes.my.path,
-            item: (
-              <TopNavItem
-                text={"마이페이지"}
-                isActive={
-                  routes.my.re.test(pathname)
-                }
-                isLast={false}
-              />
-            )
-          },
-          {
-            onClick: () => auth.logout(),
-            item: (
-              <TopNavItem
-                text={"로그아웃"}
-                isActive={false}
-                isLast={true}
-              />
-            )
-          }
-        ]}
-      />
+        </Box>
+      </Toolbar>
     </div>
   );
 }
@@ -187,8 +257,13 @@ export const BaseContainer = ({ children }: {
 }): JSX.Element => {
   const mainScreenRef = useRef<HTMLDivElement>(null);
 
+  const menuBarState = useState<boolean>(false);
+
   return (
-    <ContainerContext.Provider value={{mainScreenRef}}>
+    <ContainerContext.Provider value={{
+      mainScreenRef,
+      menuBarState
+    }}>
       <div className="w-screen h-screen flex flex-row overflow-hidden">
         <SideNavbar />
         <div className="w-full h-full flex flex-col">

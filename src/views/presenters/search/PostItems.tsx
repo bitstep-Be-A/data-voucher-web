@@ -27,7 +27,7 @@ const Noti = styled.div`
 
 export const PostItems: React.FC<PostItemsUx> = (ux) => {
   return (
-    <ul className="w-full h-full flex flex-col items-center overflow-y-scroll">
+    <ul className="w-full h-full flex flex-col items-center overflow-y-scroll py-3">
       {
         ux.postContents.map((content) => (
           <li key={content.postId} className="lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white">
@@ -53,7 +53,11 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
               }
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
-              <span style={{backgroundColor: "#E9FFE9", color: "#009A2B"}} className="block">{content.dDay}</span>
+              <span style={{
+                backgroundColor: "#E9FFE9",
+                color: "#009A2B",
+                whiteSpace: "nowrap"
+              }}>{content.dDay}</span>
               <p className="truncate">{content.notice}</p>
             </div>
             <div className="w-full flex flex-row items-center justify-between">

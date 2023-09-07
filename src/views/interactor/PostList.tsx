@@ -49,7 +49,7 @@ const PostList: React.FC = () => {
   const {setSearchFilterModal} = useSearchFilterModal();
 
   return (
-    <div className="w-full h-full bg-zinc-100 py-3">
+    <div className="w-full h-full bg-zinc-100 overflow-hidden">
       <SearchBar
         clickFilter={() => {
           setSearchFilterModal(true);        

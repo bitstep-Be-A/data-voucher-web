@@ -96,9 +96,9 @@ const PostList: React.FC = () => {
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
     if (!!detailSnapshot.data) {
-      return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
+      return listWidth > 700 ? ["w-full h-full", "w-full flex flex-col"] : ["hidden", "w-full flex flex-col"];
     }
-    return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
+    return listWidth > 700 ? ["w-full h-full", "w-full flex flex-col"] : ["w-full h-full", "hidden"];
   }, [listWidth, detailSnapshot]);
 
   const {mainScreenRef} = useContainer();
@@ -112,7 +112,7 @@ const PostList: React.FC = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-10" ref={listElementRef}>
+    <div className="flex flex-row" ref={listElementRef}>
       <div className={classNames(
         displayClassName[0],
         "border-r border-gray-400 overflow-y-scroll"
@@ -149,7 +149,7 @@ const PostList: React.FC = () => {
       </div>
       <div className={displayClassName[1]}>
         {
-          detailSnapshot.loading && <Loading className="col-span-4 relative bottom-5"/>
+          detailSnapshot.loading && <Loading/>
         }
         {
           detailSnapshot.data && (

@@ -1,7 +1,7 @@
 import { atom, useRecoilState } from "recoil";
 
 const searchFilterModalState = atom({
-  key: "modal/searchFilter",
+  key: "modalState/searchFilter",
   default: false
 });
 

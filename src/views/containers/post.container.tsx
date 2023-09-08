@@ -1,3 +1,5 @@
+import { useRecoilState } from "recoil";
+
 import { PostContext } from "../../context/post.context";
 import {
   SearchFilterSerializer,
@@ -8,11 +10,14 @@ import {
 import type { PostSummary } from "../../domain/search/post.interface";
 import { useAuth } from "../../context/auth.context";
 import { postApi } from "../../api/search";
+import { postTotalItemsState } from "../../recoil/pageState";
 
 const PostServiceProvider = ({ children }: {
   children: React.ReactNode
 }) => {
   const { userId, logout } = useAuth();
+
+  const [_, setPostTotalItems] = useRecoilState(postTotalItemsState);
 
   return (
     <PostContext.Provider value={{
@@ -25,6 +30,7 @@ const PostServiceProvider = ({ children }: {
           payload = await postApi.searchList(requestData);
         } catch { logout(); return }
         let postSummaries: PostSummary[] = payload.documents.map((v: any) => new PostSummaryModel(v));
+        setPostTotalItems(payload.meta["total_count"]);
         
         if (!!options.keyword) {
           postSummaries = postSummaries.filter((item) => postSummaryManager.isKeywordIncludingNotice(options.keyword, item.notice));

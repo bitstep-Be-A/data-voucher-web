@@ -50,18 +50,6 @@ const PostList: React.FC = () => {
       .catch(() => setPostDetail(null));
   }, [searchParams, showDetail]);
 
-  useEffect(() => {
-    if (!mainScreenRef.current) return;
-
-    mainScreenRef.current.style.backgroundColor = "rgb(244 244 245)";
-
-    return () => {
-      if (mainScreenRef.current) {
-        mainScreenRef.current.style.backgroundColor = "";
-      }
-    }
-  }, []);
-
   return (
     <div className="w-full h-full">
       <SearchBar

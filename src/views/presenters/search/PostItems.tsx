@@ -1,13 +1,18 @@
 import styled from "styled-components";
+import { useSearchParams, Link } from "react-router-dom";
+import { useMemo } from "react";
 
 import { PostSummary } from "../../../domain/search/post.interface";
 import { ID } from "../../../types/common";
+import { deepGray, deepGreen, lightGreen } from "../../../styles/constant";
+import { usePostPagination } from "../../../recoil/pageState";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import { deepGray, deepGreen, lightGreen } from "../../../styles/constant";
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
 
 interface PostItemsUx {
   addBookmark: (postId: ID) => void;
@@ -80,6 +85,26 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
           </li>
         ))
       }
+      <PostItemsPagination/>
     </ul>
+  )
+}
+
+const PostItemsPagination = () => {
+  const [searchParams, _] = useSearchParams();
+  const { totalPage } = usePostPagination();
+  const page = useMemo(() => parseInt(searchParams.get('page') || '1', totalPage), [searchParams, totalPage]);
+  return (
+    <Pagination
+      page={page}
+      count={totalPage}
+      renderItem={(item) => (
+        <PaginationItem
+          component={Link}
+          to={item.page === 1 ? '' : `?page=${item.page}`}
+          {...item}
+        />
+      )}
+    />
   )
 }

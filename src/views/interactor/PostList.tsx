@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PostSummary, PostDetail } from "../../domain/search/post.interface";
@@ -7,12 +7,12 @@ import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
-import { useContainer } from "../../context/base.context";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
 import { PostItems } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
+import useElementWidth from "../../hooks/useElementWidth";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -33,7 +33,6 @@ const PostList: React.FC = () => {
   const {searchFilterOpt, setSearchFilterOpt} = useSearchFilterOpt();
 
   const {setSearchFilterModal} = useSearchFilterModal();
-  const {mainScreenRef} = useContainer();
 
   useEffect(() => {
     search(searchFilter, searchFilterOpt).then(
@@ -63,9 +62,15 @@ const PostList: React.FC = () => {
     paginationQueryHandler(searchParams);
   }, [searchParams]);
 
+  const itemsElementRef = useRef<HTMLDivElement>(null);
+  const itemElementRef = useRef<HTMLDivElement>(null);
+
+  const itemsWidth = useElementWidth(itemsElementRef);
+  console.log(itemsWidth);
+
   return (
     <div className="grid grid-cols-10">
-      <div className="col-span-6">
+      <div className="col-span-6" ref={itemsElementRef}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -92,7 +97,7 @@ const PostList: React.FC = () => {
           selectedPost={searchParams.get("slot") || null}
         />
       </div>
-      <div className="col-span-4">
+      <div className="col-span-4" ref={itemElementRef}>
         {
           postDetail && (
             <PostItemSlot

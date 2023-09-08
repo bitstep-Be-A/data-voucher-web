@@ -68,24 +68,17 @@ const PostList: React.FC = () => {
   const summariesWidth = useElementWidth(summariesElementRef);
   const detailWidth = useElementWidth(detailElementRef);
 
-  const summariesDisplayClassName = useMemo(() => {
-    if (summariesWidth === null) return;
+  const displayClassName = useMemo(() => {
+    if (detailWidth === null || summariesWidth === null) return ["hidden", "hidden"];
     if (!!postDetail) {
-      return summariesWidth > 400 ? "col-span-6" : "hidden";
+      return summariesWidth > 400 ? ["col-span-6", "col-span-4"] : ["hidden", ""];
     }
-    return summariesWidth > 400 ? "col-span-6" : "col-span-10";
-  }, [summariesWidth, postDetail]);
-  const detailDisplayClassName = useMemo(() => {
-    if (detailWidth === null || summariesWidth === null) return;
-    if (!!postDetail) {
-      return summariesWidth > 400 ? "col-span-4" : "col-span-10";
-    }
-    return summariesWidth > 400 ? "col-span-4" : "hidden";
+    return summariesWidth > 400 ? ["col-span-6", "col-span-4"] : ["", "hidden"];
   }, [summariesWidth, postDetail, detailWidth]);
 
   return (
     <div className="grid grid-cols-10">
-      <div className={summariesDisplayClassName} ref={summariesElementRef}>
+      <div className={displayClassName[0]} ref={summariesElementRef}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -112,7 +105,7 @@ const PostList: React.FC = () => {
           selectedPost={searchParams.get("slot") || null}
         />
       </div>
-      <div className={detailDisplayClassName} ref={detailElementRef}>
+      <div className={displayClassName[1]} ref={detailElementRef}>
         {
           postDetail && (
             <PostItemSlot

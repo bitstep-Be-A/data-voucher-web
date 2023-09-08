@@ -1,16 +1,19 @@
+import styled from 'styled-components';
+
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import { deepGray } from '../styles/constant';
 
-const Loading = () => {
+const Box = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+`;
+
+const Loading = (props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
   return (
-    <Box sx={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      alignItems: "center",
-      justifyItems: "center"
-    }}>
+    <Box {...props}>
       <CircularProgress sx={{
         color: deepGray
       }}/>

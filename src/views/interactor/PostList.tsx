@@ -45,7 +45,7 @@ const PostList: React.FC = () => {
   useEffect(() => {
     setDetailSnapshot({
       data: null,
-      loading: true,
+      loading: false,
     })
     search(searchFilter, searchFilterOpt).then(
       (list => setSummarySnapshot({
@@ -134,7 +134,7 @@ const PostList: React.FC = () => {
       </div>
       <div className={displayClassName[1]}>
         {
-          detailSnapshot.loading && <Loading/>
+          detailSnapshot.loading && <Loading className="col-span-4 relative bottom-5"/>
         }
         {
           detailSnapshot.data && (

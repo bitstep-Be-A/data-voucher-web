@@ -62,29 +62,27 @@ const PostList: React.FC = () => {
     paginationQueryHandler(searchParams);
   }, [searchParams]);
 
-  const summariesElementRef = useRef<HTMLDivElement>(null);
-  const detailElementRef = useRef<HTMLDivElement>(null);
+  const listElementRef = useRef<HTMLDivElement>(null);
 
-  const summariesWidth = useElementWidth(summariesElementRef);
-  const detailWidth = useElementWidth(detailElementRef);
+  const listWidth = useElementWidth(listElementRef);
 
   const displayClassName = useMemo(() => {
-    if (detailWidth === null || summariesWidth === null) return ["hidden", "hidden"];
+    if (listWidth === null) return ["hidden", "hidden"];
     if (!!postDetail) {
       console.log("detail");
-      console.log(summariesWidth);
+      console.log(listWidth);
       console.log("------------")
-      return summariesWidth > 400 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
+      return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
     }
     console.log("summary");
-    console.log(summariesWidth);
+    console.log(listWidth);
     console.log("------------")
-    return summariesWidth > 400 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
-  }, [summariesWidth, postDetail, detailWidth]);
+    return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
+  }, [listWidth, postDetail]);
 
   return (
-    <div className="grid grid-cols-10">
-      <div className={displayClassName[0]} ref={summariesElementRef}>
+    <div className="grid grid-cols-10" ref={listElementRef}>
+      <div className={displayClassName[0]}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -111,7 +109,7 @@ const PostList: React.FC = () => {
           selectedPost={searchParams.get("slot") || null}
         />
       </div>
-      <div className={displayClassName[1]} ref={detailElementRef}>
+      <div className={displayClassName[1]}>
         {
           postDetail && (
             <PostItemSlot

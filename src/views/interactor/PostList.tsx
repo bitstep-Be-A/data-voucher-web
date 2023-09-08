@@ -8,6 +8,7 @@ import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
 import { DataStateType } from "../../types/common";
+import { classNames } from "../../utils";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
@@ -93,7 +94,7 @@ const PostList: React.FC = () => {
 
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
-    if (!!detailSnapshot) {
+    if (!!detailSnapshot.data) {
       return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
     }
     return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
@@ -101,7 +102,10 @@ const PostList: React.FC = () => {
 
   return (
     <div className="grid grid-cols-10" ref={listElementRef}>
-      <div className={displayClassName[0]}>
+      <div className={classNames(
+        displayClassName[0],
+        "border-r border-deepGray"
+      )}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);

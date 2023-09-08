@@ -60,7 +60,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
                     color: "#FFE500"
                   }}/>
                 ) : (
-                  <BookmarkBorderIcon />
+                  <BookmarkBorderIcon sx={{color: deepGray}} />
                 )
               }
             </div>

@@ -73,14 +73,14 @@ const PostList: React.FC = () => {
     if (!!postDetail) {
       return summariesWidth > 400 ? "col-span-6" : "hidden";
     }
-    return "col-span-10";
+    return summariesWidth > 400 ? "col-span-6" : "col-span-10";
   }, [summariesWidth, postDetail]);
   const detailDisplayClassName = useMemo(() => {
     if (detailWidth === null || summariesWidth === null) return;
     if (!!postDetail) {
       return summariesWidth > 400 ? "col-span-4" : "col-span-10";
     }
-    return "hidden";
+    return summariesWidth > 400 ? "col-span-4" : "hidden";
   }, [summariesWidth, postDetail, detailWidth]);
 
   return (

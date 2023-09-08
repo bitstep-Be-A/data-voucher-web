@@ -64,56 +64,60 @@ const PostList: React.FC = () => {
   }, [searchParams]);
 
   return (
-    <>
-      <SearchBar
-        clickFilter={() => {
-          setSearchFilterModal(true);
-        }}
-        writeDown={_.debounce((value: string) => {
-          setSearchFilterOpt({
-            ...searchFilterOpt,
-            keyword: value
-          });
-        }, 1200)}
-      />
-      <PostItems
-        postContents={postSummaries}
-        addBookmark={(postId) => {
-          saveBookmark(userId, postId);
-        }}
-        cancelBookmark={(postId) => {
-          removeBookmark(userId, postId);
-        }}
-        clickItem={(postId) => {
-          searchParams.set("slot", String(postId));
-          setSearchParams(searchParams);
-        }}
-        selectedPost={searchParams.get("slot") || null}
-      />
-      {
-        postDetail && (
-          <PostItemSlot
-            closeSlot={() => {
-              searchParams.delete("slot");
-              setSearchParams(searchParams);
-            }}
-            saveFile={(filePosition) => {
-              const path = process.env.REACT_APP_SERVER_URL! + postDetail?.attachments[filePosition].pfi_filename;
-              window.open(path, '_blank');
-            }}
-            visitWebsite={(url) => {
-              if (!url) return;
-              const w = window.open(url, '_blank');
-              w?.focus();
-            }}
-            content={postDetail}
-          />
-        )
-      }
+    <div className="grid grid-cols-10">
+      <div className="col-span-6">
+        <SearchBar
+          clickFilter={() => {
+            setSearchFilterModal(true);
+          }}
+          writeDown={_.debounce((value: string) => {
+            setSearchFilterOpt({
+              ...searchFilterOpt,
+              keyword: value
+            });
+          }, 1200)}
+        />
+        <PostItems
+          postContents={postSummaries}
+          addBookmark={(postId) => {
+            saveBookmark(userId, postId);
+          }}
+          cancelBookmark={(postId) => {
+            removeBookmark(userId, postId);
+          }}
+          clickItem={(postId) => {
+            searchParams.set("slot", String(postId));
+            setSearchParams(searchParams);
+          }}
+          selectedPost={searchParams.get("slot") || null}
+        />
+      </div>
+      <div className="col-span-4">
+        {
+          postDetail && (
+            <PostItemSlot
+              closeSlot={() => {
+                searchParams.delete("slot");
+                setSearchParams(searchParams);
+              }}
+              saveFile={(filePosition) => {
+                const path = process.env.REACT_APP_SERVER_URL! + postDetail?.attachments[filePosition].pfi_filename;
+                window.open(path, '_blank');
+              }}
+              visitWebsite={(url) => {
+                if (!url) return;
+                const w = window.open(url, '_blank');
+                w?.focus();
+              }}
+              content={postDetail}
+            />
+          )
+        }
+      </div>
       {/* <FilterPopup
 
       /> */}
-    </>
+    </div>
   );
 }
 

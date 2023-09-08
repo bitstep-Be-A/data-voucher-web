@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { PostSummary } from "../../../domain/search/post.interface";
 import { ID } from "../../../types/common";
-import { deepGray, deepGreen, lightGreen } from "../../../styles/constant";
+import { deepGray, deepGreen, lightGray, lightGreen } from "../../../styles/constant";
 import { usePostPagination } from "../../../recoil/pageState";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -66,8 +66,8 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
               <span style={{
-                backgroundColor: lightGreen,
-                color: deepGreen,
+                backgroundColor: content.dDay.startsWith("D") ? lightGreen : lightGray,
+                color: content.dDay.startsWith("D") ? deepGreen : deepGray,
                 whiteSpace: "nowrap"
               }}>{content.dDay}</span>
               <p className="truncate">{content.notice}</p>

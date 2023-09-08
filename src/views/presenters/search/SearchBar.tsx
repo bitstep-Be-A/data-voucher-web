@@ -8,18 +8,6 @@ interface SearchBarUx {
 
 export const SearchBar: React.FC<SearchBarUx> = (ux) => {
   return (
-    <div>
-      <SearchIcon className='left-4' />
-      <input onChange={(e) => {
-        const value = e.target.value;
-        ux.writeDown(value);
-      }}
-      />
-      <button className='relative right-4'
-        onClick={ux.clickFilter}
-      >
-        <TuneIcon />
-      </button>
-    </div>
-  )
+    <></>
+  );
 }

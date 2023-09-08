@@ -214,7 +214,7 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
           label="대표자명"
           props={{
             type: "text",
-            placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
+            placeholder: "대표자명을 입력하세요.",
             description: null,
             // disabled: true,
             submitValue: String(formData.CEO)
@@ -229,7 +229,7 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
           label="개업일자"
           props={{
             type: "text",
-            placeholder: "사업자등록번호 확인 후 자동입력됩니다.",
+            placeholder: "ex) 2023-01-01",
             description: null,
             // disabled: true,
             submitValue: String(formData.establishDate)

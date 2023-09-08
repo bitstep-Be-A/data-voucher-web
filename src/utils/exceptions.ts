@@ -4,8 +4,3 @@ export class ValidationError extends Error {
     this.name = "ValidationError";
   }
 }
-
-export type ExceptionDetail = {
-  name: string;
-  message: string;
-}

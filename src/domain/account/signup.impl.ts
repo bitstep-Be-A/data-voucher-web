@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { useRef } from "react";
 
-import type { ExceptionDetail } from "../../utils/exceptions";
+import type { ExceptionDetail } from "../../types/common";
 import {
   Serializer
 } from "../../utils/serializer";

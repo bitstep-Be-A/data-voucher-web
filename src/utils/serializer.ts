@@ -1,4 +1,4 @@
-import type { ExceptionDetail } from "./exceptions";
+import type { ExceptionDetail } from "../types/common";
 
 export interface Serializer<T> {
   toEntity: () => object;

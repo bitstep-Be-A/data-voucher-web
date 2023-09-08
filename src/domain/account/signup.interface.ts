@@ -1,4 +1,4 @@
-import type { ExceptionDetail } from "../../utils/exceptions";
+import type { ExceptionDetail } from "../../types/common";
 import type {
   CompanySizeEnum,
   CompanyTypeEnum

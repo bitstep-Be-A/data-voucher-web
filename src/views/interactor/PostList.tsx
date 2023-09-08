@@ -7,6 +7,7 @@ import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
+import { DataStateType } from "../../types/common";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
@@ -19,8 +20,16 @@ const PostList: React.FC = () => {
 
   const { userId } = useAuth();
 
-  const [postSummaries, setPostSummaries] = useState<PostSummary[]>([]);
-  const [postDetail, setPostDetail] = useState<PostDetail | null>(null);
+  const [summarySnapshot, setSummarySnapshot] = useState<DataStateType<PostSummary[]>>({
+    data: [],
+    loading: false,
+    error: null
+  });
+  const [detailSnapshot, setDetailSnapshot] = useState<DataStateType<PostDetail | null>>({
+    data: null,
+    loading: false,
+    error: null
+  });
 
   const {
     search,
@@ -35,19 +44,36 @@ const PostList: React.FC = () => {
   const {setSearchFilterModal} = useSearchFilterModal();
 
   useEffect(() => {
+    setDetailSnapshot({
+      data: null,
+      loading: true,
+    })
     search(searchFilter, searchFilterOpt).then(
-      (list => setPostSummaries(list!))
+      (list => setSummarySnapshot({
+        data: list!,
+        loading: false,
+      }))
     );
   }, [searchFilter, searchFilterOpt, search]);
 
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
-    if (!slotId) return setPostDetail(null);
+    if (!slotId) return setDetailSnapshot({
+      ...detailSnapshot,
+      data: null
+    });
 
+    setDetailSnapshot({...detailSnapshot, loading: true});
     showDetail(Number(slotId))
-      .then((data) => setPostDetail(data!))
-      .catch(() => setPostDetail(null));
-  }, [showDetail]);
+      .then((data) => setDetailSnapshot({
+        data: data!,
+        loading: false,
+      }))
+      .catch(() => setDetailSnapshot({
+        data: null,
+        loading: false,
+      }));
+  }, [showDetail, detailSnapshot]);
 
   const paginationQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const pageString = searchParams.get("page") || "1";
@@ -68,11 +94,11 @@ const PostList: React.FC = () => {
 
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
-    if (!!postDetail) {
+    if (!!detailSnapshot) {
       return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
     }
     return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
-  }, [listWidth, postDetail]);
+  }, [listWidth, detailSnapshot]);
 
   return (
     <div className="grid grid-cols-10" ref={listElementRef}>
@@ -89,7 +115,7 @@ const PostList: React.FC = () => {
           }, 1200)}
         />
         <PostItems
-          postContents={postSummaries}
+          postContents={summarySnapshot.data}
           addBookmark={(postId) => {
             saveBookmark(userId, postId);
           }}
@@ -105,14 +131,14 @@ const PostList: React.FC = () => {
       </div>
       <div className={displayClassName[1]}>
         {
-          postDetail && (
+          detailSnapshot.data && (
             <PostItemSlot
               closeSlot={() => {
                 searchParams.delete("slot");
                 setSearchParams(searchParams);
               }}
               saveFile={(filePosition) => {
-                const path = process.env.REACT_APP_SERVER_URL! + postDetail?.attachments[filePosition].pfi_filename;
+                const path = process.env.REACT_APP_SERVER_URL! + detailSnapshot.data?.attachments[filePosition].pfi_filename;
                 window.open(path, '_blank');
               }}
               visitWebsite={(url) => {
@@ -120,7 +146,7 @@ const PostList: React.FC = () => {
                 const w = window.open(url, '_blank');
                 w?.focus();
               }}
-              content={postDetail}
+              content={detailSnapshot.data}
             />
           )
         }

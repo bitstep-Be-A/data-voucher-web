@@ -14,6 +14,7 @@ import { FilterPopup } from "../presenters/search/FilterPopup";
 import { PostItems } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
 import useElementWidth from "../../hooks/useElementWidth";
+import Loading from "../../components/Loading";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,13 +23,11 @@ const PostList: React.FC = () => {
 
   const [summarySnapshot, setSummarySnapshot] = useState<DataStateType<PostSummary[]>>({
     data: [],
-    loading: false,
-    error: null
+    loading: false
   });
   const [detailSnapshot, setDetailSnapshot] = useState<DataStateType<PostDetail | null>>({
     data: null,
-    loading: false,
-    error: null
+    loading: false
   });
 
   const {
@@ -59,11 +58,11 @@ const PostList: React.FC = () => {
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
     if (!slotId) return setDetailSnapshot({
-      ...detailSnapshot,
+      loading: false,
       data: null
     });
 
-    setDetailSnapshot({...detailSnapshot, loading: true});
+    setDetailSnapshot({data: null, loading: true});
     showDetail(Number(slotId))
       .then((data) => setDetailSnapshot({
         data: data!,
@@ -73,7 +72,7 @@ const PostList: React.FC = () => {
         data: null,
         loading: false,
       }));
-  }, [showDetail, detailSnapshot]);
+  }, [showDetail]);
 
   const paginationQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const pageString = searchParams.get("page") || "1";
@@ -114,22 +113,29 @@ const PostList: React.FC = () => {
             });
           }, 1200)}
         />
-        <PostItems
-          postContents={summarySnapshot.data}
-          addBookmark={(postId) => {
-            saveBookmark(userId, postId);
-          }}
-          cancelBookmark={(postId) => {
-            removeBookmark(userId, postId);
-          }}
-          clickItem={(postId) => {
-            searchParams.set("slot", String(postId));
-            setSearchParams(searchParams);
-          }}
-          selectedPost={searchParams.get("slot") || null}
-        />
+        {
+          summarySnapshot.loading ? <Loading/> : (
+            <PostItems
+              postContents={summarySnapshot.data}
+              addBookmark={(postId) => {
+                saveBookmark(userId, postId);
+              }}
+              cancelBookmark={(postId) => {
+                removeBookmark(userId, postId);
+              }}
+              clickItem={(postId) => {
+                searchParams.set("slot", String(postId));
+                setSearchParams(searchParams);
+              }}
+              selectedPost={searchParams.get("slot") || null}
+            />
+          )
+        }
       </div>
       <div className={displayClassName[1]}>
+        {
+          detailSnapshot.loading && <Loading/>
+        }
         {
           detailSnapshot.data && (
             <PostItemSlot

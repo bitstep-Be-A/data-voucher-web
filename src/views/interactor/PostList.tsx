@@ -96,9 +96,9 @@ const PostList: React.FC = () => {
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
     if (!!detailSnapshot.data) {
-      return listWidth > 700 ? ["w-full h-full", "w-full h-full flex flex-col"] : ["hidden", "w-full h-full flex flex-col"];
+      return listWidth > 700 ? ["", ""] : ["hidden", ""];
     }
-    return listWidth > 700 ? ["w-full h-full", "w-full h-full flex flex-col"] : ["w-full h-full", "hidden"];
+    return listWidth > 700 ? ["", ""] : ["", "hidden"];
   }, [listWidth, detailSnapshot]);
 
   const {mainScreenRef} = useContainer();
@@ -115,6 +115,7 @@ const PostList: React.FC = () => {
     <div className="w-full h-full flex flex-row" ref={listElementRef}>
       <div className={classNames(
         displayClassName[0],
+        "w-full h-full",
         "border-r border-gray-400 overflow-y-scroll pb-20"
       )}>
         <SearchBar
@@ -147,7 +148,10 @@ const PostList: React.FC = () => {
           )
         }
       </div>
-      <div className={displayClassName[1]}>
+      <div className={classNames(
+        displayClassName[1],
+        "w-full h-full flex flex-col"
+      )}>
         {
           detailSnapshot.loading && <Loading/>
         }

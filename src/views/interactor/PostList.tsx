@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PostSummary, PostDetail } from "../../domain/search/post.interface";
@@ -65,12 +65,27 @@ const PostList: React.FC = () => {
   const summariesElementRef = useRef<HTMLDivElement>(null);
   const detailElementRef = useRef<HTMLDivElement>(null);
 
-  const itemsWidth = useElementWidth(summariesElementRef);
-  console.log(itemsWidth);
+  const summariesWidth = useElementWidth(summariesElementRef);
+  const detailWidth = useElementWidth(detailElementRef);
+
+  const summariesDisplayClassName = useMemo(() => {
+    if (summariesWidth === null) return;
+    if (!!postDetail) {
+      return summariesWidth > 400 ? "col-span-6" : "hidden";
+    }
+    return "col-span-10";
+  }, [summariesWidth, postDetail]);
+  const detailDisplayClassName = useMemo(() => {
+    if (detailWidth === null || summariesWidth === null) return;
+    if (!!postDetail) {
+      return summariesWidth > 400 ? "col-span-4" : "col-span-10";
+    }
+    return "hidden";
+  }, [summariesWidth, postDetail, detailWidth]);
 
   return (
     <div className="grid grid-cols-10">
-      <div className="col-span-6" ref={summariesElementRef}>
+      <div className={summariesDisplayClassName} ref={summariesElementRef}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -97,7 +112,7 @@ const PostList: React.FC = () => {
           selectedPost={searchParams.get("slot") || null}
         />
       </div>
-      <div className="col-span-4" ref={detailElementRef}>
+      <div className={detailDisplayClassName} ref={detailElementRef}>
         {
           postDetail && (
             <PostItemSlot

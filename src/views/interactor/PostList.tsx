@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import { PostSummary, PostDetail } from "../../domain/search/post.interface";
@@ -41,17 +41,30 @@ const PostList: React.FC = () => {
     );
   }, [searchFilter, searchFilterOpt, search]);
 
-  useEffect(() => {
+  const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
     if (!slotId) return setPostDetail(null);
 
     showDetail(Number(slotId))
       .then((data) => setPostDetail(data!))
       .catch(() => setPostDetail(null));
-  }, [searchParams, showDetail]);
+  }, [showDetail]);
+
+  const paginationQueryHandler = useCallback((searchParams: URLSearchParams) => {
+    const pageString = searchParams.get("page") || "1";
+    setSearchFilterOpt({
+      ...searchFilterOpt,
+      offset: (parseInt(pageString)-1) * searchFilterOpt.limit
+    });
+  }, [searchFilterOpt, setSearchFilterOpt]);
+
+  useEffect(() => {
+    postDetailQueryHandler(searchParams);
+    paginationQueryHandler(searchParams);
+  }, [searchParams]);
 
   return (
-    <div className="w-full h-full">
+    <>
       <SearchBar
         clickFilter={() => {
           setSearchFilterModal(true);
@@ -100,7 +113,7 @@ const PostList: React.FC = () => {
       {/* <FilterPopup
 
       /> */}
-    </div>
+    </>
   );
 }
 

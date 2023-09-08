@@ -105,6 +105,7 @@ const PostItemsPagination = () => {
           {...item}
         />
       )}
+      className="mb-4 mt-4"
     />
   )
 }

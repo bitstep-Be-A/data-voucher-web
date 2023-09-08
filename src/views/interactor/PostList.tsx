@@ -62,15 +62,15 @@ const PostList: React.FC = () => {
     paginationQueryHandler(searchParams);
   }, [searchParams]);
 
-  const itemsElementRef = useRef<HTMLDivElement>(null);
-  const itemElementRef = useRef<HTMLDivElement>(null);
+  const summariesElementRef = useRef<HTMLDivElement>(null);
+  const detailElementRef = useRef<HTMLDivElement>(null);
 
-  const itemsWidth = useElementWidth(itemsElementRef);
+  const itemsWidth = useElementWidth(summariesElementRef);
   console.log(itemsWidth);
 
   return (
     <div className="grid grid-cols-10">
-      <div className="col-span-6" ref={itemsElementRef}>
+      <div className="col-span-6" ref={summariesElementRef}>
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -97,7 +97,7 @@ const PostList: React.FC = () => {
           selectedPost={searchParams.get("slot") || null}
         />
       </div>
-      <div className="col-span-4" ref={itemElementRef}>
+      <div className="col-span-4" ref={detailElementRef}>
         {
           postDetail && (
             <PostItemSlot

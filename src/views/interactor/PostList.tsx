@@ -9,6 +9,7 @@ import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
 import { DataStateType } from "../../types/common";
 import { classNames } from "../../utils";
+import { useContainer } from "../../context/base.context";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
@@ -100,11 +101,21 @@ const PostList: React.FC = () => {
     return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
   }, [listWidth, detailSnapshot]);
 
+  const {mainScreenRef} = useContainer();
+  useEffect(() => {
+    if (mainScreenRef.current)
+      mainScreenRef.current.className = "w-full h-full";
+    return () => {
+      if (mainScreenRef.current)
+        mainScreenRef.current.className = "w-full h-full overflow-y-scroll";
+    }
+  }, []);
+
   return (
     <div className="grid grid-cols-10" ref={listElementRef}>
       <div className={classNames(
         displayClassName[0],
-        "border-r border-deepGray"
+        "border-r border-gray-400 overflow-y-scroll"
       )}>
         <SearchBar
           clickFilter={() => {

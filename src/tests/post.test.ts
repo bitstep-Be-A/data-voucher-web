@@ -1,6 +1,6 @@
 import {
   PostSummaryModel,
-  postSummaryManager,
+  postManager,
   PostDetailModel
 } from "../domain/search/post.impl";
 import {
@@ -45,10 +45,10 @@ describe('공고검색', () => {
       "1차",
     ];
     includedKeywords.forEach((keyword) => {
-      expect(postSummaryManager.isKeywordIncludingNotice(keyword, notice)).toBe(true);
+      expect(postManager.isKeywordIncludingNotice(keyword, notice)).toBe(true);
     });
     unIncludedKeywords.forEach((keyword) => {
-      expect(postSummaryManager.isKeywordIncludingNotice(keyword, notice)).toBe(false);
+      expect(postManager.isKeywordIncludingNotice(keyword, notice)).toBe(false);
     })
   });
 
@@ -92,7 +92,7 @@ describe('공고검색', () => {
       ["인력, ict, 기업,충청북도", "인력,ICT,기업,충청북도"]  // 공백 존재, 대문자
     ]
     unOrganizedKeywordSet.forEach((v) => {
-      const received = postSummaryManager.organizeKeywords(
+      const received = postManager.organizeKeywords(
         v[0].split(',')
       );
       expect(received).toStrictEqual(v[1].split(','));
@@ -103,7 +103,7 @@ describe('공고검색', () => {
       [["세종특별자치시", "인건비", "전문인력"], ["인건비", "전문인력"]]
     ];
     applyRemovedLocationSet.forEach((v) => {
-      const received = postSummaryManager.removeLocationsFromTags(v[0]);
+      const received = postManager.removeLocationsFromTags(v[0]);
       expect(received).toStrictEqual(v[1]);
     });
 
@@ -120,7 +120,7 @@ describe('공고검색', () => {
       }
     ];
     applyRemovedIncludesNoticeInfoSet.forEach((v) => {
-      const received = postSummaryManager.removeIncludesNoticeInfo(v.tag, v.notice);
+      const received = postManager.removeIncludesNoticeInfo(v.tag, v.notice);
       expect(received).toStrictEqual(v.expect);
     });
 
@@ -135,7 +135,7 @@ describe('공고검색', () => {
       ]
     ];
     recommendationOrderedSet.forEach((v) => {
-      const received = postSummaryManager.recommendationOrderedFirst(v[0]);
+      const received = postManager.recommendationOrderedFirst(v[0]);
       expect(received).toStrictEqual(v[1]);
     });
   });

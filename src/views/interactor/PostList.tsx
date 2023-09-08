@@ -2,7 +2,7 @@ import _ from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { PostSummary, PostDetail } from "../../domain/search/post.interface";
+import { PostSummary, PostDetail, PostRecommendation } from "../../domain/search/post.interface";
 import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
@@ -17,6 +17,7 @@ import { PostItems } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
 import useElementWidth from "../../hooks/useElementWidth";
 import Loading from "../../components/Loading";
+import { AIRecommendItems } from "../presenters/search/AIRecommendItems";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,12 +32,17 @@ const PostList: React.FC = () => {
     data: null,
     loading: false
   });
+  const [recommendSnapshot, setRecommendSnapshot] = useState<DataStateType<PostRecommendation[]>>({
+    data: [],
+    loading: false
+  });
 
   const {
     search,
     showDetail,
     saveBookmark,
-    removeBookmark
+    removeBookmark,
+    recommend
   } = usePostService();
 
   const {searchFilter, setSearchFilter} = useSearchFilter();
@@ -59,10 +65,19 @@ const PostList: React.FC = () => {
 
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
-    if (!slotId) return setDetailSnapshot({
-      loading: false,
-      data: null
-    });
+    if (!slotId) {
+      setRecommendSnapshot({data: [], loading: true});
+      recommend(userId)
+        .then((data) => setRecommendSnapshot({
+          data: data!,
+          loading: false
+        }));
+      setDetailSnapshot({
+        loading: false,
+        data: null
+      });
+      return;
+    }
 
     setDetailSnapshot({data: null, loading: true});
     showDetail(Number(slotId))
@@ -153,10 +168,10 @@ const PostList: React.FC = () => {
         "w-full h-full flex flex-col"
       )}>
         {
-          detailSnapshot.loading && <Loading/>
+          (detailSnapshot.loading || recommendSnapshot.loading) && <Loading/>
         }
         {
-          detailSnapshot.data && (
+          detailSnapshot.data ? (
             <PostItemSlot
               closeSlot={() => {
                 searchParams.delete("slot");
@@ -172,6 +187,19 @@ const PostList: React.FC = () => {
                 w?.focus();
               }}
               content={detailSnapshot.data}
+            />
+          ) : (
+            <AIRecommendItems
+              addBookmark={(postId) => {
+                saveBookmark(userId, postId);
+              }}
+              cancelBookmark={(postId) => {
+                removeBookmark(userId, postId);
+              }}
+              seeDetail={(postId) => {
+                searchParams.set("slot", String(postId));
+                setSearchParams(searchParams);
+              }}
             />
           )
         }

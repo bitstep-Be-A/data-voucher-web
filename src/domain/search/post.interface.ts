@@ -14,10 +14,18 @@ export interface PostBase {
   organization: string;
 }
 
+export interface PostRecommendation extends PostBase {
+  projectBudget: string;
+  isBookmarked: boolean;
+  part: string;
+  postDate: string | null;
+  department: string;
+}
+
 export interface PostSummary extends PostBase {
   readCount: number;
   searchTags: string[];
-  projectAmount: string;
+  projectBudget: string;
   isBookmarked: boolean;
 }
 
@@ -30,6 +38,13 @@ export interface PostSummaryManager {
   selectTags: (searchTags: string[]) => string[];  // n개씩만 가져오기
   isKeywordIncludingNotice: (keyword: string, notice: string) => boolean;
 }
+
+export interface PostDetailManager {}
+
+export interface PostManager extends PostSummaryManager, PostDetailManager {
+  changeDateLeftToDDay: (daysLeft: number) => string;
+  bookmarkToggleToBool: (toggle: ToggleType) => boolean;
+};
 
 export interface PostDetail extends PostBase {
   part: string;  // 분야
@@ -91,4 +106,5 @@ export interface PostService {
   showDetail: (postId: ID) => Promise<PostDetail | void>;
   saveBookmark: (userId: ID, postId: ID) => void;
   removeBookmark: (userId: ID, postId: ID) => void;
+  recommend: (userId: ID) => Promise<PostRecommendation[] | void>;
 }

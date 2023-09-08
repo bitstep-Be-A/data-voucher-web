@@ -24,5 +24,9 @@ export const postApi = {
       "PostID": postId
     }});
     return null;
+  },
+  recommendPosts: async (userId: ID) => {
+    const response = await Axios.post(`/AI맞춤추천공고/post/lists/recommend`, {'MemberNo': userId});
+    return response.data;
   }
 }

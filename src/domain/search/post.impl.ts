@@ -2,11 +2,12 @@ import { atom, useRecoilState } from "recoil";
 
 import {
   PostSummary,
-  PostSummaryManager,
+  PostManager,
   PostDetail,
   Attachment,
   SearchFilter,
   SearchFilterOpt,
+  PostRecommendation,
 } from "./post.interface";
 import { ID } from "../../types/common";
 import { locations } from "../../policies/global.policy";
@@ -79,6 +80,31 @@ export class SearchFilterSerializer {
   }
 }
 
+export class PostRecommendationModel implements PostRecommendation {
+  public postId: ID;
+  public logo?: string | undefined;
+  public notice: string;
+  public dDay: string;
+  public organization: string;
+  public part: string;
+  public projectBudget: string;
+  public postDate: string | null;
+  public department: string;
+  public isBookmarked: boolean;
+
+  constructor(entity: any) {
+    this.postId = entity["PostID"];
+    this.isBookmarked = entity["bookmarkYN"];
+    this.projectBudget = entity["budget"];
+    this.dDay = postManager.changeDateLeftToDDay(entity["days_left"]);
+    this.postDate = entity["post_date"];
+    this.notice = entity["notice"];
+    this.organization = entity["organization"];
+    this.part = entity["part"];
+    this.department = entity["department"];
+  }
+}
+
 export class PostDetailModel implements PostDetail {
   public postId: ID;
   public logo?: string;
@@ -103,14 +129,7 @@ export class PostDetailModel implements PostDetail {
     this.applyStart = entity["apply_start"];
     this.attachments = entity["attachments"];
     this.budget = entity["budget"];
-    const daysLeft = entity["days_left"];
-    if (daysLeft === 0) {
-      this.dDay = "D-day"
-    } else if (daysLeft < 0) {
-      this.dDay = `D${daysLeft}`;
-    } else {
-      this.dDay = `접수마감`;
-    }
+    this.dDay = postManager.changeDateLeftToDDay(entity["days_left"]);
     this.department = entity["department"];
     this.notice = entity["notice"];
     this.purpose = entity["object"];
@@ -121,7 +140,23 @@ export class PostDetailModel implements PostDetail {
   }
 }
 
-export const postSummaryManager: PostSummaryManager = {
+export const postManager: PostManager = {
+  bookmarkToggleToBool(toggle) {
+    if (toggle === "Y") {
+      return true;
+    } else if (toggle === "N") {
+      return false;
+    } else { return false }
+  },
+  changeDateLeftToDDay(daysLeft) {
+    if (daysLeft === 0) {
+      return "D-day"
+    } else if (daysLeft < 0) {
+      return `D${daysLeft}`;
+    } else {
+      return `접수마감`;
+    }
+  },
   organizeKeywords(keywords) {
     return keywords.map((v) => v.toUpperCase().replace(/(\s*)/g, ""));
   },
@@ -200,7 +235,7 @@ export class PostSummaryModel implements PostSummary {
   public notice: string;
   public dDay: string;
   public organization: string;
-  public projectAmount: string;
+  public projectBudget: string;
   public readCount: number;
   private _searchTags: string[];
   public isBookmarked: boolean;
@@ -209,30 +244,18 @@ export class PostSummaryModel implements PostSummary {
     this.postId = entity['PostID'];
     this.logo = undefined;
     this.notice = entity['notice'];
-    const daysLeft = entity["apply_end"];
-    if (daysLeft === 0) {
-      this.dDay = "D-day"
-    } else if (daysLeft < 0) {
-      this.dDay = `D${daysLeft}`;
-    } else {
-      this.dDay = `접수마감`;
-    }
+    this.dDay = postManager.changeDateLeftToDDay(entity["apply_end"]);
     this.organization = entity['organization'];
-    this.projectAmount = entity['budget'];
+    this.projectBudget = entity['budget'];
     this.readCount = entity['views'];
 
     this._searchTags = entity['tag'].split(',');
-    this._searchTags = postSummaryManager.organizeKeywords(this._searchTags);
-    this._searchTags = postSummaryManager.removeLocationsFromTags(this._searchTags);
-    this._searchTags = postSummaryManager.recommendationOrderedFirst(this._searchTags);
-    this._searchTags = postSummaryManager.selectTags(this._searchTags);
+    this._searchTags = postManager.organizeKeywords(this._searchTags);
+    this._searchTags = postManager.removeLocationsFromTags(this._searchTags);
+    this._searchTags = postManager.recommendationOrderedFirst(this._searchTags);
+    this._searchTags = postManager.selectTags(this._searchTags);
 
-    const bookmarkYN = entity["bookmarkYN"];
-    if (bookmarkYN === "Y") {
-      this.isBookmarked = true;
-    } else if (bookmarkYN === "N") {
-      this.isBookmarked = false;
-    } else { this.isBookmarked = false }
+    this.isBookmarked = postManager.bookmarkToggleToBool(entity["bookmarkYN"]);
   }
 
   get searchTags(): string[] {

@@ -80,7 +80,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
                   ))
                 }
               </div>
-              <span className="font-bold text-sm">{content.projectAmount}</span>
+              <span className="font-bold text-sm">{content.projectBudget}</span>
             </div>
           </li>
         ))

@@ -4,8 +4,9 @@ import { PostContext } from "../../context/post.context";
 import {
   SearchFilterSerializer,
   PostSummaryModel,
-  postSummaryManager,
+  postManager,
   PostDetailModel,
+  PostRecommendationModel,
 } from "../../domain/search/post.impl";
 import type { PostSummary } from "../../domain/search/post.interface";
 import { useAuth } from "../../context/auth.context";
@@ -33,7 +34,7 @@ const PostServiceProvider = ({ children }: {
         setPostTotalItems(payload.meta["total_count"]);
         
         if (!!options.keyword) {
-          postSummaries = postSummaries.filter((item) => postSummaryManager.isKeywordIncludingNotice(options.keyword, item.notice));
+          postSummaries = postSummaries.filter((item) => postManager.isKeywordIncludingNotice(options.keyword, item.notice));
         }
         postSummaries = postSummaries.slice(options.offset, options.offset + options.limit);
         return postSummaries;
@@ -54,7 +55,14 @@ const PostServiceProvider = ({ children }: {
         try {
           postApi.deleteBookmark(userId, postId);
         } catch { logout(); }
-      }
+      },
+      recommend: async (userId) => {
+        let payload
+        try {
+          payload = await postApi.recommendPosts(userId);
+        } catch { logout(); return }
+        return payload.documents.map((v: any) => new PostRecommendationModel(v));
+      },
     }}>
       {children}
     </PostContext.Provider>

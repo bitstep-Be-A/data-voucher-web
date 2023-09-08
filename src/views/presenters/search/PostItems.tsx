@@ -33,7 +33,7 @@ const Noti = styled.div`
 
 export const PostItems: React.FC<PostItemsUx> = (ux) => {
   return (
-    <ul className="w-full h-full flex flex-col items-center py-3">
+    <ul className="flex flex-col items-center py-3">
       {
         ux.postContents.map((content) => (
           <li key={content.postId} className="lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white">

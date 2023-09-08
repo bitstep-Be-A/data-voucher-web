@@ -69,14 +69,8 @@ const PostList: React.FC = () => {
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
     if (!!postDetail) {
-      console.log("detail");
-      console.log(listWidth);
-      console.log("------------")
       return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["hidden", "col-span-10"];
     }
-    console.log("summary");
-    console.log(listWidth);
-    console.log("------------")
     return listWidth > 700 ? ["col-span-6", "col-span-4"] : ["col-span-10", "hidden"];
   }, [listWidth, postDetail]);
 

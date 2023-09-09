@@ -15,7 +15,9 @@ interface AIRecommendItemsUx {
 
 export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
   return (
-    <ul className="w-[350px] flex flex-col items-center px-4">
+    <>
+    <h3>AI 맞춤 추천 공고</h3>
+    <ul className="w-[350px] flex flex-col items-center px-4 space-y-5">
       {
         ux.postContents.map((content) => (
           <li className="flex flex-col items-center">
@@ -69,5 +71,6 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
         ))
       }
     </ul>
+    </>
   );
 }

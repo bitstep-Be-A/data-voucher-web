@@ -60,7 +60,10 @@ const PostServiceProvider = ({ children }: {
         let payload
         try {
           payload = await postApi.recommendPosts(userId);
-        } catch { logout(); return }
+        } catch (e) { 
+          console.log(e);
+          return;
+         }
         return payload.documents.map((v: any) => new PostRecommendationModel(v));
       },
     }}>

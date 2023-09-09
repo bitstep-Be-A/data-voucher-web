@@ -127,11 +127,11 @@ const PostList: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-row" ref={listElementRef}>
+    <div className="w-full h-full flex flex-row pb-20" ref={listElementRef}>
       <div className={classNames(
         displayClassName[0],
         "w-full h-full",
-        "border-r border-gray-400 overflow-y-scroll pb-20"
+        "border-r border-gray-400 overflow-y-scroll"
       )}>
         <SearchBar
           clickFilter={() => {
@@ -165,7 +165,7 @@ const PostList: React.FC = () => {
       </div>
       <div className={classNames(
         displayClassName[1],
-        "w-full h-full flex flex-col items-center",
+        "w-full h-full flex flex-col items-center py-8",
         "overflow-y-scroll"
       )}>
         {

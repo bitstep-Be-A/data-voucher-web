@@ -19,7 +19,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
       {
         ux.postContents.map((content) => (
           <li className="flex flex-col items-center">
-            <div className="flex flex-row justify-between items-center mb-3">
+            <div className="w-full flex flex-row justify-between items-center mb-3">
               <span>{content.dDay}</span>
               {
                 content.isBookmarked ? (
@@ -33,7 +33,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
             </div>
             <span>{content.notice}</span>
             <hr className="px-2 my-2" />
-            <div className="grid gap-y-3 grid-cols-7">
+            <div className="w-full grid gap-y-3 grid-cols-7">
               <span className="col-span-2">
                 분야
               </span>

@@ -165,7 +165,8 @@ const PostList: React.FC = () => {
       </div>
       <div className={classNames(
         displayClassName[1],
-        "w-full h-full flex flex-col"
+        "w-full h-full flex flex-col items-center",
+        "overflow-y-scroll"
       )}>
         {
           (detailSnapshot.loading || recommendSnapshot.loading) && <Loading/>

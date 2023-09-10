@@ -91,7 +91,7 @@ export interface FilterTag {
     'excludeClosing';
 }
 
-export interface SearchFilterOpt {
+export interface PostListOption {
   keyword: string;
   limit: number;
   offset: number;

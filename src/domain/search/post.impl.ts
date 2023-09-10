@@ -6,7 +6,7 @@ import {
   PostDetail,
   Attachment,
   SearchFilter,
-  SearchFilterOpt,
+  PostListOption,
   PostRecommendation,
 } from "./post.interface";
 import { ID } from "../../types/common";
@@ -38,7 +38,7 @@ export const useSearchFilter = () => {
   }
 }
 
-const searchFilterOptState = atom<SearchFilterOpt>({
+const searchFilterOptState = atom<PostListOption>({
   key: "search/post/SearchFilterOpt",
   default: {
     keyword: "",

@@ -12,6 +12,7 @@ interface AIRecommendItemsUx {
   cancelBookmark: (postId: ID) => void;
   seeDetail: (postId: ID) => void;
   postContents: PostRecommendation[];
+  bookmarkList: ID[];
 }
 
 export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
@@ -25,7 +26,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
             <div className="w-full flex flex-row justify-between items-center mb-3">
               <span>{content.dDay}</span>
               {
-                content.isBookmarked ? (
+                ux.bookmarkList.includes(content.postId) ? (
                   <IconButton onClick={() => ux.cancelBookmark(content.postId)}>
                     <BookmarkIcon style={{
                       color: "#FFE500"

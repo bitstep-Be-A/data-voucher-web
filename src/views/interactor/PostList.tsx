@@ -7,7 +7,7 @@ import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
 import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
-import { DataStateType } from "../../types/common";
+import { DataStateType, ID } from "../../types/common";
 import { classNames } from "../../utils";
 import { useContainer } from "../../context/base.context";
 
@@ -37,6 +37,8 @@ const PostList: React.FC = () => {
     loading: false
   });
 
+  const [bookmarkList, setBookmarkList] = useState<ID[]>([]);
+
   const {
     search,
     showDetail,
@@ -56,10 +58,13 @@ const PostList: React.FC = () => {
       loading: false,
     })
     search(searchFilter, searchFilterOpt).then(
-      (list => setSummarySnapshot({
-        data: list!,
-        loading: false,
-      }))
+      (list => {
+        setSummarySnapshot({
+          data: list!,
+          loading: false,
+        });
+        setBookmarkList(list!.filter((v) => v.isBookmarked).map(v => v.postId));
+      })
     );
   }, [searchFilter, searchFilterOpt, search]);
 
@@ -152,15 +157,18 @@ const PostList: React.FC = () => {
               postContents={summarySnapshot.data}
               addBookmark={(postId) => {
                 saveBookmark(userId, postId);
+                setBookmarkList([...bookmarkList, postId]);
               }}
               cancelBookmark={(postId) => {
                 removeBookmark(userId, postId);
+                setBookmarkList(bookmarkList.filter(v => v !== postId));
               }}
               clickItem={(postId) => {
                 searchParams.set("slot", String(postId));
                 setSearchParams(searchParams);
               }}
               selectedPost={Number(searchParams.get("slot")) || null}
+              bookmarkList={bookmarkList}
             />
           )
         }
@@ -193,14 +201,17 @@ const PostList: React.FC = () => {
               postContents={recommendSnapshot.data}
               addBookmark={(postId) => {
                 saveBookmark(userId, postId);
+                setBookmarkList([...bookmarkList, postId]);
               }}
               cancelBookmark={(postId) => {
                 removeBookmark(userId, postId);
+                setBookmarkList(bookmarkList.filter(v => v !== postId));
               }}
               seeDetail={(postId) => {
                 searchParams.set("slot", String(postId));
                 setSearchParams(searchParams);
               }}
+              bookmarkList={bookmarkList}
             />
           ) : <Loading className="h-full flex items-center"/>
         }

@@ -22,6 +22,7 @@ interface PostItemsUx {
   clickItem: (postId: ID) => void;
   postContents: PostSummary[];
   selectedPost: ID | null;
+  bookmarkList: ID[];
 }
 
 const Noti = styled.div`
@@ -62,7 +63,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
                 </Noti>
               </div>
               {
-                content.isBookmarked ? (
+                ux.bookmarkList.includes(content.postId) ? (
                   <IconButton onClick={(e) => {
                     e.stopPropagation();
                     ux.cancelBookmark(content.postId);

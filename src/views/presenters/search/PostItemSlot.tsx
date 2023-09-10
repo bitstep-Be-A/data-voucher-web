@@ -26,7 +26,7 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
           responsiveHeaderMarginY,
           responsiveHeaderText
         )}>공고상세</h3>
-        <IconButton onClick={ux.closeSlot} className="lg:w-5 lg:h-5 w-4 h-4">
+        <IconButton onClick={ux.closeSlot} className="lg:w-5 lg:h-5 w-4 h-4 mr-10">
           <CloseIcon/>
         </IconButton>
       </div>

@@ -160,7 +160,7 @@ const PostList: React.FC = () => {
                 searchParams.set("slot", String(postId));
                 setSearchParams(searchParams);
               }}
-              selectedPost={searchParams.get("slot") || null}
+              selectedPost={Number(searchParams.get("slot")) || null}
             />
           )
         }
@@ -171,10 +171,7 @@ const PostList: React.FC = () => {
         "overflow-y-scroll"
       )}>
         {
-          (detailSnapshot.loading || recommendSnapshot.loading) && <Loading/>
-        }
-        {
-          detailSnapshot.data ? (
+          searchParams.get("slot") ? (detailSnapshot.data && !detailSnapshot.loading) ? (
             <PostItemSlot
               closeSlot={() => {
                 searchParams.delete("slot");
@@ -191,7 +188,7 @@ const PostList: React.FC = () => {
               }}
               content={detailSnapshot.data}
             />
-          ) : (
+          ) : <Loading/> : !recommendSnapshot.loading ? (
             <AIRecommendItems
               postContents={recommendSnapshot.data}
               addBookmark={(postId) => {
@@ -205,7 +202,7 @@ const PostList: React.FC = () => {
                 setSearchParams(searchParams);
               }}
             />
-          )
+          ) : <Loading/>
         }
       </div>
       {/* <FilterPopup

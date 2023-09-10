@@ -66,8 +66,6 @@ const PostList: React.FC = () => {
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
     if (!slotId) {
-      if (!userId) return;
-
       setRecommendSnapshot({data: [], loading: true});
       recommend(userId)
         .then((data) => setRecommendSnapshot({
@@ -102,9 +100,11 @@ const PostList: React.FC = () => {
   }, [searchFilterOpt, setSearchFilterOpt]);
 
   useEffect(() => {
-    postDetailQueryHandler(searchParams);
+    if (userId) {
+      postDetailQueryHandler(searchParams);
+    }
     paginationQueryHandler(searchParams);
-  }, [searchParams]);
+  }, [searchParams, userId]);
 
   const listElementRef = useRef<HTMLDivElement>(null);
 

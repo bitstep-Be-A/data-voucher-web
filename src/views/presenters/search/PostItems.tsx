@@ -63,13 +63,19 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
               </div>
               {
                 content.isBookmarked ? (
-                  <IconButton onClick={() => ux.cancelBookmark(content.postId)}>
+                  <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    ux.cancelBookmark(content.postId);
+                  }}>
                     <BookmarkIcon style={{
                       color: "#FFE500"
                     }}/>
                   </IconButton>
                 ) : (
-                  <IconButton onClick={() => ux.addBookmark(content.postId)}>
+                  <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    ux.addBookmark(content.postId);
+                  }}>
                     <BookmarkBorderIcon sx={{color: deepGray}} />
                   </IconButton>
                 )

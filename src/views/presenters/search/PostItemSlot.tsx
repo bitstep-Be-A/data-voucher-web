@@ -28,84 +28,90 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
           <CloseIcon/>
         </IconButton>
       </div>
-      <hr />
-      <span className={classNames(responsiveHeaderText)}>{ux.content.notice}</span>
-      <div className={classNames(
-        "w-full grid gap-y-3 grid-cols-7",
-        responsiveBodyText
-      )}>
-        <span className="col-span-2 font-bold">
-          마감일
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.dDay}
-        </span>
-        <span className="col-span-2 font-bold">
-          분야
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.part}
-        </span>
-        <span className="col-span-2 font-bold">
-          사업목적
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.purpose}
-        </span>
-        <span className="col-span-2 font-bold">
-          소관부처
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.department}
-        </span>
-        <span className="col-span-2 font-bold">
-          수행기관
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.organization}
-        </span>
-        <span className="col-span-2 font-bold">
-          게시일시
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.postDate}
-        </span>
-        <span className="col-span-2 font-bold">
-          접수기간
-        </span>
-        <span className="col-end-8 col-span-4">
-          <p>{ux.content.applyStart} ~</p>
-          <p>{ux.content.applyEnd}</p>
-        </span>
-        <span className="col-span-2 font-bold">
-          지원규모
-        </span>
-        <span className="col-end-8 col-span-4">
-          {ux.content.budget}
-        </span>
+      <div className="w-full px-8">
+        <hr />
+        <span className={classNames(
+          responsiveHeaderText,
+          "px-8"
+        )}>{ux.content.notice}</span>
+        <div className={classNames(
+          "w-full grid gap-y-3 grid-cols-7",
+          responsiveBodyText
+        )}>
+          <span className="col-span-2 font-bold">
+            마감일
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.dDay}
+          </span>
+          <span className="col-span-2 font-bold">
+            분야
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.part}
+          </span>
+          <span className="col-span-2 font-bold">
+            사업목적
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.purpose}
+          </span>
+          <span className="col-span-2 font-bold">
+            소관부처
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.department}
+          </span>
+          <span className="col-span-2 font-bold">
+            수행기관
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.organization}
+          </span>
+          <span className="col-span-2 font-bold">
+            게시일시
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.postDate}
+          </span>
+          <span className="col-span-2 font-bold">
+            접수기간
+          </span>
+          <span className="col-end-8 col-span-4">
+            <p>{ux.content.applyStart} ~</p>
+            <p>{ux.content.applyEnd}</p>
+          </span>
+          <span className="col-span-2 font-bold">
+            지원규모
+          </span>
+          <span className="col-end-8 col-span-4">
+            {ux.content.budget}
+          </span>
+        </div>
+        <hr />
+        <div className={classNames(
+          responsiveBodyText,
+        )}>
+          <h5 className="font-bold">사업안내</h5>
+          <span>{ux.content.overview}</span>
+        </div>
+        <hr />
+        {
+          ux.content.attachments.map((attachment, index) => (
+            <div className="flex flex-row space-x-3" key={index}>
+              <AttachmentIcon/>
+              <span className={classNames(
+                "underline cursor-pointer",
+                responsiveBodyText
+              )} onClick={() => ux.visitWebsite(
+                process.env.REACT_APP_SERVER_URL + attachment.pfi_filename
+              )}>
+                { attachment.pfi_filename }
+              </span>
+            </div>
+          ))
+        }
       </div>
-      <hr />
-      <h5 className={classNames(
-        "font-bold",
-        responsiveBodyText
-      )}>사업안내</h5>
-      <span>{ux.content.overview}</span>
-      <hr />
-      {
-        ux.content.attachments.map((attachment, index) => (
-          <div className="flex flex-row space-x-3" key={index}>
-            <AttachmentIcon/>
-            <span className={classNames(
-              "underline cursor-pointer",
-              responsiveBodyText
-            )} onClick={() => ux.visitWebsite(
-              process.env.REACT_APP_SERVER_URL + attachment.pfi_filename
-            )}>
-              { attachment.pfi_filename }
-            </span>
-          </div>
-        ))
-      }
     </div>
   );
 }

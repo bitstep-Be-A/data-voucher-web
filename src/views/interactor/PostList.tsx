@@ -188,7 +188,7 @@ const PostList: React.FC = () => {
               }}
               content={detailSnapshot.data}
             />
-          ) : <Loading/> : !recommendSnapshot.loading ? (
+          ) : <Loading className="h-full flex items-center"/> : !recommendSnapshot.loading ? (
             <AIRecommendItems
               postContents={recommendSnapshot.data}
               addBookmark={(postId) => {
@@ -202,7 +202,7 @@ const PostList: React.FC = () => {
                 setSearchParams(searchParams);
               }}
             />
-          ) : <Loading/>
+          ) : <Loading className="h-full flex items-center"/>
         }
       </div>
       {/* <FilterPopup

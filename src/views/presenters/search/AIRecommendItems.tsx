@@ -20,7 +20,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
     <ul className="w-[350px] flex flex-col items-center px-6 space-y-5 lg:text-base text-sm">
       {
         ux.postContents.map((content, index) => (
-          <li className="w-full flex flex-col py-2 px-3 rounded-lg bg-lightGray text-deepGray" key={index}>
+          <li className="w-full flex flex-col py-2 px-3 rounded-lg bg-zinc-100 text-deepGray" key={index}>
             <div className="w-full flex flex-row justify-between items-center mb-3">
               <span>{content.dDay}</span>
               {
@@ -67,7 +67,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
                 {content.projectBudget}
               </span>
             </div>
-            <button className="w-full lg:py-4 py-3 rounded-md bg-gray-400 text-white"
+            <button className="w-full lg:py-3 py-2 rounded-md bg-lightGray text-white mt-3"
               onClick={() => ux.seeDetail(content.postId)}
             >상세 보기</button>
           </li>

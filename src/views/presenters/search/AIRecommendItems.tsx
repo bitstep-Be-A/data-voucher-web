@@ -16,7 +16,7 @@ interface AIRecommendItemsUx {
 export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
   return (
     <>
-    <h3 className="mb-4">AI 맞춤 추천 공고</h3>
+    <h3 className="mb-4 font-bold lg:text-base text-sm">AI 맞춤 추천 공고</h3>
     <ul className="w-[350px] flex flex-col items-center px-6 space-y-5 lg:text-base text-sm">
       {
         ux.postContents.map((content, index) => (

@@ -14,6 +14,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
+import IconButton from '@mui/material/IconButton';
 
 interface PostItemsUx {
   addBookmark: (postId: ID) => void;
@@ -62,11 +63,15 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
               </div>
               {
                 content.isBookmarked ? (
-                  <BookmarkIcon style={{
-                    color: "#FFE500"
-                  }}/>
+                  <IconButton onClick={() => ux.cancelBookmark(content.postId)}>
+                    <BookmarkIcon style={{
+                      color: "#FFE500"
+                    }}/>
+                  </IconButton>
                 ) : (
-                  <BookmarkBorderIcon sx={{color: deepGray}} />
+                  <IconButton onClick={() => ux.addBookmark(content.postId)}>
+                    <BookmarkBorderIcon sx={{color: deepGray}} />
+                  </IconButton>
                 )
               }
             </div>

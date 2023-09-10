@@ -5,6 +5,7 @@ import { deepGray } from "../../../styles/constant";
 
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import IconButton from '@mui/material/IconButton';
 
 interface AIRecommendItemsUx {
   addBookmark: (postId: ID) => void;
@@ -25,11 +26,15 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
               <span>{content.dDay}</span>
               {
                 content.isBookmarked ? (
-                  <BookmarkIcon style={{
-                    color: "#FFE500"
-                  }}/>
+                  <IconButton onClick={() => ux.cancelBookmark(content.postId)}>
+                    <BookmarkIcon style={{
+                      color: "#FFE500"
+                    }}/>
+                  </IconButton>
                 ) : (
-                  <BookmarkBorderIcon sx={{color: deepGray}} />
+                  <IconButton onClick={() => ux.addBookmark(content.postId)}>
+                    <BookmarkBorderIcon sx={{color: deepGray}} />
+                  </IconButton>
                 )
               }
             </div>

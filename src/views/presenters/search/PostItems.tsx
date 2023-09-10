@@ -6,6 +6,7 @@ import { PostSummary } from "../../../domain/search/post.interface";
 import { ID } from "../../../types/common";
 import { deepGray, deepGreen, lightGray, lightGreen } from "../../../styles/constant";
 import { usePostPagination } from "../../../recoil/pageState";
+import { classNames } from "../../../utils";
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PinDropIcon from '@mui/icons-material/PinDrop';
@@ -36,7 +37,12 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
     <ul className="flex flex-col items-center py-3">
       {
         ux.postContents.map((content) => (
-          <li key={content.postId} className="lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white">
+          <li key={content.postId} className={classNames(
+              "lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white cursor-pointer",
+              ux.selectedPost ? "border-2 border-deepGray" : ""
+            )}
+            onClick={() => ux.clickItem(content.postId)}
+          >
             <div className="w-full flex flex-row items-center justify-between">
               <div className="flex flex-row items-center space-x-2">
                 <Noti>

@@ -14,26 +14,29 @@ interface PostItemSlotUx {
 
 const responsiveHeaderText = "lg:text-base text-sm";
 const responsiveBodyText = "lg:text-sm text-xs";
+const responsiveHeaderMarginY = "lg:my-4 my-3";
+const responsiveBodyMarginY = "lg:my-3 my-2.5";
 
 export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center text-deepGray">
       <div className="w-full flex flex-row justify-between items-center">
         <div className="w-2 h-2 bg-transparent" />
         <h3 className={classNames(
-          "my-3",
+          responsiveHeaderMarginY,
           responsiveHeaderText
         )}>공고상세</h3>
         <IconButton onClick={ux.closeSlot} className="lg:w-5 lg:h-5 w-4 h-4">
           <CloseIcon/>
         </IconButton>
+        <hr />
       </div>
       <div className="w-full px-8">
-        <hr />
-        <span className={classNames(
+        <div className={classNames(
           responsiveHeaderText,
-          "px-8"
-        )}>{ux.content.notice}</span>
+          "px-8 lg:mt-4 mt-3"
+        )}>{ux.content.notice}</div>
+        <hr className={responsiveHeaderMarginY} />
         <div className={classNames(
           "w-full grid gap-y-3 grid-cols-7",
           responsiveBodyText
@@ -88,14 +91,14 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
             {ux.content.budget}
           </span>
         </div>
-        <hr />
+        <hr className={responsiveBodyMarginY} />
         <div className={classNames(
           responsiveBodyText,
         )}>
           <h5 className="font-bold">사업안내</h5>
           <span>{ux.content.overview}</span>
         </div>
-        <hr />
+        <hr className={responsiveBodyMarginY} />
         {
           ux.content.attachments.map((attachment, index) => (
             <div className="flex flex-row space-x-3" key={index}>

@@ -26,11 +26,11 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
           responsiveHeaderMarginY,
           responsiveHeaderText
         )}>공고상세</h3>
-        <IconButton onClick={ux.closeSlot} className="lg:w-5 lg:h-5 w-4 h-4 mr-10">
+        <IconButton onClick={ux.closeSlot} className="lg:w-5 lg:h-5 w-4 h-4 relative right-4">
           <CloseIcon/>
         </IconButton>
       </div>
-      <hr />
+      <hr className="w-full" />
       <div className="w-full px-8">
         <div className={classNames(
           responsiveHeaderText,
@@ -95,7 +95,7 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
         <div className={classNames(
           responsiveBodyText,
         )}>
-          <h5 className="font-bold">사업안내</h5>
+          <h5 className="font-bold lg:mb-3 mb-2.5">사업안내</h5>
           <span>{ux.content.overview}</span>
         </div>
         <hr className={responsiveBodyMarginY} />

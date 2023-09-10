@@ -39,7 +39,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
         ux.postContents.map((content) => (
           <li key={content.postId} className={classNames(
               "lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white cursor-pointer rounded-md",
-              ux.selectedPost === content.postId ? "border" : ""
+              ux.selectedPost === content.postId ? "border border-black" : ""
             )}
             onClick={() => ux.clickItem(content.postId)}
           >

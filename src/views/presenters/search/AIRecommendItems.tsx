@@ -19,8 +19,8 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
     <h3>AI 맞춤 추천 공고</h3>
     <ul className="w-[350px] flex flex-col items-center px-4 space-y-5">
       {
-        ux.postContents.map((content) => (
-          <li className="flex flex-col items-center">
+        ux.postContents.map((content, index) => (
+          <li className="w-full flex flex-col" key={index}>
             <div className="w-full flex flex-row justify-between items-center mb-3">
               <span>{content.dDay}</span>
               {

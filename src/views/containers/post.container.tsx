@@ -18,6 +18,8 @@ const PostServiceProvider = ({ children }: {
 }) => {
   const { userId, logout } = useAuth();
 
+  console.log(userId);
+
   const [_, setPostTotalItems] = useRecoilState(postTotalItemsState);
 
   return (

@@ -94,7 +94,7 @@ export class PostRecommendationModel implements PostRecommendation {
 
   constructor(entity: any) {
     this.postId = entity["PostID"];
-    this.isBookmarked = entity["bookmarkYN"];
+    this.isBookmarked = postManager.bookmarkToggleToBool(entity["bookmarkYN"]);
     this.projectBudget = entity["budget"];
     this.dDay = postManager.changeDateLeftToDDay(entity["days_left"]);
     this.postDate = entity["post_date"];

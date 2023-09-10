@@ -6,7 +6,7 @@ import { PostSummary, PostDetail, PostRecommendation } from "../../domain/search
 import { usePostService } from "../../context/post.context";
 import { useAuth } from "../../context/auth.context";
 import { useSearchFilterModal } from "../../recoil/modalState";
-import { useSearchFilter, useSearchFilterOpt } from "../../domain/search/post.impl";
+import { useSearchFilter, usePostListOption } from "../../domain/search/post.impl";
 import { DataStateType, ID } from "../../types/common";
 import { classNames } from "../../utils";
 import { useContainer } from "../../context/base.context";
@@ -48,7 +48,7 @@ const PostList: React.FC = () => {
   } = usePostService();
 
   const {searchFilter, setSearchFilter} = useSearchFilter();
-  const {searchFilterOpt, setSearchFilterOpt} = useSearchFilterOpt();
+  const {postListOption, setPostListOption} = usePostListOption();
 
   const {setSearchFilterModal} = useSearchFilterModal();
 
@@ -57,7 +57,7 @@ const PostList: React.FC = () => {
       data: null,
       loading: false,
     })
-    search(searchFilter, searchFilterOpt).then(
+    search(searchFilter, postListOption).then(
       (list => {
         setSummarySnapshot({
           data: list!,
@@ -66,7 +66,7 @@ const PostList: React.FC = () => {
         setBookmarkList(list!.filter((v) => v.isBookmarked).map(v => v.postId));
       })
     );
-  }, [searchFilter, searchFilterOpt, search]);
+  }, [searchFilter, postListOption, search]);
 
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
@@ -98,11 +98,11 @@ const PostList: React.FC = () => {
 
   const paginationQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const pageString = searchParams.get("page") || "1";
-    setSearchFilterOpt({
-      ...searchFilterOpt,
-      offset: (parseInt(pageString)-1) * searchFilterOpt.limit
+    setPostListOption({
+      ...postListOption,
+      offset: (parseInt(pageString)-1) * postListOption.limit
     });
-  }, [searchFilterOpt, setSearchFilterOpt]);
+  }, [postListOption, setPostListOption]);
 
   useEffect(() => {
     if (userId) {
@@ -145,8 +145,8 @@ const PostList: React.FC = () => {
             setSearchFilterModal(true);
           }}
           writeDown={_.debounce((value: string) => {
-            setSearchFilterOpt({
-              ...searchFilterOpt,
+            setPostListOption({
+              ...postListOption,
               keyword: value
             });
           }, 1200)}

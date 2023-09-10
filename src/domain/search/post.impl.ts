@@ -38,7 +38,7 @@ export const useSearchFilter = () => {
   }
 }
 
-const searchFilterOptState = atom<PostListOption>({
+const postListOptionState = atom<PostListOption>({
   key: "search/post/SearchFilterOpt",
   default: {
     keyword: "",
@@ -47,11 +47,11 @@ const searchFilterOptState = atom<PostListOption>({
   }
 });
 
-export const useSearchFilterOpt = () => {
-  const [searchFilterOpt, setSearchFilterOpt] = useRecoilState(searchFilterOptState);
+export const usePostListOption = () => {
+  const [postListOption, setPostListOption] = useRecoilState(postListOptionState);
   return {
-    searchFilterOpt,
-    setSearchFilterOpt
+    postListOption,
+    setPostListOption
   }
 }
 

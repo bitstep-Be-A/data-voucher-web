@@ -89,7 +89,7 @@ const PostList: React.FC = () => {
         data: null,
         loading: false,
       }));
-  }, [showDetail]);
+  }, [showDetail, userId]);
 
   const paginationQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const pageString = searchParams.get("page") || "1";

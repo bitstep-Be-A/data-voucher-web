@@ -24,6 +24,7 @@ const PostList: React.FC = () => {
 
   const { userId } = useAuth();
 
+  // service로 fetch 하여 가져온 데이터 snapshot
   const [summarySnapshot, setSummarySnapshot] = useState<DataStateType<PostSummary[]>>({
     data: [],
     loading: false
@@ -37,8 +38,11 @@ const PostList: React.FC = () => {
     loading: false
   });
 
-  const [bookmarkList, setBookmarkList] = useState<ID[]>([]);
+  // 북마크 reactive하게 조정하기 위한 state
+  const [summaryBookmarkList, setSummaryBookmarkList] = useState<ID[]>([]);
+  const [recommendBookmarkList, setRecommendBookmarkList] = useState<ID[]>([]);
 
+  // 주입받은 post service
   const {
     search,
     showDetail,
@@ -47,6 +51,7 @@ const PostList: React.FC = () => {
     recommend
   } = usePostService();
 
+  // search 시 필요한 parameter
   const {searchFilter, setSearchFilter} = useSearchFilter();
   const {postListOption, setPostListOption} = usePostListOption();
 
@@ -58,12 +63,12 @@ const PostList: React.FC = () => {
       loading: false,
     })
     search(searchFilter, postListOption).then(
-      (list => {
+      (data => {
         setSummarySnapshot({
-          data: list!,
+          data: data!,
           loading: false,
         });
-        setBookmarkList(list!.filter((v) => v.isBookmarked).map(v => v.postId));
+        setSummaryBookmarkList(data!.filter((v) => v.isBookmarked).map(v => v.postId));
       })
     );
   }, [searchFilter, postListOption, search]);
@@ -73,10 +78,13 @@ const PostList: React.FC = () => {
     if (!slotId) {
       setRecommendSnapshot({data: [], loading: true});
       recommend(userId)
-        .then((data) => setRecommendSnapshot({
-          data: data!,
-          loading: false
-        }));
+        .then((data) => {
+          setRecommendSnapshot({
+            data: data!,
+            loading: false
+          });
+          setRecommendBookmarkList(data!.filter((v) => v.isBookmarked).map(v => v.postId));
+        });
       setDetailSnapshot({
         loading: false,
         data: null
@@ -157,18 +165,18 @@ const PostList: React.FC = () => {
               postContents={summarySnapshot.data}
               addBookmark={(postId) => {
                 saveBookmark(userId, postId);
-                setBookmarkList([...bookmarkList, postId]);
+                setSummaryBookmarkList([...summaryBookmarkList, postId]);
               }}
               cancelBookmark={(postId) => {
                 removeBookmark(userId, postId);
-                setBookmarkList(bookmarkList.filter(v => v !== postId));
+                setSummaryBookmarkList(summaryBookmarkList.filter(v => v !== postId));
               }}
               clickItem={(postId) => {
                 searchParams.set("slot", String(postId));
                 setSearchParams(searchParams);
               }}
               selectedPost={Number(searchParams.get("slot")) || null}
-              bookmarkList={bookmarkList}
+              bookmarkList={summaryBookmarkList}
             />
           )
         }
@@ -201,17 +209,17 @@ const PostList: React.FC = () => {
               postContents={recommendSnapshot.data}
               addBookmark={(postId) => {
                 saveBookmark(userId, postId);
-                setBookmarkList([...bookmarkList, postId]);
+                setRecommendBookmarkList([...recommendBookmarkList, postId]);
               }}
               cancelBookmark={(postId) => {
                 removeBookmark(userId, postId);
-                setBookmarkList(bookmarkList.filter(v => v !== postId));
+                setRecommendBookmarkList(recommendBookmarkList.filter(v => v !== postId));
               }}
               seeDetail={(postId) => {
                 searchParams.set("slot", String(postId));
                 setSearchParams(searchParams);
               }}
-              bookmarkList={bookmarkList}
+              bookmarkList={recommendBookmarkList}
             />
           ) : <Loading className="h-full flex items-center"/>
         }

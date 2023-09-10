@@ -66,6 +66,8 @@ const PostList: React.FC = () => {
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
     if (!slotId) {
+      if (!userId) return;
+
       setRecommendSnapshot({data: [], loading: true});
       recommend(userId)
         .then((data) => setRecommendSnapshot({

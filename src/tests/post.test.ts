@@ -76,8 +76,8 @@ describe('공고검색', () => {
       {id: '3', name: 'name3', filterKey: 'employeeCount'},
       {id: '4', name: 'name4', filterKey: 'recruitType'},
       {id: '5', name: 'name5', filterKey: 'interestParts'},
-      {id: '6', name: 'name6', filterKey: 'applyStart'},
-      {id: '7', name: 'name7', filterKey: 'applyEnd'},
+      {id: '6', name: 'name6', filterKey: 'applyStartDate'},
+      {id: '7', name: 'name7', filterKey: 'applyEndDate'},
       {id: '8', name: 'name8', filterKey: 'excludeClosing'}
     ];
     filterTags.forEach((v) => {

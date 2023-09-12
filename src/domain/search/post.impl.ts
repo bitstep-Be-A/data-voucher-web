@@ -19,8 +19,8 @@ export const defaultSearchFilter: SearchFilter = {
   targetEnterprises: [],
   recruitType: undefined,
   interestParts: [],
-  applyStart: undefined,
-  applyEnd: undefined,
+  applyStartDate: undefined,
+  applyEndDate: undefined,
   excludeClosing: 'Y',
   bookmarkOnly: 'N'
 }
@@ -72,8 +72,8 @@ export class SearchFilterSerializer {
       "supportType": this.filter.recruitType ?? "",
       "part": this.filter.interestParts,
       "postDateYN": "N",
-      "startDate": this.filter.applyStart,
-      "endDate": this.filter.applyEnd,
+      "startDate": this.filter.applyStartDate,
+      "endDate": this.filter.applyEndDate,
       "registerClosingYN": this.filter.excludeClosing,
       "bookmarkPageYN": this.filter.bookmarkOnly
     }
@@ -96,7 +96,7 @@ export class PostRecommendationModel implements PostRecommendation {
     this.postId = entity["PostID"];
     this.isBookmarked = postManager.bookmarkToggleToBool(entity["bookmarkYN"]);
     this.projectBudget = entity["budget"];
-    this.dDay = postManager.changeDateLeftToDDay(entity["days_left"]);
+    this.dDay = postManager.changeDateLeftToDDay(entity["apply_end"]);
     this.postDate = entity["post_date"];
     this.notice = entity["notice"];
     this.organization = entity["organization"];
@@ -115,8 +115,8 @@ export class PostDetailModel implements PostDetail {
   public purpose?: string | undefined;
   public department: string;
   public postDate: string | null;
-  public applyStart: string;
-  public applyEnd: string;
+  public applyStartDate: string;
+  public applyEndDate: string;
   public connectWith?: string | undefined;
   public standardPriceMethod?: string | undefined;
   public overview: string;
@@ -125,11 +125,11 @@ export class PostDetailModel implements PostDetail {
 
   constructor(entity: any) {
     this.postId = entity["PostID"];
-    this.applyEnd = entity["apply_end"];
-    this.applyStart = entity["apply_start"];
+    this.applyEndDate = entity["apply_end"];
+    this.applyStartDate = entity["apply_start"];
     this.attachments = entity["attachments"];
     this.budget = entity["budget"];
-    this.dDay = postManager.changeDateLeftToDDay(entity["days_left"]);
+    this.dDay = postManager.changeDateLeftToDDay(entity["apply_end"]);
     this.department = entity["department"];
     this.notice = entity["notice"];
     this.purpose = entity["object"];
@@ -149,12 +149,16 @@ export const postManager: PostManager = {
     } else { return false }
   },
   changeDateLeftToDDay(daysLeft) {
-    if (daysLeft === 0) {
-      return "D-day"
-    } else if (daysLeft < 0) {
-      return `D${daysLeft}`;
+    if (typeof daysLeft === "string") {
+      return "상시";
     } else {
-      return `접수마감`;
+      if (daysLeft === 0) {
+        return "D-day"
+      } else if (daysLeft > 0) {
+        return `D-${daysLeft}`;
+      } else {
+        return `접수마감`;
+      }
     }
   },
   organizeKeywords(keywords) {

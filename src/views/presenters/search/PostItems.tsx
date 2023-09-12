@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { PostSummary } from "../../../domain/search/post.interface";
 import { ID } from "../../../types/common";
-import { deepGray, deepGreen, lightGray, lightGreen } from "../../../styles/constant";
+import { deepGray, deepGreen, lightGreen, tailwindGray } from "../../../styles/constant";
 import { usePostPagination } from "../../../recoil/pageState";
 import { classNames } from "../../../utils";
 
@@ -84,7 +84,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
             </div>
             <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
               <span style={{
-                backgroundColor: content.dDay.startsWith("D") ? lightGreen : lightGray,
+                backgroundColor: content.dDay.startsWith("D") ? lightGreen : tailwindGray[400],
                 color: content.dDay.startsWith("D") ? deepGreen : deepGray,
                 whiteSpace: "nowrap"
               }}>{content.dDay}</span>

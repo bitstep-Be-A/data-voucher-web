@@ -42,7 +42,7 @@ export interface PostSummaryManager {
 export interface PostDetailManager {}
 
 export interface PostManager extends PostSummaryManager, PostDetailManager {
-  changeDateLeftToDDay: (daysLeft: number) => string;
+  changeDateLeftToDDay: (daysLeft: number | string) => string;
   bookmarkToggleToBool: (toggle: ToggleType) => boolean;
 };
 
@@ -51,8 +51,8 @@ export interface PostDetail extends PostBase {
   purpose?: string;
   department: string;  // 소관부처
   postDate: string | null;  // 게시일
-  applyStart: string;  // 접수시작일
-  applyEnd: string;  // 접수마감일
+  applyStartDate: string;  // 접수시작일
+  applyEndDate: string;  // 접수마감일
   connectWith?: string;
   standardPriceMethod?: string;  // 예가방법
   overview: string;
@@ -73,8 +73,8 @@ export interface SearchFilter {
   interestParts: PartCategoryEnum[];
   employeeCount?: number;
   recruitType?: RecruitEnum;
-  applyStart?: string;
-  applyEnd?: string;
+  applyStartDate?: string;
+  applyEndDate?: string;
 }
 
 export interface FilterTag {
@@ -86,8 +86,8 @@ export interface FilterTag {
     'employeeCount' |
     'recruitType' |
     'interestParts' |
-    'applyStart' |
-    'applyEnd' |
+    'applyStartDate' |
+    'applyEndDate' |
     'excludeClosing';
 }
 

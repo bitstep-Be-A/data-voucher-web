@@ -65,8 +65,8 @@ describe('공고검색', () => {
       ],
       employeeCount: undefined,
       recruitType: undefined,
-      applyStart: "2023-01-01",
-      applyEnd: "2023-12-31",
+      applyStartDate: "2023-01-01",
+      applyEndDate: "2023-12-31",
       excludeClosing: "N",
       bookmarkOnly: "N"
     }

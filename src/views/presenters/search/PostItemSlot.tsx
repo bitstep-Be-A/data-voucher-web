@@ -81,8 +81,8 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
             접수기간
           </span>
           <span className="col-end-8 col-span-4">
-            <p>{ux.content.applyStart} ~</p>
-            <p>{ux.content.applyEnd}</p>
+            <p>{ux.content.applyStartDate} ~</p>
+            <p>{ux.content.applyEndDate}</p>
           </span>
           <span className="col-span-2 font-bold">
             지원규모

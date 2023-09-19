@@ -154,9 +154,9 @@ const PostList: React.FC = () => {
   const displayClassName = useMemo(() => {
     if (listWidth === null) return ["hidden", "hidden"];
     if (!!detailSnapshot.data) {
-      return listWidth > 724 ? ["", ""] : ["hidden", ""];
+      return listWidth > 786 ? ["", ""] : ["hidden", ""];
     }
-    return listWidth > 724 ? ["", ""] : ["", "hidden"];
+    return listWidth > 786 ? ["", ""] : ["", "hidden"];
   }, [listWidth, detailSnapshot]);
 
   const {mainScreenRef} = useContainer();
@@ -220,6 +220,10 @@ const PostList: React.FC = () => {
         )}
         enable={{
           left: true
+        }}
+        defaultSize={{
+          width: 420,
+          height: "100%"
         }}
         minWidth={350}
         maxWidth={780}

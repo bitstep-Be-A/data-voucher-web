@@ -13,11 +13,12 @@ import { useContainer } from "../../context/base.context";
 
 import { SearchBar } from "../presenters/search/SearchBar";
 import { FilterPopup } from "../presenters/search/FilterPopup";
-import { PostItems } from "../presenters/search/PostItems";
+import { PostItems, PostItemsSkeleton } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
 import useElementWidth from "../../hooks/useElementWidth";
 import Loading from "../../components/Loading";
 import { AIRecommendItems } from "../presenters/search/AIRecommendItems";
+import { Resizable } from "re-resizable";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,7 +62,11 @@ const PostList: React.FC = () => {
     setDetailSnapshot({
       data: null,
       loading: false,
-    })
+    });
+    setSummarySnapshot({
+      data: [],
+      loading: true,
+    });
     search(searchFilter, postListOption).then(
       (data => {
         setSummarySnapshot({
@@ -142,12 +147,13 @@ const PostList: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-row pb-20" ref={listElementRef}>
+    <div className="w-full h-full flex flex-row pt-2 pb-20" ref={listElementRef}>
       <div className={classNames(
-        displayClassName[0],
-        "w-full h-full",
-        "border-r border-gray-400 overflow-y-scroll"
-      )}>
+          displayClassName[0],
+          "w-full h-full",
+          "border-r border-gray-400 overflow-y-scroll"
+        )}
+      >
         <SearchBar
           clickFilter={() => {
             setSearchFilterModal(true);
@@ -160,7 +166,7 @@ const PostList: React.FC = () => {
           }, 1200)}
         />
         {
-          summarySnapshot.loading ? <Loading/> : (
+          summarySnapshot.loading ? <PostItemsSkeleton/> : (
             <PostItems
               postContents={summarySnapshot.data}
               addBookmark={(postId) => {
@@ -181,11 +187,17 @@ const PostList: React.FC = () => {
           )
         }
       </div>
-      <div className={classNames(
-        displayClassName[1],
-        "w-full h-full flex flex-col items-center py-8",
-        "overflow-y-scroll"
-      )}>
+      <Resizable className={classNames(
+          displayClassName[1],
+          "w-full h-full flex flex-col items-center py-8 mx-auto",
+          "overflow-y-scroll"
+        )}
+        enable={{
+          left: true
+        }}
+        minWidth={350}
+        maxWidth={780}
+      >
         {
           searchParams.get("slot") ? (detailSnapshot.data && !detailSnapshot.loading) ? (
             <PostItemSlot
@@ -223,7 +235,7 @@ const PostList: React.FC = () => {
             />
           ) : <Loading className="h-full flex items-center"/>
         }
-      </div>
+      </Resizable>
       {/* <FilterPopup
 
       /> */}

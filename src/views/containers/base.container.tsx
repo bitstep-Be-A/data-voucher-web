@@ -14,9 +14,9 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { IconButton, Toolbar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
+import Drawer from '@mui/material/Drawer';
+import AppBar from '@mui/material/AppBar';
 
 interface SideNavItemProps {
   text: string;
@@ -65,7 +65,7 @@ const SideNavbar = () => {
   return (
     <div className={classNames(
       isSideNavBarHidden ? "hidden" : "flex flex-col",
-      "w-full max-w-[350px] border-r border-gray-400"
+      "w-[250px] border-r border-gray-400"
     )} ref={sideBoxRef}>
       <div className="h-[40px] my-12">
         <span className="hidden">Logo</span>
@@ -144,67 +144,42 @@ const TopNavbar = () => {
 
   const { menuBarState } = useContainer();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+  const toggleDrawer = (open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setDrawerOpen(open);
+    };
+
 
   return (
-    <div className="border-b border-gray-400">
+    <AppBar position={"static"} color={"inherit"}>
       <Toolbar
         className="flex flex-row justify-between"
       >
         <Box>
           <IconButton
-            onClick={handleMenu}
+            onClick={toggleDrawer(true)}
           >
             <MenuIcon sx={{
               display: menuBarState[0] ? "block" : "none"
             }} />
           </IconButton>
-          <Menu
-            id="burger-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "left"
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left"
-            }}
-            open={!!anchorEl}
-            onClose={handleClose}
+          <Drawer
+            anchor={'left'}
+            open={drawerOpen}
+            onClose={toggleDrawer(false)}
           >
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(routes.search.path);
-              }}
-            >
-              공고검색
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(routes.bookmark.path);
-              }}
-            >
-              즐겨찾기
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                handleClose();
-                navigate(routes.docs.path);
-              }}
-            >
-              문서관리
-            </MenuItem>
-          </Menu>
+            <SideNavbar/>
+          </Drawer>
         </Box>
         <Box>
           {
@@ -228,7 +203,7 @@ const TopNavbar = () => {
                 />
               </button>
             </> : <>
-              <button onClick={() => navigate(routes.signup.path)}>
+              <button onClick={() => navigate(routes.my.path)}>
                 <TopNavItem
                   text={"마이페이지"}
                   isActive={
@@ -248,7 +223,7 @@ const TopNavbar = () => {
           }
         </Box>
       </Toolbar>
-    </div>
+    </AppBar>
   );
 }
 
@@ -268,7 +243,7 @@ export const BaseContainer = ({ children }: {
         <SideNavbar />
         <div className="w-full h-full flex flex-col">
           <TopNavbar />
-          <div className="w-full h-full overflow-y-scroll" ref={mainScreenRef}>
+          <div className="w-full h-full overflow-y-scroll bg-neutral-50" ref={mainScreenRef}>
             {children}
           </div>
         </div>

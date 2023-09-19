@@ -9,6 +9,8 @@ import { routes } from './routes/path';
 import { USER_ID_SESSION_KEY } from './constants/auth.constant';
 import { AuthContext } from './context/auth.context';
 import { ID } from './types/common';
+import { ThemeProvider } from '@mui/material';
+import { theme } from './styles/theme';
 
 import LoginPage from './pages/Login';
 import NotFound from './pages/NotFound';
@@ -53,24 +55,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path={routes.home.path} element={<HomePage/>}/>
-          <Route path='/' element={<PrivateRoute/>}>
-            <Route path={routes.search.path} element={<SearchPage/>}/>
-            <Route path={routes.my.path} element={<MyPage/>}/>
-            <Route path={routes.docs.path} element={<DocsPage/>}/>
-            <Route path={routes.bookmark.path} element={<BookmarkPage/>}/>
-          </Route>
-          <Route path='/' element={<PublicRoute/>}>
-            <Route path={routes.signup.path} element={<SignupPage/>}/>
-            <Route path={routes.login.path} element={<LoginPage/>}/>
-          </Route>
-          <Route path={"/*"} element={<NotFound/>}/>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path={routes.home.path} element={<HomePage/>}/>
+            <Route path='/' element={<PrivateRoute/>}>
+              <Route path={routes.search.path} element={<SearchPage/>}/>
+              <Route path={routes.my.path} element={<MyPage/>}/>
+              <Route path={routes.docs.path} element={<DocsPage/>}/>
+              <Route path={routes.bookmark.path} element={<BookmarkPage/>}/>
+            </Route>
+            <Route path='/' element={<PublicRoute/>}>
+              <Route path={routes.signup.path} element={<SignupPage/>}/>
+              <Route path={routes.login.path} element={<LoginPage/>}/>
+            </Route>
+            <Route path={"/*"} element={<NotFound/>}/>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -86,7 +86,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
                 )
               }
             </div>
-            <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm">
+            <div className="w-full flex flex-row items-center space-x-2 lg:text-base text-sm mb-2">
               <span style={{
                 backgroundColor: content.dDay.startsWith("D") ? lightGreen : tailwindGray[200],
                 color: content.dDay.startsWith("D") ? deepGreen : deepGray,

@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useNavigate } from "react-router-dom";
+import { grey } from "@mui/material/colors";
 
 import { routes } from "../../routes/path";
 import { classNames } from "../../utils";
 import { useAuth } from "../../context/auth.context";
 import { ContainerContext, useContainer } from "../../context/base.context";
 import useElementWidth from "../../hooks/useElementWidth";
+import { theme } from "../../styles/theme";
 
 import Nav from "../../components/Nav";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import { IconButton, Toolbar } from "@mui/material";
+import { IconButton, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
 import Drawer from '@mui/material/Drawer';
@@ -30,10 +32,16 @@ const SideNavItem: React.FC<SideNavItemProps> = ({
   isActive
 }) => {
   return (
-    <div className={classNames(
-      isActive ? "text-black" : "text-gray-400",
-      "flex flex-row items-center pl-10 py-2 hover:bg-gray-100 hover:opacity-70"
-    )}>
+    <Typography
+      variant="button"
+      sx={{
+        color: isActive ? theme.palette.primary.main : grey[700],
+        textDecoration: isActive ? "underline" : "none"
+      }}
+      className={classNames(
+        "flex flex-row items-center pl-10 py-2 hover:bg-secondary hover:text-white"
+      )}
+    >
       <Icon
         style={{
           width: 18,
@@ -45,7 +53,7 @@ const SideNavItem: React.FC<SideNavItemProps> = ({
           fontSize: 18
         }}
       >{text}</span>
-    </div>
+    </Typography>
   )
 }
 

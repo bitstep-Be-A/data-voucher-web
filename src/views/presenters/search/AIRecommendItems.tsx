@@ -6,6 +6,8 @@ import { deepGray } from "../../../styles/constant";
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Typography from "@mui/material/Typography";
 
 interface AIRecommendItemsUx {
   addBookmark: (postId: ID) => void;
@@ -22,7 +24,7 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
     <ul className="w-[350px] flex flex-col items-center px-6 space-y-5 lg:text-base text-sm">
       {
         ux.postContents.map((content, index) => (
-          <li className="w-full flex flex-col py-2 px-3 rounded-lg bg-zinc-100 text-deepGray" key={index}>
+          <li className="w-full flex flex-col py-3 px-3 rounded-lg bg-zinc-100 text-deepGray" key={index}>
             <div className="w-full flex flex-row justify-between items-center mb-3">
               <span>{content.dDay}</span>
               {
@@ -73,9 +75,18 @@ export const AIRecommendItems = (ux: AIRecommendItemsUx) => {
                 {content.projectBudget}
               </span>
             </div>
-            <button className="w-full lg:py-3 py-2 rounded-md bg-lightGray text-white mt-3"
+            <Button
+              variant={"contained"}
               onClick={() => ux.seeDetail(content.postId)}
-            >상세 보기</button>
+              sx={{
+                mt: 2,
+                py: 1
+              }}
+            >
+              <Typography variant={"button"}>
+                상세 보기
+              </Typography>
+            </Button>
           </li>
         ))
       }

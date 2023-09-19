@@ -102,6 +102,7 @@ export interface PostService {
     keyword: string;
     limit: number;
     offset: number;
+    isBookmark?: boolean;
   }) => Promise<PostSummary[] | void>;
   showDetail: (postId: ID) => Promise<PostDetail | void>;
   saveBookmark: (userId: ID, postId: ID) => void;

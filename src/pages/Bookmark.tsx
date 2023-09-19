@@ -1,9 +1,10 @@
-import { CenteredContainer } from "../views/containers/base.container";
+import PostContainer from "../views/containers/post.container";
+import PostList from "../views/interactor/PostList";
 
 export default function BookmarkPage() {
   return (
-    <CenteredContainer>
-      <div>Bookmark page</div>
-    </CenteredContainer>
+    <PostContainer>
+      <PostList />
+    </PostContainer>
   );
 }

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import { PostSummary, PostDetail, PostRecommendation } from "../../domain/search/post.interface";
 import { usePostService } from "../../context/post.context";
@@ -10,18 +10,20 @@ import { useSearchFilter, usePostListOption } from "../../domain/search/post.imp
 import { DataStateType, ID } from "../../types/common";
 import { classNames } from "../../utils";
 import { useContainer } from "../../context/base.context";
-
 import { SearchBar } from "../presenters/search/SearchBar";
-import { FilterPopup } from "../presenters/search/FilterPopup";
+import { PostTabBar } from "../presenters/search/PostTabBar";
+// import { FilterPopup } from "../presenters/search/FilterPopup";
 import { PostItems, PostItemsSkeleton } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
 import useElementWidth from "../../hooks/useElementWidth";
 import Loading from "../../components/Loading";
 import { AIRecommendItems } from "../presenters/search/AIRecommendItems";
 import { Resizable } from "re-resizable";
+import { routes } from "../../routes/path";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname } = useLocation();
 
   const { userId } = useAuth();
 
@@ -59,6 +61,21 @@ const PostList: React.FC = () => {
   const {setSearchFilterModal} = useSearchFilterModal();
 
   useEffect(() => {
+    if (routes.bookmark.re.test(pathname) && !(searchFilter.bookmarkOnly === 'Y')) {
+      setSearchFilter({
+        ...searchFilter,
+        bookmarkOnly: "Y"
+      });
+      return;
+    }
+    else if (routes.search.re.test(pathname) && !(searchFilter.bookmarkOnly === 'N')) {
+      setSearchFilter({
+        ...searchFilter,
+        bookmarkOnly: "N"
+      });
+      return;
+    }
+
     setDetailSnapshot({
       data: null,
       loading: false,
@@ -67,6 +84,7 @@ const PostList: React.FC = () => {
       data: [],
       loading: true,
     });
+    
     search(searchFilter, postListOption).then(
       (data => {
         setSummarySnapshot({
@@ -76,7 +94,12 @@ const PostList: React.FC = () => {
         setSummaryBookmarkList(data!.filter((v) => v.isBookmarked).map(v => v.postId));
       })
     );
-  }, [searchFilter, postListOption, search]);
+  }, [
+    searchFilter,
+    postListOption,
+    search,
+    pathname
+  ]);
 
   const postDetailQueryHandler = useCallback((searchParams: URLSearchParams) => {
     const slotId = searchParams.get("slot") || null;
@@ -165,27 +188,30 @@ const PostList: React.FC = () => {
             });
           }, 1200)}
         />
-        {
-          summarySnapshot.loading ? <PostItemsSkeleton/> : (
-            <PostItems
-              postContents={summarySnapshot.data}
-              addBookmark={(postId) => {
-                saveBookmark(userId, postId);
-                setSummaryBookmarkList([...summaryBookmarkList, postId]);
-              }}
-              cancelBookmark={(postId) => {
-                removeBookmark(userId, postId);
-                setSummaryBookmarkList(summaryBookmarkList.filter(v => v !== postId));
-              }}
-              clickItem={(postId) => {
-                searchParams.set("slot", String(postId));
-                setSearchParams(searchParams);
-              }}
-              selectedPost={Number(searchParams.get("slot")) || null}
-              bookmarkList={summaryBookmarkList}
-            />
-          )
-        }
+        <div className="lg:max-w-[465px] max-w-[380px] w-full mx-auto">
+          <PostTabBar/>
+          {
+            summarySnapshot.loading ? <PostItemsSkeleton/> : (
+              <PostItems
+                postContents={summarySnapshot.data}
+                addBookmark={(postId) => {
+                  saveBookmark(userId, postId);
+                  setSummaryBookmarkList([...summaryBookmarkList, postId]);
+                }}
+                cancelBookmark={(postId) => {
+                  removeBookmark(userId, postId);
+                  setSummaryBookmarkList(summaryBookmarkList.filter(v => v !== postId));
+                }}
+                clickItem={(postId) => {
+                  searchParams.set("slot", String(postId));
+                  setSearchParams(searchParams);
+                }}
+                selectedPost={Number(searchParams.get("slot")) || null}
+                bookmarkList={summaryBookmarkList}
+              />
+            )
+          }
+        </div>
       </div>
       <Resizable className={classNames(
           displayClassName[1],

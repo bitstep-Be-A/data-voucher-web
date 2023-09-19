@@ -18,7 +18,6 @@ import IconButton from '@mui/material/IconButton';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 
 interface PostItemsUx {
   addBookmark: (postId: ID) => void;
@@ -44,7 +43,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
       {
         ux.postContents.map((content) => (
           <Card key={content.postId} className={classNames(
-              "lg:max-w-[465px] max-w-[380px] w-full px-3 py-3 bg-white hover:bg-neutral-50 hover:opacity-80 cursor-pointer rounded-md",
+              "w-full px-3 py-3 bg-white hover:bg-neutral-50 hover:opacity-80 cursor-pointer rounded-md",
               ux.selectedPost === content.postId ? "border-2 border-gray-500" : ""
             )}
             onClick={() => ux.clickItem(content.postId)}
@@ -114,7 +113,7 @@ export const PostItems: React.FC<PostItemsUx> = (ux) => {
 
 export const PostItemsSkeleton = () => {
   return (
-    <Stack className="mx-auto lg:max-w-[465px] max-w-[380px] py-3">
+    <Stack className="py-3">
       {
         [1,2,3,4,5,6].map((_, index) => (
           <Stack className="w-full px-3 py-3" spacing={2} key={index}>

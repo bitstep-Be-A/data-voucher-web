@@ -7,6 +7,10 @@ import { defaultLoginRequest } from "../../domain/account/login.impl";
 
 import { EventButton } from "../../components/Button";
 import { UnderlinedTextInput, BlockedTextInput } from "../../components/Input";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import { Box } from "@mui/material";
 
 // FindCredentialPw
 interface FindCredentialPwInputFieldProps {
@@ -163,29 +167,45 @@ export const LoginForm: React.FC<LoginService> = ({
   const [formData, setFormData] = useState<LoginRequest>(defaultLoginRequest);
 
   return (
-    <form className="w-[286px] flex flex-col items-end" onSubmit={(e) => {
-      e.preventDefault();
-      login(formData);
+    <Card sx={{
+      px: 3,
+      py: 4
     }}>
-      <div className="mb-6">
-        <fieldset>
-          <div className="space-y-4 my-2 py-2">
-            <LoginInputField labelName="아이디" updateValue={(v) => setFormData({...formData, emailId: v})} value={formData.emailId} />
-            <LoginInputField labelName="비밀번호" updateValue={(v) => setFormData({...formData, password: v})} value={formData.password} />
-          </div>
-        </fieldset>
-        <HelpCredentialInfo />
-      </div>
-      <EventButton
-        width={208}
-        style={{
-          borderRadius: "4px",
-        }}
-        className="text-sm"
-        type={"submit"}
+      <Box
+        width={"100%"}
+        mb={3}
       >
-        로그인
-      </EventButton>
-    </form>
+        <Typography variant={"h6"} component={"h1"}
+          sx={{fontWeight: "bold"}}
+          className="text-center"
+        >
+          로그인
+        </Typography>
+      </Box>
+      <form className="w-[286px] flex flex-col items-end" onSubmit={(e) => {
+        e.preventDefault();
+        login(formData);
+      }}>
+        <div className="mb-6">
+          <fieldset>
+            <div className="space-y-4 my-2 py-2">
+              <LoginInputField labelName="아이디" updateValue={(v) => setFormData({...formData, emailId: v})} value={formData.emailId} />
+              <LoginInputField labelName="비밀번호" updateValue={(v) => setFormData({...formData, password: v})} value={formData.password} />
+            </div>
+          </fieldset>
+          <HelpCredentialInfo />
+        </div>
+        <Button
+          sx={{
+            borderRadius: "4px",
+          }}
+          className="w-full"
+          type={"submit"}
+          variant={"contained"}
+        >
+          로그인
+        </Button>
+      </form>
+    </Card>
   );
 }

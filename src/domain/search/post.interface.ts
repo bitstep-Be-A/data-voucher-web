@@ -61,6 +61,7 @@ export interface PostDetail extends PostBase {
 }
 
 export interface Attachment {
+  file_url: string;
   pfi_filename: string;
   pfi_originname: string;
 }

@@ -106,9 +106,7 @@ export const PostItemSlot: React.FC<PostItemSlotUx> = (ux) => {
               <span className={classNames(
                 "underline cursor-pointer",
                 responsiveBodyText
-              )} onClick={() => ux.visitWebsite(
-                process.env.REACT_APP_SERVER_URL + attachment.pfi_filename
-              )}>
+              )} onClick={() => ux.saveFile(index)}>
                 { attachment.pfi_filename }
               </span>
             </div>

@@ -236,7 +236,7 @@ const PostList: React.FC = () => {
                 setSearchParams(searchParams);
               }}
               saveFile={(filePosition) => {
-                const path = process.env.REACT_APP_SERVER_URL! + detailSnapshot.data?.attachments[filePosition].pfi_filename;
+                const path = detailSnapshot.data?.attachments[filePosition].file_url;
                 window.open(path, '_blank');
               }}
               visitWebsite={(url) => {

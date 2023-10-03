@@ -10,16 +10,18 @@ import { useSearchFilter, usePostListOption } from "../../domain/search/post.imp
 import { DataStateType, ID } from "../../types/common";
 import { classNames } from "../../utils";
 import { useContainer } from "../../context/base.context";
-import { SearchBar } from "../presenters/search/SearchBar";
 import { PostTabBar } from "../presenters/search/PostTabBar";
 // import { FilterPopup } from "../presenters/search/FilterPopup";
 import { PostItems, PostItemsSkeleton } from "../presenters/search/PostItems";
 import { PostItemSlot } from "../presenters/search/PostItemSlot";
 import useElementWidth from "../../hooks/useElementWidth";
 import Loading from "../../components/Loading";
+import { SearchFilter } from "../presenters/search/SearchFilter";
 import { AIRecommendItems } from "../presenters/search/AIRecommendItems";
 import { Resizable } from "re-resizable";
 import { routes } from "../../routes/path";
+import { locations } from "../../policies/global.policy";
+import { PartCategoryEnum, TargetEnterpriseEnum } from "../../policies/recommendation.policy";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -173,22 +175,38 @@ const PostList: React.FC = () => {
     <div className="w-full h-full flex flex-row pt-2 pb-20" ref={listElementRef}>
       <div className={classNames(
           displayClassName[0],
-          "w-full h-full",
+          "w-full h-full flex flex-col items-center",
           "border-r border-gray-400 overflow-y-scroll"
         )}
       >
-        <SearchBar
-          clickFilter={() => {
-            setSearchFilterModal(true);
-          }}
-          writeDown={_.debounce((value: string) => {
-            setPostListOption({
-              ...postListOption,
-              keyword: value
-            });
-          }, 1200)}
-        />
-        <div className="lg:max-w-[465px] max-w-[380px] w-full mx-auto">
+        <div className={classNames(
+          "lg:max-w-[465px] max-w-[380px] w-full",
+          "mt-3"
+        )}>
+          <SearchFilter
+            inputKeyword={(value) => {}}
+            clickSearchButton={() => {}}
+            openFilter={() => {
+              setSearchFilterModal(true);
+            }}
+            closeFilter={() => {
+              setSearchFilterModal(false);
+            }}
+            applyFilter={({
+              locationChoices,
+              targetEnterpriseChoices,
+              partChoices
+            }) => {
+              setSearchFilter({
+                ...searchFilter,
+                locations: locations.filter((v) => locationChoices.includes(v.sidoName)),
+                targetEnterprises: targetEnterpriseChoices as TargetEnterpriseEnum[],
+                interestParts: partChoices as PartCategoryEnum[]
+              });
+            }}
+          />
+        </div>
+        <div className="lg:max-w-[465px] max-w-[380px] w-full">
           <PostTabBar/>
           {
             summarySnapshot.loading ? <PostItemsSkeleton/> : (

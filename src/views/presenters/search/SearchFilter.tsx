@@ -179,7 +179,7 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
                         <Chip label={item.label} onDelete={() => {
                           const filters = item.onDelete();
                           ux.applyFilter(filters);
-                        }}/>
+                        }} key={item.label}/>
                       ))
                     }
                   </Stack>
@@ -187,7 +187,7 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
                   <Grid container spacing={1}>
                     {
                       chipList.map((item) => (
-                        <Grid item xs={"auto"}>
+                        <Grid item xs={"auto"} key={item.label}>
                           <Chip label={item.label} onDelete={() => {
                             const filters = item.onDelete();
                             ux.applyFilter(filters);

@@ -1,19 +1,19 @@
 export enum RecruitEnum {
-  NORMAL = "일반 지원",
-  YOUNG = "청년 지원",
-  WOMEN = "여성 지원",
-  DISABLED = "장애인 지원"
+  NORMAL = "일반지원",
+  YOUNG = "청년지원",
+  WOMEN = "여성지원",
+  DISABLED = "장애인지원"
 }
 
 export enum TargetEnterpriseEnum {
-  SME = "중소 기업",
-  DIB = "장애인 기업",
-  SE = "사회적 기업",
+  SME = "중소기업",
+  DIB = "장애인기업",
+  SE = "사회적기업",
   SB = "소상공인",
-  CA = "협동 조합",
-  WOB = "여성 기업",
-  VC = "마을 기업",
-  VE = "창업 벤처"
+  CA = "협동조합",
+  WOB = "여성기업",
+  VC = "마을기업",
+  VE = "창업벤처"
 }
 
 export enum PartCategoryEnum {

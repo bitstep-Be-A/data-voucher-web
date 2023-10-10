@@ -6,6 +6,7 @@ import {
   PartCategoryEnum
 } from '../../../policies/recommendation.policy';
 import { locations } from '../../../policies/global.policy';
+import { classNames } from '../../../utils';
 
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
@@ -24,7 +25,6 @@ import Stack from '@mui/material/Stack';
 import Chip from "@mui/material/Chip";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
-import { classNames } from '../../../utils';
 
 interface SearchFilterUx {
   inputKeyword: (value: string) => void;

@@ -40,8 +40,11 @@ describe('폴더', () => {
     expect(driver.action.data['parent_folder_id']).toBe(req.parent);
   });
 
-  it('폴더 id로 폴더를 제거합니다.', () => {
+  it('폴더 id로 폴더를 제거합니다.', async () => {
+    const docFolderId = 1;
+    const driver = await DocFolderDriver.manager.delete(docFolderId);
 
+    expect(driver.action.data['folder_id']).toBe(docFolderId);
   });
 
   it('폴더 이름을 입력하면 입력된 이름으로 변경됩니다.', () => {

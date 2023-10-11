@@ -1,4 +1,7 @@
 export type DriverAction = {
-  name: string;
+  method: string;
   data: any;
+  key?: string | number;
 }
+
+export type Manager = object;

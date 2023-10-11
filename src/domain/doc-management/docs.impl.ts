@@ -4,7 +4,6 @@ import {
   DocFolder
 } from "./docs.interface";
 import { FOLDER_NAME_MAX_LENGTH } from "../../policies/document.policy";
-import { Serializer, DefaultSerializerMixin } from "../../utils/serializer";
 
 export const folderExceptionMap: FolderExceptionMap = {
   FOLDER_NAME_IS_BLANK: {
@@ -24,21 +23,4 @@ export const folderValidator: FolderValidator = {
   checkFolderNameMaxLength(value) {
     return value.length > FOLDER_NAME_MAX_LENGTH ? folderExceptionMap.FOLDER_NAME_MAX_LENGTH_OVER : null;
   },
-}
-
-export class DocFolderRequest
-  extends DefaultSerializerMixin
-  implements Serializer<DocFolder> {
-  constructor(private data: DocFolder) {
-    super();
-  }
-
-  toEntity() {
-    return {
-      'folder_name': this.data.name,
-      'parent_folder_id': this.data.parent
-    }
-  }
-
-  getData() { return this.data }
 }

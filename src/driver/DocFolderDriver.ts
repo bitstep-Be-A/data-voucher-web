@@ -27,7 +27,7 @@ export class DocFolderManager {
   }
 }
 
-export default class DocFolderDriver extends AbstractDriver {
+export default class DocFolderDriver extends AbstractDriver<undefined> {
   static manager = new DocFolderManager();
 
   async save() {
@@ -48,4 +48,6 @@ export default class DocFolderDriver extends AbstractDriver {
     }
     throw new Error('INVALID_METHOD');
   }
+
+  query() {}
 }

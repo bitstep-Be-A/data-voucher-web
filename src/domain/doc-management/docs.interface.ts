@@ -1,6 +1,6 @@
 import type { ExceptionDetail } from "../../types/common";
 
-export type DocFolderId = number | null | undefined;
+export type DocFolderId = number | null;
 
 export interface DocFolder {
   id?: DocFolderId;
@@ -14,6 +14,14 @@ export interface DocFile {
   id: DocFileId;
   name: string;
   folderId: DocFolderId;
+}
+
+export interface DocNode {
+  rootFolderName: string;
+  parentFolderId?: DocFolderId;
+  folderId: DocFolderId;
+  files: DocFile[];
+  folders: DocFolder[];
 }
 
 export interface FolderValidator {

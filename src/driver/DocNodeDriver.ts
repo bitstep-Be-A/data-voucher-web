@@ -3,7 +3,6 @@ import type { DocFolderId } from "../domain/doc-management/docs.interface";
 import { DocNode } from "../domain/doc-management/docs.interface";
 import AbstractDriver from "./AbstractDriver";
 import { Queue } from "../utils/queue";
-import { getAxiosResponse } from "../api/axios";
 
 export class DocNodeManager {
   get(folderId: DocFolderId) {
@@ -19,12 +18,8 @@ export default class DocNodeDriver extends AbstractDriver<DocNode> {
 
   async query() {
     if (this.action.method === 'get') {
-      try {
-        const doc = await docManagementApi.getDoc();
-        return getNodeFromTree(this.action.key as DocFolderId, doc);
-      } catch(e) {
-        return getAxiosResponse(e);
-      }
+      const doc = await docManagementApi.getDoc();
+      return getNodeFromTree(this.action.key as DocFolderId, doc);
     }
 
     throw Error('INVALID_METHOD');
@@ -54,9 +49,33 @@ type _Tree = {
 }
 
 export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
+  if (id === null) {
+    return {
+      rootFolderName: tree['folder_name'],
+      folderName: tree['folder_name'],
+      parentFolderId: null,
+      folderId: null,
+      files: [],
+      folders: tree['folder_tree'].map((v) => {
+        return {
+          id: v.folder_id,
+          parent: v.parent_folder_id,
+          name: v.folder_name
+        }
+      })
+    }
+  }
+
   const folders = tree['folder_tree'];
   if (!folders.length) {
-    throw Error('NOT_FOUND');
+    return {
+      rootFolderName: tree['folder_name'],
+      folderName: tree['folder_name'],
+      parentFolderId: null,
+      folderId: null,
+      files: [],
+      folders: []
+    }
   }
 
   const q = new Queue<_Folder>(folders);
@@ -67,6 +86,7 @@ export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
     if (folder['folder_id'] === id)
       return {
         rootFolderName: tree['folder_name'],
+        folderName: folder['folder_name'],
         parentFolderId: folder['parent_folder_id'],
         folderId: id,
         files: folder['files'].map((v) => {
@@ -84,10 +104,8 @@ export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
           }
         })
       };
-
-    for (let f of folder['subfolders']) {
-      q.push(f);
-    }
+    
+    folder['subfolders'].forEach((f) => q.push(f));
   }
 
   throw Error('NOT_FOUND');

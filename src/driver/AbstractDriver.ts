@@ -1,4 +1,3 @@
-import { ErrorDetail } from "../types/common";
 import type { DriverAction, Manager } from "./types";
 
 export default abstract class AbstractDriver<T> {
@@ -6,7 +5,7 @@ export default abstract class AbstractDriver<T> {
 
   static manager: Manager;
 
-  abstract save(): Promise<ErrorDetail | null> | void;
+  abstract save(): Promise<void> | void;
 
-  abstract query(): Promise<ErrorDetail | T> | void;
+  abstract query(): Promise<T> | void;
 }

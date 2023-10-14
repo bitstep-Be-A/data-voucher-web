@@ -4,7 +4,6 @@ import {
 } from "../domain/doc-management/docs.interface";
 import { docManagementApi } from "../api/doc-management";
 import AbstractDriver from "./AbstractDriver";
-import { getAxiosResponse } from "../api/axios";
 
 export class DocFolderManager {
   create(data: DocFolder) {
@@ -32,19 +31,10 @@ export default class DocFolderDriver extends AbstractDriver<undefined> {
 
   async save() {
     if (this.action.method === 'create') {
-      try {
-        await docManagementApi.createFolder(this.action.data);
-      } catch(e: unknown) {
-        return getAxiosResponse(e);
-      }
-      return null;
+      await docManagementApi.createFolder(this.action.data);
     }
     if (this.action.method === 'delete') {
-      try {
-        await docManagementApi.deleteFolder(this.action.data);
-      } catch(e: unknown) {
-        return getAxiosResponse(e);
-      }
+      await docManagementApi.deleteFolder(this.action.data);
     }
     throw new Error('INVALID_METHOD');
   }

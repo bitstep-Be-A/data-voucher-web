@@ -1,10 +1,10 @@
 import PostContainer from "../views/containers/post.container";
-import PostList from "../views/interactor/PostList";
+import PostInteractor from "../views/interactor/PostInteractor";
 
 export default function BookmarkPage() {
   return (
     <PostContainer>
-      <PostList />
+      <PostInteractor />
     </PostContainer>
   );
 }

@@ -192,7 +192,7 @@ const DirectoryList: React.FC<DirectoryListUx> = (ux) => {
                   cursor: "default"
                 }} onClick={(e) => {
                   if (e.detail === 2) {
-                    console.log('event start');
+                    ux.clickFile(file.id);
                   }
                 }}>
                   <ListItemIcon sx={{

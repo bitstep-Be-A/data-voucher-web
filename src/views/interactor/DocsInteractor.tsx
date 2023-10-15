@@ -50,7 +50,10 @@ const DocsInteractor = () => {
               }}
             />
             <DirectoryList
-              clickFile={(fileId) => { }}
+              clickFile={(fileId) => {
+                const path = `${process.env.REACT_APP_SERVER_URL}내문서관리/file_download/${fileId}`;
+                window.open(path, '_blank');
+              }}
               clickFolder={(folderId) => {
                 query(folderId);
               }}

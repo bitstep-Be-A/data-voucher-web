@@ -169,7 +169,10 @@ const TopNavbar = () => {
 
 
   return (
-    <AppBar position={"static"} color={"inherit"}>
+    <AppBar position={"static"} color={"inherit"} elevation={0} sx={{
+      borderBottom: 1,
+      borderColor: "grey.500"
+    }}>
       <Toolbar
         className="flex flex-row justify-between"
       >

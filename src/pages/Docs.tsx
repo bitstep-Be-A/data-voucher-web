@@ -1,9 +1,10 @@
-import { CenteredContainer } from "../views/containers/base.container";
+import DocsContainer from "../views/containers/docs.container";
+import DocsInteractor from "../views/interactor/DocsInteractor";
 
 export default function DocsPage() {
   return (
-    <CenteredContainer>
-      <div>Docs page</div>
-    </CenteredContainer>
+    <DocsContainer>
+      <DocsInteractor />
+    </DocsContainer>
   );
 }

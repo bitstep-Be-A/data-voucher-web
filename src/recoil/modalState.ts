@@ -12,3 +12,16 @@ export const useSearchFilterModal = () => {
     setSearchFilterModal
   }
 }
+
+const folderAddModalState = atom({
+  key: "modalState/folderAdd",
+  default: false
+});
+
+export const useFolderAddModal = () => {
+  const [folderAddModal, setFolderAddModal] = useRecoilState(folderAddModalState);
+  return {
+    folderAddModal,
+    setFolderAddModal
+  }
+}

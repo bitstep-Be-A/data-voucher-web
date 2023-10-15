@@ -193,7 +193,7 @@ export const LoginForm: React.FC<LoginService> = ({
               <LoginInputField labelName="비밀번호" updateValue={(v) => setFormData({...formData, password: v})} value={formData.password} />
             </div>
           </fieldset>
-          <HelpCredentialInfo />
+          {/* <HelpCredentialInfo /> */}
         </div>
         <Button
           sx={{

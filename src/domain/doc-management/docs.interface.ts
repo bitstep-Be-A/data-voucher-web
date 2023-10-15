@@ -11,9 +11,14 @@ export interface DocFolder {
 export type DocFileId = number;
 
 export interface DocFile {
-  id?: DocFileId;
+  id: DocFileId;
   name: string;
   folderId: DocFolderId;
+}
+
+export interface DocFileRequest {
+  folderId: DocFolderId;
+  file: File;
 }
 
 export interface DocNode {

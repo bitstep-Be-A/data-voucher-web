@@ -1,4 +1,4 @@
-import { atom, selector, useSetRecoilState } from "recoil";
+import { atom, selector, useRecoilRefresher_UNSTABLE, useSetRecoilState } from "recoil";
 
 import type { DocFile, DocFolder, DocFolderId } from "../../domain/doc-management/docs.interface";
 import DocNodeDriver from "../../driver/DocNodeDriver";
@@ -46,6 +46,7 @@ export const useDocNodeQuery = () => {
     query: (folderId: DocFolderId) => setReq({
       init: true,
       folderId
-    })
+    }),
+    refresh: useRecoilRefresher_UNSTABLE(docNodeState)
   }
 }

@@ -13,4 +13,8 @@ export type InfoType = {
 }
 
 export type ExceptionDetail = InfoType;
-export type ErrorDetail = InfoType;
+export type ErrorDetail = {
+  name: string;
+  message: string;
+  code: number;
+};

@@ -23,6 +23,7 @@ export function getAxiosResponse(error: unknown): ErrorDetail {
   }
   return {
     name: error.response.statusText,
-    message: error.response.data.error || error.response.statusText
+    message: error.response.data.error || error.response.statusText,
+    code: error.response.status
   }
 }

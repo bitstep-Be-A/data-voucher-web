@@ -11,7 +11,7 @@ export class DocFolderManager {
       method: 'create',
       data: {
         'folder_name': data.name,
-        'parent_folder_id': data.parent
+        'parent_folder_id': data.parent ?? undefined
       }
     }));
   }
@@ -30,13 +30,16 @@ export default class DocFolderDriver extends AbstractDriver<undefined> {
   static manager = new DocFolderManager();
 
   async save() {
-    if (this.action.method === 'create') {
-      await docManagementApi.createFolder(this.action.data);
+    switch (this.action.method) {
+      case "create":
+        await docManagementApi.createFolder(this.action.data);
+        break;
+      case "delete":
+        await docManagementApi.deleteFolder(this.action.data);
+        break;
+      default:
+        throw new Error('INVALID_METHOD');
     }
-    if (this.action.method === 'delete') {
-      await docManagementApi.deleteFolder(this.action.data);
-    }
-    throw new Error('INVALID_METHOD');
   }
 
   query() {}

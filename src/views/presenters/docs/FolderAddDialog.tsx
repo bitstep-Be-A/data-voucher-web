@@ -37,7 +37,10 @@ const FolderAddDialog: React.FC<FolderAddDialogUx> = (ux) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={ux.clickCancelButton}>취소</Button>
-        <Button onClick={() => ux.clickAddButton({name: folderName})}>추가</Button>
+        <Button onClick={() => {
+          ux.clickAddButton({name: folderName});
+          ux.clickCancelButton();
+        }}>추가</Button>
       </DialogActions>
     </Dialog>
   );

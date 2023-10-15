@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 
 import { DocsContext } from "../../../context/docs.context";
 
@@ -18,16 +18,32 @@ interface DocumentAppBarUx {
   goHome: () => void;
   goBack: () => void;
   clickFolder: () => void;
-  clickFile: () => void;
+  uploadFile: (file: File) => void;
 }
 
 const DocumentAppBar: React.FC<DocumentAppBarUx> = (ux) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { docNode } = useContext(DocsContext)!;
   const {
-    rootFolderName,
     folderName,
     parentFolderId,
+    rootFolderName
   } = docNode!;
+
+  const handleSelectFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      ux.uploadFile(file);
+    }
+  };
 
   return (
     <AppBar position="static" color="inherit" elevation={1}>
@@ -56,9 +72,20 @@ const DocumentAppBar: React.FC<DocumentAppBarUx> = (ux) => {
           <IconButton onClick={ux.clickFolder}>
             <CreateNewFolderOutlinedIcon />
           </IconButton>
-          <IconButton>
-            <NoteAddOutlinedIcon />
-          </IconButton>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept=".pdf, .doc, .docx, .txt, .hwp, .pptx, .ppt, .xlsx, .csv"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          {
+            folderName !== rootFolderName && (
+              <IconButton onClick={handleSelectFile}>
+                <NoteAddOutlinedIcon />
+              </IconButton>
+            )
+          }
         </Stack>
       </Toolbar>
     </AppBar>

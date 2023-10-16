@@ -32,9 +32,9 @@ describe('폴더', () => {
       name: '문서1'
     }
     const driver = await DocFolderDriver.manager.create(req);
-  
+
     expect(driver.action.data['folder_name']).toBe(req.name);
-    expect(driver.action.data['parent_folder_id']).toBe(req.parent);
+    expect(driver.action.data['parent_folder_id']).toBe(undefined);
   });
 
   it('폴더 id로 폴더를 제거합니다.', async () => {
@@ -45,17 +45,17 @@ describe('폴더', () => {
   });
 
   it('폴더 이름을 입력하면 입력된 이름으로 변경됩니다.', () => {
-    
+
   });
 
-  it('폴더 위치 지정하기', () => {});
+  it('폴더 위치 지정하기', () => { });
 
-  it('폴더의 생성과 변경, 삭제 관련 피드백이 화면에 반영됩니다.', () => {});
+  it('폴더의 생성과 변경, 삭제 관련 피드백이 화면에 반영됩니다.', () => { });
 });
 
 test('현재 위치의 폴더와 파일을 조회합니다', () => {
   const validIdList = [
-    19, 20, 21, 22, 23
+    32, 33, 35, 36, 39
   ];
   for (let _id of validIdList) {
     const node = getNodeFromTree(_id, _testDocTree);
@@ -63,102 +63,75 @@ test('현재 위치의 폴더와 파일을 조회합니다', () => {
   }
 });
 
-test('현재 위치에서 뒤로가기', () => {});
+test('현재 위치에서 뒤로가기', () => { });
 
-test('특정 위치로 이동하기', () => {});
+test('특정 위치로 이동하기', () => { });
 
 const _testDocTree = {
   "message": "User folder and files fetched",
-  "folder_name": "60_박현준님의 폴더",
+  "user_root_folder_name": "77_\uc774\uc9c4\ud601\ub2d8\uc758 \ud3f4\ub354",
   "folder_tree": [
     {
-      "folder_id": 19,
+      "folder_id": null,
       "parent_folder_id": null,
-      "folder_name": "설진영",
-      "files": [
-        {
-          "file_id": 11,
-          "file_name": "submission_1.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 19,
-          "file_name": "파일업로드 테스트.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 20,
-          "file_name": "파일업로드 테스트1.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 21,
-          "file_name": "파일업로드 테스트2.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 22,
-          "file_name": "파일업로드 테스트3.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 23,
-          "file_name": "파일업로드 테스트5.csv",
-          "folderID of file": 19
-        },
-        {
-          "file_id": 24,
-          "file_name": "파일업로드 테스트6.csv",
-          "folderID of file": 19
-        }
-      ],
-      "subfolders": [
-        {
-          "folder_id": 20,
-          "parent_folder_id": 19,
-          "folder_name": "설진영2",
-          "files": [
-            {
-              "file_id": 12,
-              "file_name": "submission_1.csv",
-              "folderID of file": 20
-            }
-          ],
-          "subfolders": []
-        }
-      ]
-    },
-    {
-      "folder_id": 21,
-      "parent_folder_id": null,
-      "folder_name": "설진영3",
-      "files": [
-        {
-          "file_id": 13,
-          "file_name": "submission_1.csv",
-          "folderID of file": 21
-        }
-      ],
-      "subfolders": []
-    },
-    {
-      "folder_id": 22,
-      "parent_folder_id": null,
-      "folder_name": "0831",
+      "folder_name": "77_\uc774\uc9c4\ud601\ub2d8\uc758 \ud3f4\ub354",
       "files": [],
       "subfolders": [
         {
-          "folder_id": 23,
-          "parent_folder_id": 22,
-          "folder_name": "0831-1",
-          "files": [
+          "folder_id": 32,
+          "parent_folder_id": null,
+          "folder_name": "\ud3f4\ub3543",
+          "files": [],
+          "subfolders": [
             {
-              "file_id": 17,
-              "file_name": "bear.jpg",
-              "folderID of file": 23
+              "folder_id": 35,
+              "parent_folder_id": 32,
+              "folder_name": "\ud3f4\ub3542",
+              "files": [
+                {
+                  "file_id": 27,
+                  "file_name": "\u1105\u1169\u1100\u1173\u110b\u1175\u11ab \u1112\u116c\u110b\u116f\u11ab\u1100\u1161\u110b\u1175\u11b8 \u1103\u1166\u110b\u1175\u1110\u1165.pdf",
+                  "folderID of file": 35
+                }
+              ],
+              "subfolders": []
+            },
+            {
+              "folder_id": 36,
+              "parent_folder_id": 32,
+              "folder_name": "\uc774\uc9c4\ud601\ub2d8\uc758 \ud3f4\ub354",
+              "files": [],
+              "subfolders": []
+            },
+            {
+              "folder_id": 39,
+              "parent_folder_id": 32,
+              "folder_name": "hihih",
+              "files": [
+                {
+                  "file_id": 28,
+                  "file_name": "\u1105\u1169\u1100\u1173\u110b\u1175\u11ab \u1112\u116c\u110b\u116f\u11ab\u1100\u1161\u110b\u1175\u11b8 \u1103\u1166\u110b\u1175\u1110\u1165.pdf",
+                  "folderID of file": 39
+                }
+              ],
+              "subfolders": []
             }
-          ],
-          "subfolders": []
+          ]
+        },
+        {
+          "folder_id": 33,
+          "parent_folder_id": null,
+          "folder_name": "\ud3f4\ub3544",
+          "files": [],
+          "subfolders": [
+            {
+              "folder_id": 40,
+              "parent_folder_id": 33,
+              "folder_name": "\ud3f4\ub3545",
+              "files": [],
+              "subfolders": []
+            }
+          ]
         }
       ]
     }

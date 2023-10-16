@@ -35,7 +35,7 @@ type _File = {
 }
 
 type _Folder = {
-  folder_id: number;
+  folder_id: number | null;
   parent_folder_id: number | null;
   folder_name: string;
   files: _File[];
@@ -44,19 +44,19 @@ type _Folder = {
 
 type _Tree = {
   message: string;
-  folder_name: string;
+  user_root_folder_name: string;
   folder_tree: _Folder[];
 }
 
 export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
   if (id === null) {
     return {
-      rootFolderName: tree['folder_name'],
-      folderName: tree['folder_name'],
+      rootFolderName: tree['user_root_folder_name'],
+      folderName: tree['user_root_folder_name'],
       parentFolderId: null,
       folderId: null,
       files: [],
-      folders: tree['folder_tree'].map((v) => {
+      folders: tree['folder_tree'][0]['subfolders'].map((v) => {
         return {
           id: v.folder_id,
           parent: v.parent_folder_id,
@@ -66,11 +66,11 @@ export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
     }
   }
 
-  const folders = tree['folder_tree'];
+  const folders = tree['folder_tree'][0]['subfolders'];
   if (!folders.length) {
     return {
-      rootFolderName: tree['folder_name'],
-      folderName: tree['folder_name'],
+      rootFolderName: tree['user_root_folder_name'],
+      folderName: tree['user_root_folder_name'],
       parentFolderId: null,
       folderId: null,
       files: [],
@@ -85,7 +85,7 @@ export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
 
     if (folder['folder_id'] === id)
       return {
-        rootFolderName: tree['folder_name'],
+        rootFolderName: tree['user_root_folder_name'],
         folderName: folder['folder_name'],
         parentFolderId: folder['parent_folder_id'],
         folderId: id,

@@ -49,7 +49,7 @@ type _Tree = {
 }
 
 export const getNodeFromTree = (id: DocFolderId, tree: _Tree): DocNode => {
-  if (id === null) {
+  if (id === null || !tree['folder_tree'].length) {
     return {
       rootFolderName: tree['user_root_folder_name'],
       folderName: tree['user_root_folder_name'],

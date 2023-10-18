@@ -8,6 +8,7 @@ import { useSignupSerializer } from "../../domain/account/signup.impl";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Loading from "../../components/Loading";
+import Backdrop from "@mui/material/Backdrop";
 
 interface StatusItemProps {
   isActive: boolean;
@@ -109,11 +110,12 @@ const SignupContainer = ({ children }: {
         <StepNavbar/>
         { children }
       </div>
-      {
-        loading && (
-          <Loading/>
-        )
-      }
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <Loading />
+      </Backdrop>
     </SignupContext.Provider>
   );
 }

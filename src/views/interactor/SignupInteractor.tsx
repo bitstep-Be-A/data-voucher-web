@@ -392,6 +392,7 @@ const EmailVerificationStep: React.FC = () => {
       }}
       complete={async () => {
         await signupApi.signupComplete();
+        alert("회원가입이 완료되었습니다.");
         window.location.replace(routes.login.path);
       }}
     />

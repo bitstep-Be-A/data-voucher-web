@@ -185,7 +185,19 @@ const PostList: React.FC = () => {
         )}>
           <SearchFilter
             inputKeyword={(value) => {}}
-            clickSearchButton={() => {}}
+            clickSearchButton={({
+              keyword,
+              locationChoices,
+              targetEnterpriseChoices,
+              partChoices
+            }) => {
+              setSearchFilter({
+                ...searchFilter,
+                locations: locations.filter((v) => locationChoices.includes(v.sidoName)),
+                targetEnterprises: targetEnterpriseChoices as TargetEnterpriseEnum[],
+                interestParts: partChoices as PartCategoryEnum[]
+              });
+            }}
             openFilter={() => {
               setSearchFilterModal(true);
             }}

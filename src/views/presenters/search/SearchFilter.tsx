@@ -28,7 +28,17 @@ import Collapse from '@mui/material/Collapse';
 
 interface SearchFilterUx {
   inputKeyword: (value: string) => void;
-  clickSearchButton: () => void;
+  clickSearchButton: ({
+    keyword,
+    locationChoices,
+    targetEnterpriseChoices,
+    partChoices
+  }: {
+    keyword: string;
+    locationChoices: string[];
+    targetEnterpriseChoices: string[];
+    partChoices: string[];
+  }) => void;
   openFilter: () => void;
   closeFilter: () => void;
   applyFilter: ({
@@ -144,7 +154,12 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
         <IconButton type="button" sx={{}} aria-label="search" onClick={ux.openFilter}>
           <TuneIcon />
         </IconButton>
-        <IconButton type="button" sx={{}} aria-label="search">
+        <IconButton type="button" sx={{}} aria-label="search" onClick={() => ux.clickSearchButton({
+          keyword: "",
+          locationChoices,
+          targetEnterpriseChoices,
+          partChoices
+        })}>
           <SearchIcon />
         </IconButton>
       </Paper>

@@ -1,37 +1,91 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useRecoilState } from "recoil";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 import { routes } from "../../routes/path";
 import { LoginRequest, LoginService } from "../../domain/account/login.interface";
 import { defaultLoginRequest } from "../../domain/account/login.impl";
+import { findIdEmailVerficationState, findIdRequestState } from "../../recoil/app/FindIDRequest";
+import { findPWRequestState, findPwEmailVerification } from "../../recoil/app/FindPWRequest";
+import { loginApi } from "../../api/account";
 
+import Timer from "../../components/Timer";
 import { EventButton } from "../../components/Button";
 import { UnderlinedTextInput, BlockedTextInput } from "../../components/Input";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import { Box } from "@mui/material";
+import { classNames } from "../../utils";
+import LoopIcon from '@mui/icons-material/Loop';
+import IconButton from "@mui/material/IconButton";
+
+export const Frame = styled.div`
+  width: 676px;
+`;
+
+export const InputBlock = styled(Frame)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Description = ({main, fail}: {main: string | null; fail: string | null}) => {
+  const message = useMemo(() => {
+    if (fail) {
+      return <span className="text-red-500">{fail}</span>;
+    }
+    else if (main) {
+      return <>{"※ " + main}</>
+    }
+    return <></>;
+  }, [main, fail]);
+
+  return (
+    <div className="absolute top-[28px] h-4 text-xs text-deepGray w-[400px]">
+      {message}
+    </div>
+  )
+}
 
 // FindCredentialPw
-interface FindCredentialPwInputFieldProps {
+interface InputFieldProps {
   placeholder: string;
   buttonText?: string;
   inputStyle?: React.CSSProperties;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick?: () => void;
+  disabled?: boolean;
+  type?: React.HTMLInputTypeAttribute | undefined;
 }
 
-const FindCredentialPwInputField: React.FC<FindCredentialPwInputFieldProps> = ({
+const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   buttonText,
-  inputStyle
+  inputStyle,
+  value,
+  onChange,
+  onButtonClick,
+  disabled,
+  type
 }) => {
   return (
     <div className="w-full flex justify-center items-center space-x-4">
-      <UnderlinedTextInput placeholder={placeholder} width={224} style={inputStyle} />
+      <UnderlinedTextInput placeholder={placeholder} width={224} style={inputStyle}
+        value={value}
+        onChange={onChange}
+        readOnly={disabled}
+        type={type}
+      />
       {
         buttonText && (
           <EventButton
             width={'90px'}
-            className="text-sm rounded-sm"
+            className={classNames("text-sm rounded-sm", disabled ? "opacity-40": "")}
+            onClick={onButtonClick}
+            disabled={disabled}
           >
             {buttonText}
           </EventButton>
@@ -42,24 +96,87 @@ const FindCredentialPwInputField: React.FC<FindCredentialPwInputFieldProps> = ({
 }
 
 export const FindCredentialPwForm: React.FC = () => {
+  const [emailVerfication, setEmailVerification] = useRecoilState(findPwEmailVerification);
+  const [findPwRequest, setFindPwRequest] = useRecoilState(findPWRequestState);
+
+  const [isSendCode, setIsSendCode] = useState<boolean>(false);
+
   return (
-    <form className="w-[500px] flex flex-col items-center">
+    <form className="w-[500px] flex flex-col items-center" onSubmit={(e) => {
+      e.preventDefault();
+      loginApi.pwFind({
+        "code": findPwRequest.code,
+        "new_password": findPwRequest.password,
+        "new_password_confirm": findPwRequest.passwordConfirm
+      }).then(data => {
+        alert(data.message);
+        window.location.replace(routes.login.path);
+      }).catch((e) => alert("비밀번호 재설정에 실패하였습니다."));
+    }}>
       <fieldset className="mb-4">
         <legend className="text-2xl font-bold py-3 text-center">비밀번호 찾기/재설정</legend>
         <span className="text-center py-1 mb-2 text-sm">
-          <p>회원가입 시 등록하셨던 휴대전화번호로 비밀번호를 찾습니다.</p>
-          <p>휴대전화번호로 전송되는 인증번호를 입력해주세요.</p>
+          <p>회원가입 시 등록하셨던 이메일로 비밀번호를 찾습니다.</p>
+          <p>이메일로 전송되는 인증번호를 입력해주세요.</p>
         </span>
         <div className="space-y-2 my-2 py-2">
-          <FindCredentialPwInputField placeholder="ID(이메일) 주소를 입력해주세요."
+          <div className={classNames(
+            "flex flex-row",
+            isSendCode ? "ml-10" : ""
+          )}>
+            <InputField placeholder="ID(이메일) 주소를 입력해주세요."
+              value={emailVerfication.email}
+              onChange={(e) => setEmailVerification({
+                email: e.target.value
+              })}
+              buttonText="인증번호 전송"
+              onButtonClick={() => {
+                setIsSendCode(true);
+                loginApi.pwFindVerify({
+                  "Email_ID": emailVerfication.email
+                }).catch(e => alert("인증번호 전송에 실패했습니다."));
+              }}
+              disabled={isSendCode}
+            />
+            {
+              isSendCode && <IconButton onClick={() => window.location.reload()}>
+                <LoopIcon fontSize="small" />
+              </IconButton>
+            }
+          </div>
+          <div className="flex flex-row items-center">
+            <InputField placeholder="인증번호 입력" value={findPwRequest.code} onChange={(e) => setFindPwRequest({
+                ...findPwRequest,
+                code: e.target.value
+              })}
+              inputStyle={{
+                width: isSendCode ? 238 : 272
+              }}
+            />
+            {
+              isSendCode && (
+                <Timer start={300} timeFormat="m:ss" className="text-red-500" reversed={true} />
+              )
+            }
+          </div>
+          <InputField placeholder="새 비밀번호 입력" value={findPwRequest.password} onChange={(e) => setFindPwRequest({
+              ...findPwRequest,
+              password: e.target.value
+            })}
             inputStyle={{
-              textAlign: 'center',
-              marginBottom: 25,
-              width: 240
+              width: 272
             }}
+            type={"password"}
           />
-          <FindCredentialPwInputField placeholder="휴대전화번호 입력 ('-' 제외)" buttonText="인증번호 전송" />
-          <FindCredentialPwInputField placeholder="인증번호 입력" buttonText="확인" />
+          <InputField placeholder="새 비밀번호 확인" value={findPwRequest.passwordConfirm} onChange={(e) => setFindPwRequest({
+              ...findPwRequest,
+              passwordConfirm: e.target.value
+            })}
+            inputStyle={{
+              width: 272
+            }}
+            type={"password"}
+          />
         </div>
       </fieldset>
       <EventButton
@@ -73,41 +190,59 @@ export const FindCredentialPwForm: React.FC = () => {
   );
 }
 
-// FindCredentialId
-interface FindCredentialIdInputFieldProps {
-  placeholder: string;
-  buttonText: string;
-}
-
-const FindCredentialIdInputField: React.FC<FindCredentialIdInputFieldProps> = ({
-  placeholder,
-  buttonText
-}) => {
-  return (
-    <div className="w-full flex justify-center items-center space-x-4">
-      <UnderlinedTextInput placeholder={placeholder} width={224} />
-      <EventButton
-        width={'90px'}
-        className="text-sm rounded-sm"
-      >
-        {buttonText}
-      </EventButton>
-    </div>
-  );
-}
-
 export const FindCredentialIdForm: React.FC = () => {
+  const [emailVerification, setEmailVerification] = useRecoilState(findIdEmailVerficationState);
+  const [findIdRequest, setFindIdRequest] = useRecoilState(findIdRequestState);
+
+  const [isSendCode, setIsSendCode] = useState<boolean>(false);
   return (
-    <form className="w-[500px] flex flex-col items-center">
+    <form className="w-[500px] flex flex-col items-center" onSubmit={(e) => {
+      e.preventDefault();
+      loginApi.idFind({
+        verification_code: findIdRequest.code
+      }).then((data) => {
+        alert("회원님의 아이디는 " + data.user_id + " 입니다.");
+        window.location.replace(routes.login.path);
+      });
+    }}>
       <fieldset className="mb-4">
         <legend className="text-2xl font-bold py-3 text-center">아이디 찾기</legend>
         <span className="text-center py-1 mb-2 text-sm">
-          <p>회원가입 시 등록하셨던 휴대전화번호로 아이디를 찾습니다.</p>
-          <p>휴대전화번호로 전송되는 인증번호를 입력해주세요.</p>
+          <p>회원가입 시 등록하셨던 이메일로 아이디를 찾습니다.</p>
+          <p>이메일로 전송되는 인증번호를 입력해주세요.</p>
         </span>
         <div className="space-y-2 my-2 py-2">
-          <FindCredentialIdInputField placeholder="휴대전화번호 입력 ('-' 제외)" buttonText="인증번호 전송" />
-          <FindCredentialIdInputField placeholder="인증번호 입력" buttonText="확인" />
+          <div className={classNames(
+            "flex flex-row",
+            isSendCode ? "ml-10" : ""
+          )}>
+            <InputField
+              placeholder="이메일 입력"
+              buttonText="인증번호 전송" 
+              value={emailVerification.email}
+              onChange={(e) => setEmailVerification({email: e.target.value})}
+              onButtonClick={() => {
+                setIsSendCode(true);
+                loginApi.idFindVerify({
+                  "Email": emailVerification.email
+                }).catch(e => alert("인증번호 전송에 실패했습니다."));
+              }}
+              disabled={isSendCode}
+            />
+            {
+              isSendCode && <IconButton onClick={() => window.location.reload()}>
+                <LoopIcon fontSize="small" />
+              </IconButton>
+            }
+          </div>
+          <InputField
+            placeholder="인증번호 입력"
+            value={findIdRequest.code}
+            onChange={(e) => setFindIdRequest({code: e.target.value})}
+            inputStyle={{
+              width: 270
+            }}
+          />
         </div>
       </fieldset>
       <EventButton
@@ -193,7 +328,7 @@ export const LoginForm: React.FC<LoginService> = ({
               <LoginInputField labelName="비밀번호" updateValue={(v) => setFormData({...formData, password: v})} value={formData.password} />
             </div>
           </fieldset>
-          {/* <HelpCredentialInfo /> */}
+          <HelpCredentialInfo />
         </div>
         <Button
           sx={{

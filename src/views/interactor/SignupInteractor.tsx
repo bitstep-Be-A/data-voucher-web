@@ -26,7 +26,6 @@ import { useContainer } from "../../context/base.context";
 import { AgreementCheckField } from "../presenters/signup/joinAgreement";
 import { InfoInputField, InfoInputFieldset } from "../presenters/signup/userInfo";
 import { EmailVerification } from "../presenters/signup/emailVerification";
-import { useAuth } from "../../context/auth.context";
 
 interface StepSectionProps<T> {
   submit: (data: T) => void;

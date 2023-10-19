@@ -2,7 +2,7 @@ import { classNames } from "../utils";
 
 import { lightGray } from "../styles/constant";
 
-export interface EventButtonProps {
+export interface EventButtonProps extends React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
   children?: React.ReactNode;
   width?: number | string;
   paddingY?: number | string;
@@ -13,16 +13,18 @@ export interface EventButtonProps {
   style?: React.CSSProperties;
 }
 
-export const EventButton: React.FC<EventButtonProps> = ({
-  children,
-  width,
-  paddingY,
-  className,
-  theme,
-  type,
-  style,
-  onClick
-}) => {
+export const EventButton: React.FC<EventButtonProps> = (props) => {
+  const {
+    children,
+    width,
+    paddingY,
+    className,
+    theme,
+    type,
+    style,
+    onClick
+  } = props;
+
   let baseStyle: React.CSSProperties = {
     width: width,
     paddingTop: paddingY ?? "0.375rem",
@@ -47,6 +49,7 @@ export const EventButton: React.FC<EventButtonProps> = ({
       )}
       type={ type }
       onClick={onClick}
+      {...props}
     >
       { children }
     </button>

@@ -6,12 +6,13 @@ export interface InputAttributeProps extends React.DetailedHTMLProps<React.Input
 
 export interface UnderlinedTextInputProps extends InputAttributeProps { };
 
-export const UnderlinedTextInput: React.FC<UnderlinedTextInputProps> = ({
-  placeholder,
-  width,
-  className,
-  style
-}) => {
+export const UnderlinedTextInput: React.FC<UnderlinedTextInputProps> = (props) => {
+  const {
+    placeholder,
+    width,
+    className,
+    style
+  } = props;
   return (
     <input type="text" placeholder={placeholder}
       className={classNames(
@@ -22,6 +23,7 @@ export const UnderlinedTextInput: React.FC<UnderlinedTextInputProps> = ({
         width: width,
         ...style
       }}
+      {...props}
     />
   );
 }

@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
 
 import { useSearchFilterModal } from '../../../recoil/modalState';
 import {
   TargetEnterpriseEnum,
-  PartCategoryEnum
+  PartCategoryEnum,
+  RecruitEnum
 } from '../../../policies/recommendation.policy';
 import { locations } from '../../../policies/global.policy';
 import { classNames } from '../../../utils';
@@ -25,31 +27,40 @@ import Stack from '@mui/material/Stack';
 import Chip from "@mui/material/Chip";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+interface ChoiceFilter {
+  locationChoices: string[];
+  targetEnterpriseChoices: string[];
+  partChoices: string[];
+  recruitChoice: string | undefined;
+  startDate: string | null;
+  endDate: string | null;
+}
 
 interface SearchFilterUx {
   inputKeyword: (value: string) => void;
-  clickSearchButton: ({
-    keyword,
+  clickSearchButton: (keyword: string, {
     locationChoices,
     targetEnterpriseChoices,
-    partChoices
-  }: {
-    keyword: string;
-    locationChoices: string[];
-    targetEnterpriseChoices: string[];
-    partChoices: string[];
-  }) => void;
+    partChoices,
+    recruitChoice,
+    startDate,
+    endDate
+  }: ChoiceFilter) => void;
   openFilter: () => void;
   closeFilter: () => void;
   applyFilter: ({
     locationChoices,
     targetEnterpriseChoices,
-    partChoices
-  }: {
-    locationChoices: string[];
-    targetEnterpriseChoices: string[];
-    partChoices: string[];
-  }) => void;
+    partChoices,
+    recruitChoice,
+    startDate,
+    endDate
+  }: ChoiceFilter) => void;
 }
 
 export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
@@ -58,6 +69,11 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
   const [locationChoices, setLocationChoices] = useState<string[]>([]);
   const [targetEnterpriseChoices, setTargetEnterpriseChoices] = useState<string[]>([]);
   const [partChoices, setPartChoices] = useState<string[]>([]);
+  const [recruitChoice, setRecruitChoice] = useState<string | undefined>(undefined);
+  const [startDateValue, setStartDateValue] = useState<Dayjs | null>(null);
+  const startDate = useMemo(() => startDateValue?.format("YYYY-MM-DD") || null, [startDateValue]);
+  const [endDateValue, setEndDateValue] = useState<Dayjs | null>(null);
+  const endDate = useMemo(() => endDateValue?.format("YYYY-MM-DD") || null, [endDateValue]);
 
   const chipList = useMemo(() => {
     const locationChipItems = locationChoices.map((label) => {
@@ -69,7 +85,10 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
           return {
             locationChoices: filtered,
             targetEnterpriseChoices,
-            partChoices
+            partChoices,
+            recruitChoice,
+            startDate,
+            endDate
           }
         }
       }
@@ -83,7 +102,10 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
           return {
             locationChoices,
             targetEnterpriseChoices: filtered,
-            partChoices
+            partChoices,
+            recruitChoice,
+            startDate,
+            endDate
           }
         }
       }
@@ -97,7 +119,10 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
           return {
             locationChoices,
             targetEnterpriseChoices,
-            partChoices: filtered
+            partChoices: filtered,
+            recruitChoice,
+            startDate,
+            endDate
           }
         }
       }
@@ -106,9 +131,45 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
     return [
       ...locationChipItems,
       ...targetEnterpriseChipItems,
-      ...partChoiceChipItems
+      ...partChoiceChipItems,
+      ...recruitChoice ? [{
+        label: recruitChoice,
+        onDelete: () => {
+          setRecruitChoice(undefined);
+          return {
+            locationChoices,
+            targetEnterpriseChoices,
+            partChoices,
+            recruitChoice: undefined,
+            startDate,
+            endDate
+          }
+        }
+      }] : [],
+      ...(!!startDate) ? [{
+        label: startDate+'~'+(endDate || ""),
+        onDelete: () => {
+          setStartDateValue(null);
+          setEndDateValue(null);
+          return {
+            locationChoices,
+            targetEnterpriseChoices,
+            partChoices,
+            recruitChoice: undefined,
+            startDate: null,
+            endDate: null
+          }
+        }
+      }] : []
     ]
-  }, [locationChoices, targetEnterpriseChoices, partChoices]);
+  }, [
+    locationChoices,
+    targetEnterpriseChoices,
+    partChoices,
+    recruitChoice,
+    startDate,
+    endDate
+  ]);
 
   const getChoiceButtonSx = (isChoiced: boolean) => {
     return isChoiced ? {
@@ -154,11 +215,13 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
         <IconButton type="button" sx={{}} aria-label="search" onClick={ux.openFilter}>
           <TuneIcon />
         </IconButton>
-        <IconButton type="button" sx={{}} aria-label="search" onClick={() => ux.clickSearchButton({
-          keyword: "",
+        <IconButton type="button" sx={{}} aria-label="search" onClick={() => ux.clickSearchButton("", {
           locationChoices,
           targetEnterpriseChoices,
-          partChoices
+          partChoices,
+          recruitChoice,
+          startDate,
+          endDate
         })}>
           <SearchIcon />
         </IconButton>
@@ -172,7 +235,10 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
           ux.applyFilter({
             locationChoices: [],
             targetEnterpriseChoices: [],
-            partChoices: []
+            partChoices: [],
+            recruitChoice,
+            startDate,
+            endDate
           });
         }}>
           필터제거
@@ -180,7 +246,7 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
         <Collapse in={isExpand} collapsedSize={40}>
           <Grid container>
             <Grid item xs={chipList.length <= 4 ? 12 : 11} sx={{
-              overflow: "scroll",
+              overflowY: "scroll",
               boxShadow: !isExpand ? "inset -10px 0 5px -5px rgba(200, 200, 200, .2)" : undefined,
               "&::-webkit-scrollbar": {
                 display: "none"
@@ -253,7 +319,7 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
                 지역검색 (중복검색 가능)
               </Typography>
               <Box height={200} sx={{
-                overflow: "scroll"
+                overflowY: "scroll"
               }}>
                 <Grid container columns={12} spacing={1}>
                   {locations.map((value, index) => (
@@ -281,7 +347,7 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
                 대상기업 (중복검색 가능)
               </Typography>
               <Box height={100} sx={{
-                overflow: "scroll"
+                overflowY: "scroll"
               }}>
                 <Grid container columns={12} spacing={1}>
                   {Object.values(TargetEnterpriseEnum).map((value, index) => (
@@ -306,10 +372,36 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
             </Stack>
             <Stack spacing={2}>
               <Typography variant={"h6"} component={"div"} color={"grey.700"}>
+                인력 충원 형태
+              </Typography>
+              <Box height={50}>
+                <Grid container columns={12} spacing={1}>
+                  {Object.values(RecruitEnum).map((value, index) => (
+                    <Grid item xs={4} sm={3} key={index}>
+                      <Button variant={"outlined"} sx={{
+                        borderRadius: 0,
+                        width: "100%",
+                        ...getChoiceButtonSx(recruitChoice === value)
+                      }} onClick={() => {
+                        if (recruitChoice === value) {
+                          setRecruitChoice(undefined);
+                        } else {
+                          setRecruitChoice(value);
+                        }
+                      }}>
+                        {value}
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </Stack>
+            <Stack spacing={2}>
+              <Typography variant={"h6"} component={"div"} color={"grey.700"}>
                 분야 (중복검색 가능)
               </Typography>
               <Box height={150} sx={{
-                overflow: "scroll"
+                overflowY: "scroll"
               }}>
                 <Grid container columns={12} spacing={1}>
                   {Object.values(PartCategoryEnum).map((value, index) => (
@@ -332,6 +424,17 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
                 </Grid>
               </Box>
             </Stack>
+            <Stack spacing={2}>
+              <Typography variant={"h6"} component={"div"} color={"grey.700"}>
+                기간
+              </Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DatePicker', 'DatePicker']}>
+                  <DatePicker label="시작일" format={"YYYY-MM-DD"} value={startDateValue} onChange={(value) => setStartDateValue(value)} />
+                  <DatePicker label="종료일" format={"YYYY-MM-DD"} value={endDateValue} onChange={(value) => setEndDateValue(value)} />
+                </DemoContainer>
+              </LocalizationProvider>
+            </Stack>
           </Stack>
           <Box sx={{
             my: 3,
@@ -339,10 +442,18 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
             justifyContent: "center"
           }}>
             <Button variant={"outlined"} sx={{px: 5}} onClick={() => {
+              if ((!startDate && endDate)) { alert("시작일을 입력해주세요."); return; }
+              if (dayjs(startDate).diff(endDate, 'day') > 0) {
+                alert("시작일은 종료일을 넘길 수 없습니다."); return;
+              }
+
               ux.applyFilter({
                 locationChoices,
                 targetEnterpriseChoices,
-                partChoices
+                partChoices,
+                recruitChoice,
+                startDate,
+                endDate
               });
               ux.closeFilter();
             }}>

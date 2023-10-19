@@ -21,7 +21,7 @@ import { AIRecommendItems } from "../presenters/search/AIRecommendItems";
 import { Resizable } from "re-resizable";
 import { routes } from "../../routes/path";
 import { locations } from "../../policies/global.policy";
-import { PartCategoryEnum, TargetEnterpriseEnum } from "../../policies/recommendation.policy";
+import { PartCategoryEnum, RecruitEnum, TargetEnterpriseEnum } from "../../policies/recommendation.policy";
 
 const PostList: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -185,17 +185,22 @@ const PostList: React.FC = () => {
         )}>
           <SearchFilter
             inputKeyword={(value) => {}}
-            clickSearchButton={({
-              keyword,
+            clickSearchButton={(keyword, {
               locationChoices,
               targetEnterpriseChoices,
-              partChoices
+              partChoices,
+              recruitChoice,
+              startDate,
+              endDate
             }) => {
               setSearchFilter({
                 ...searchFilter,
                 locations: locations.filter((v) => locationChoices.includes(v.sidoName)),
                 targetEnterprises: targetEnterpriseChoices as TargetEnterpriseEnum[],
-                interestParts: partChoices as PartCategoryEnum[]
+                interestParts: partChoices as PartCategoryEnum[],
+                recruitType: recruitChoice as RecruitEnum,
+                applyStartDate: startDate ?? undefined,
+                applyEndDate: endDate ?? undefined
               });
             }}
             openFilter={() => {
@@ -207,13 +212,19 @@ const PostList: React.FC = () => {
             applyFilter={({
               locationChoices,
               targetEnterpriseChoices,
-              partChoices
+              partChoices,
+              recruitChoice,
+              startDate,
+              endDate
             }) => {
               setSearchFilter({
                 ...searchFilter,
                 locations: locations.filter((v) => locationChoices.includes(v.sidoName)),
                 targetEnterprises: targetEnterpriseChoices as TargetEnterpriseEnum[],
-                interestParts: partChoices as PartCategoryEnum[]
+                interestParts: partChoices as PartCategoryEnum[],
+                recruitType: recruitChoice as RecruitEnum,
+                applyStartDate: startDate ?? undefined,
+                applyEndDate: endDate ?? undefined
               });
             }}
           />

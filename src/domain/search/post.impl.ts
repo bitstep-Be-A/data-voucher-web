@@ -64,12 +64,19 @@ export class SearchFilterSerializer {
     this.userId = userId;
   }
 
+  private _supportTypeMapper = {
+    [recommendation.RecruitEnum.DISABLED]: "장애인",
+    [recommendation.RecruitEnum.NORMAL]: "일반",
+    [recommendation.RecruitEnum.WOMEN]: "여성",
+    [recommendation.RecruitEnum.YOUNG]: "청년"
+  };
+
   toEntity() {
     return {
       "MemberNo": this.userId,
       "department": this.filter.locations.map((v) => v.sidoName),
       "company": this.filter.targetEnterprises,
-      "supportType": this.filter.recruitType ?? "",
+      "supportType": this.filter.recruitType ? this._supportTypeMapper[this.filter.recruitType] : "",
       "part": this.filter.interestParts,
       "postDateYN": "N",
       "startDate": this.filter.applyStartDate,

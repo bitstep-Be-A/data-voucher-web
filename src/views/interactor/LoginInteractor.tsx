@@ -203,7 +203,7 @@ export const FindCredentialIdForm: React.FC = () => {
       }).then((data) => {
         alert("회원님의 아이디는 " + data.user_id + " 입니다.");
         window.location.replace(routes.login.path);
-      });
+      }).catch((e) => alert("인증에 실패하였습니다. 올바른 인증코드를 입력하거나 새로고침하세요."));
     }}>
       <fieldset className="mb-4">
         <legend className="text-2xl font-bold py-3 text-center">아이디 찾기</legend>
@@ -235,14 +235,21 @@ export const FindCredentialIdForm: React.FC = () => {
               </IconButton>
             }
           </div>
-          <InputField
-            placeholder="인증번호 입력"
-            value={findIdRequest.code}
-            onChange={(e) => setFindIdRequest({code: e.target.value})}
-            inputStyle={{
-              width: 270
-            }}
-          />
+          <div className="flex flex-row items-center">
+            <InputField
+              placeholder="인증번호 입력"
+              value={findIdRequest.code}
+              onChange={(e) => setFindIdRequest({code: e.target.value})}
+              inputStyle={{
+                width: isSendCode ? 238 : 272
+              }}
+            />
+            {
+              isSendCode && (
+                <Timer start={300} timeFormat="m:ss" className="text-red-500" reversed={true} />
+              )
+            }
+          </div>
         </div>
       </fieldset>
       <EventButton

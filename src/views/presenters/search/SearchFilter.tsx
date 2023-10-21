@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 
 import { useSearchFilterModal } from '../../../recoil/modalState';
@@ -43,14 +43,7 @@ interface ChoiceFilter {
 
 interface SearchFilterUx {
   inputKeyword: (value: string) => void;
-  clickSearchButton: (keyword: string, {
-    locationChoices,
-    targetEnterpriseChoices,
-    partChoices,
-    recruitChoice,
-    startDate,
-    endDate
-  }: ChoiceFilter) => void;
+  clickSearchButton: (keyword: string) => void;
   openFilter: () => void;
   closeFilter: () => void;
   applyFilter: ({
@@ -65,6 +58,9 @@ interface SearchFilterUx {
 
 export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
   const { searchFilterModal: open } = useSearchFilterModal();
+
+  const [keyword, setKeyword] = useState<string>("");
+  const searchIconRef = useRef<HTMLButtonElement>(null);
 
   const [locationChoices, setLocationChoices] = useState<string[]>([]);
   const [targetEnterpriseChoices, setTargetEnterpriseChoices] = useState<string[]>([]);
@@ -206,23 +202,24 @@ export const SearchFilter: React.FC<SearchFilterUx> = (ux) => {
       <Paper
         component="form"
         sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          searchIconRef.current?.click();
+        }}
       >
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           placeholder="검색어를 입력해주세요"
           inputProps={{ 'aria-label': 'search' }}
+          value={keyword}
+          onChange={(e) => {setKeyword(e.target.value)}}
         />
         <IconButton type="button" sx={{}} aria-label="search" onClick={ux.openFilter}>
           <TuneIcon />
         </IconButton>
-        <IconButton type="button" sx={{}} aria-label="search" onClick={() => ux.clickSearchButton("", {
-          locationChoices,
-          targetEnterpriseChoices,
-          partChoices,
-          recruitChoice,
-          startDate,
-          endDate
-        })}>
+        <IconButton type="button" sx={{}} aria-label="search" onClick={() => ux.clickSearchButton(keyword)}
+          ref={searchIconRef}
+        >
           <SearchIcon />
         </IconButton>
       </Paper>

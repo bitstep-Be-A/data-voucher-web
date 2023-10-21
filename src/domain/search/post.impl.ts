@@ -22,7 +22,8 @@ export const defaultSearchFilter: SearchFilter = {
   applyStartDate: undefined,
   applyEndDate: undefined,
   excludeClosing: 'Y',
-  bookmarkOnly: 'N'
+  bookmarkOnly: 'N',
+  searchKeyword: ""
 }
 
 const searchFilterState = atom<SearchFilter>({
@@ -82,7 +83,8 @@ export class SearchFilterSerializer {
       "startDate": this.filter.applyStartDate,
       "endDate": this.filter.applyEndDate,
       "registerClosingYN": this.filter.excludeClosing,
-      "bookmarkPageYN": this.filter.bookmarkOnly
+      "bookmarkPageYN": this.filter.bookmarkOnly,
+      "searchKeyword": this.filter.searchKeyword
     }
   }
 }

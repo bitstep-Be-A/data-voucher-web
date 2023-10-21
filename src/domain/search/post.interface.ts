@@ -76,6 +76,7 @@ export interface SearchFilter {
   recruitType?: RecruitEnum;
   applyStartDate?: string;
   applyEndDate?: string;
+  searchKeyword: string;
 }
 
 export interface FilterTag {

@@ -185,22 +185,10 @@ const PostList: React.FC = () => {
         )}>
           <SearchFilter
             inputKeyword={(value) => {}}
-            clickSearchButton={(keyword, {
-              locationChoices,
-              targetEnterpriseChoices,
-              partChoices,
-              recruitChoice,
-              startDate,
-              endDate
-            }) => {
+            clickSearchButton={(keyword) => {
               setSearchFilter({
                 ...searchFilter,
-                locations: locations.filter((v) => locationChoices.includes(v.sidoName)),
-                targetEnterprises: targetEnterpriseChoices as TargetEnterpriseEnum[],
-                interestParts: partChoices as PartCategoryEnum[],
-                recruitType: recruitChoice as RecruitEnum,
-                applyStartDate: startDate ?? undefined,
-                applyEndDate: endDate ?? undefined
+                searchKeyword: keyword
               });
             }}
             openFilter={() => {

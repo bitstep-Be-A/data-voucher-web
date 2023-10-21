@@ -68,7 +68,8 @@ describe('공고검색', () => {
       applyStartDate: "2023-01-01",
       applyEndDate: "2023-12-31",
       excludeClosing: "N",
-      bookmarkOnly: "N"
+      bookmarkOnly: "N",
+      searchKeyword: ""
     }
     const filterTags: FilterTag[] = [
       {id: '1', name: 'name1', filterKey: 'locations'},

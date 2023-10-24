@@ -1,9 +1,10 @@
-import { CenteredContainer } from "../views/containers/base.container";
+import ProfileContainer from "../views/containers/profile.container";
+import ProfileInteractor from "../views/interactor/ProfileInteractor";
 
 export default function MyPage() {
   return (
-    <CenteredContainer>
-      <div>My page</div>
-    </CenteredContainer>
+    <ProfileContainer>
+      <ProfileInteractor />
+    </ProfileContainer>
   );
 }

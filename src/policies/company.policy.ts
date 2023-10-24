@@ -16,9 +16,9 @@ export enum CompanyTypeEnum {
   VE = '벤처기업', // Venture Enterprise
   WOB = '여성기업',  // Women owned business
   SE = '사회적기업',  // Social Enterprise
-  DIB = '장애인 기업',  // Disabled owned business
+  DIB = '장애인기업',  // Disabled owned business
   SB = '소상공인',  // Small Business
-  CA = '협동 조합',  // Cooperative Association
-  VC = '마을 기업',  // Village Company
+  CA = '협동조합',  // Cooperative Association
+  VC = '마을기업',  // Village Company
   NA = '해당없음'
 }

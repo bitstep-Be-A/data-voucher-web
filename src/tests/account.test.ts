@@ -110,3 +110,7 @@ describe('회원가입', () => {
     expect(validator.checkValidPhoneNumber(validPhoneNumber)).toBe(true);
   });
 });
+
+describe("프로필 업데이트", () => {
+
+});

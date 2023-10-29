@@ -54,14 +54,16 @@ export interface SignupValidator {
   checkValidCompanyType: (value: string) => boolean;
   checkValidTargetAreas: (value: string) => boolean;
   checkValidInterestKeywords: (value: string) => boolean;
+  checkValidRegistrationNumber: (value: string) => boolean;
+  checkValidEstablishDate: (value: string) => boolean;
 }
 
 export interface SignupService {
   submitAgreement: (agreement: JoinAgreement) => void;
   submitMyInfo: (my: MyInfo) => Promise<void>;
-  submitCompanyRegisterInfo: (company: CompanyRegisterInfo) => void;
+  submitCompanyRegisterInfo: (company: CompanyRegisterInfo) => Promise<void>;
   submitCompanyDetailInfo: (company: CompanyDetailInfo) => void;
-  verifyCompany: () => Promise<void>;
+  verifyCompany: (data: CompanyRegisterInfo) => Promise<boolean>;
 }
 
 export interface SignupExceptionMap {
@@ -76,4 +78,7 @@ export interface SignupExceptionMap {
   COMPANY_SIZE_NOT_SELECTED: ExceptionDetail;
   COMPANY_TYPE_NOT_SELECTED: ExceptionDetail;
   COMPANY_TARGET_AREA_NOT_SELECTED: ExceptionDetail;
+  INVALID_REGISTRATION_NUMBER: ExceptionDetail;
+  INVALID_ESTABLISH_DATE: ExceptionDetail;
+  INVALID_CEO: ExceptionDetail;
 }

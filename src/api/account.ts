@@ -16,6 +16,10 @@ export const signupApi = {
     const response = await Axios.post('/signup/complete');
     const data = response.data;
     return {userId: data['MemberNo'] as ID}
+  },
+  companyCheck: async (data: object) => {
+    const response = await Axios.post('/기업진위여부확인/companycheck', data);
+    return response.data;
   }
 }
 

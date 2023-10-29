@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import type { ExceptionDetail } from "../../types/common";
 import {
@@ -17,7 +17,9 @@ import {
 } from "./signup.interface";
 import {
   CompanySizeEnum,
-  MAX_INTEREST_KEYWORD_COUNT
+  ESTABLISH_DATE_REGEX,
+  MAX_INTEREST_KEYWORD_COUNT,
+  REGISTRATION_NUMBER_REGEX
 } from "../../policies/company.policy";
 import {
   EMAIL_REGEX,
@@ -25,6 +27,7 @@ import {
   PASSWORD_REGEX,
   PHONE_NUMBER_REGEX
 } from "../../policies/signup.policy";
+import { signupApi } from '../../api/account';
 
 export const signupExceptionMap: SignupExceptionMap = {
   REQUIRED_AGREEMENT_UNCHECKED: {
@@ -53,7 +56,7 @@ export const signupExceptionMap: SignupExceptionMap = {
   },
   COMPANY_NOT_VERIFIED: {
     name: 'COMPANY_INFO_NOT_VERIFIED',
-    message: '등록되지 않은 회사입니다. 사업자 등록번호를 확인해주세요.'
+    message: '등록되지 않은 회사입니다. 기업 정보를 올바르게 입력해주세요.'
   },
   INVALID_NAME: {
     name: 'INVALID_NAME',
@@ -70,6 +73,18 @@ export const signupExceptionMap: SignupExceptionMap = {
   COMPANY_TARGET_AREA_NOT_SELECTED: {
     name: 'COMPANY_TARGET_AREA_NOT_SELECTED',
     message: '기업소재지 또는 관심지역을 적어도 하나 설정해주세요.'
+  },
+  INVALID_ESTABLISH_DATE: {
+    name: "INVALID_ESTABLISH_DATE",
+    message: '설립일자를 올바르게 입력해주세요.'
+  },
+  INVALID_REGISTRATION_NUMBER: {
+    name: 'INVALID_REGISTRATION_NUMBER',
+    message: '사업자등록번호를 올바르게 입력해주세요.'
+  },
+  INVALID_CEO: {
+    name: 'INVALID_CEO',
+    message: '대표자명을 입력해주세요.'
   }
 }
 
@@ -131,7 +146,13 @@ export const signupValidator: SignupValidator = {
   },
   checkValidInterestKeywords: function (value: string) {
     return JSON.parse(value).length <= MAX_INTEREST_KEYWORD_COUNT;
-  }
+  },
+  checkValidRegistrationNumber: function (value) {
+    return REGISTRATION_NUMBER_REGEX.test(value);
+  },
+  checkValidEstablishDate: function (value) {
+    return ESTABLISH_DATE_REGEX.test(value);
+  },
 }
 
 export interface SignupSerializer extends Serializer<SignupinfoRequest>, SignupService {};
@@ -177,7 +198,18 @@ export function useSignupSerializer(): SignupSerializer {
     return value;
   }
 
-  async function verifyCompany() {}
+  async function verifyCompany(data: CompanyRegisterInfo) {
+    try {
+      await signupApi.companyCheck({
+        "BusinessRegistrationNumber": data.businessRegistrationNumber,
+        "EstablishedDate": data.establishDate,
+        "CEO": data.CEO
+      });
+      return true;
+    } catch(e) {
+      return false;
+    }
+  }
 
   function submitAgreement(agreement: JoinAgreement) {
     exceptionsRef.current = [];
@@ -226,17 +258,49 @@ export function useSignupSerializer(): SignupSerializer {
     }
   }
 
-  function submitCompanyRegisterInfo(company: CompanyRegisterInfo) {
-    dataRef.current = {
-      ...dataRef.current,
-      ...company
+  const submitCompanyRegisterInfo = async (company: CompanyRegisterInfo) => {
+    if (!signupValidator.checkValidRegistrationNumber(company.businessRegistrationNumber)) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_REGISTRATION_NUMBER);
     }
-  }
+    if (!company.CEO) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_CEO);
+    }
+    if (!signupValidator.checkValidEstablishDate(company.establishDate)) {
+      exceptionsRef.current.push(signupExceptionMap.INVALID_ESTABLISH_DATE);
+    }
+    if (company.companySize === CompanySizeEnum.ETC) {
+      exceptionsRef.current.push(signupExceptionMap.COMPANY_SIZE_NOT_SELECTED);
+    }
+
+    const isVerified = await verifyCompany(company);
+    if (!isVerified) {
+      exceptionsRef.current.push(signupExceptionMap.COMPANY_NOT_VERIFIED);
+    }
+
+    if (isValid()) {
+      dataRef.current = {
+        ...dataRef.current,
+        ...company
+      }
+    }
+  };
 
   function submitCompanyDetailInfo(company: CompanyDetailInfo) {
-    dataRef.current = {
-      ...dataRef.current,
-      ...company
+    if (
+      !company.companyTypes.length
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.COMPANY_TYPE_NOT_SELECTED);
+    }
+    if (
+      !company.targetAreas.length
+    ) {
+      exceptionsRef.current.push(signupExceptionMap.COMPANY_TARGET_AREA_NOT_SELECTED);
+    }
+    if (isValid()) {
+      dataRef.current = {
+        ...dataRef.current,
+        ...company
+      }
     }
   }
 

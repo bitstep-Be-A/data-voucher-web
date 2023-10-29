@@ -30,7 +30,7 @@ export const RequireSymbol = () => {
 
 export const Label = ({label}: {label: React.ReactNode}) => {
   return (
-    <div className="w-32 ml-2 mr-8" style={{color: deepGray}}>
+    <div className="w-36 ml-2 mr-8" style={{color: deepGray}}>
       {label}
     </div>
   )

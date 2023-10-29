@@ -193,17 +193,19 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
           label="사업자등록번호"
           props={{
             type: "text",
-            placeholder: "사업자등록번호를 입력하세요.",
+            placeholder: "사업자등록번호를 입력하세요.(-없이 기입)",
             description: null,
             submitValue: String(formData.businessRegistrationNumber)
           }}
-          failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          validator={(value: string) => true}
+          failMessage={signupExceptionMap.INVALID_REGISTRATION_NUMBER.message}
+          validator={(value: string) => signupValidator.checkValidRegistrationNumber(value)}
           onInput={(value: string) => submit({...formData, businessRegistrationNumber: value})}
           verification= {{
             name: "기업정보확인",
             event: () => {
-              verifyCompany();
+              verifyCompany(formData).then((v) => {
+                v ? alert("기업 인증에 성공했습니다.") : alert("기업 인증에 실패했습니다.");
+              });
             }
           }}
         />,
@@ -225,16 +227,16 @@ const CompanyRegisterInfoStep: React.FC<StepSectionProps<CompanyRegisterInfo>> =
         <InfoInputField
           key="start"
           required={true}
-          label="개업일자"
+          label="설립일자"
           props={{
             type: "text",
-            placeholder: "ex) 2023-01-01",
+            placeholder: "ex) 20200521",
             description: null,
             // disabled: true,
             submitValue: String(formData.establishDate)
           }}
-          failMessage={signupExceptionMap.COMPANY_NOT_VERIFIED.message}
-          validator={(value: string) => true}
+          failMessage={signupExceptionMap.INVALID_ESTABLISH_DATE.message}
+          validator={(value: string) => signupValidator.checkValidEstablishDate(value)}
           onInput={(value: string) => submit({...formData, establishDate: value})}
         />,
         <InfoInputField
@@ -528,7 +530,7 @@ const SignupForm: React.FC = () => {
             className="border border-lightGray"
             onClick={async () => {
               serializer.submitMyInfo(myInfoValue);
-              serializer.submitCompanyRegisterInfo(companyRegisterInfoValue);
+              await serializer.submitCompanyRegisterInfo(companyRegisterInfoValue);
               serializer.submitCompanyDetailInfo(companyDetailInfoValue);
 
               if (serializer.isValid()) {

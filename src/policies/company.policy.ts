@@ -22,3 +22,6 @@ export enum CompanyTypeEnum {
   VC = '마을기업',  // Village Company
   NA = '해당없음'
 }
+
+export const REGISTRATION_NUMBER_REGEX = /^\d{10}$/;
+export const ESTABLISH_DATE_REGEX = /^\d{8}$/;
